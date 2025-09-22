@@ -2635,11 +2635,7 @@ void FHECKKSRNS::EvalFBTSetupInternal(const CryptoContextImpl<DCRTPoly>& cc, con
     scaleDec        = (!pureCKKS) ? scaleDec * scaleMod : scaleDec / PIn.ConvertToDouble();
 
     // two levels for double-angle formula; division by k is included in AdjustDepthFBT
-    uint32_t approxModDepth = 2;
-
-    // Increase interpolation degree for large precision
-    uint32_t depthBT = approxModDepth + levelBudget[0] + levelBudget[1] + depthLeveledComputation +
-                       AdjustDepthFBT(coeffs, PIn, order, skd);
+    uint32_t depthBT = depthLeveledComputation + GetFBTDepth(levelBudget, coeffs, PIn, order, skd);
 
     // compute # of levels to remain when encoding the coefficients
     uint32_t L0 = cryptoParams->GetElementParams()->GetParams().size();
@@ -2649,14 +2645,6 @@ void FHECKKSRNS::EvalFBTSetupInternal(const CryptoContextImpl<DCRTPoly>& cc, con
         lDec = L0 - depthBT;
     }
     else {
-        // // Andreea: This is to purely test Decoding + Encoding
-        // lEnc = 1;
-        // lDec = 5;
-
-        // // Andreea: This is to test Decoding + Encoding + EvalLUT, without AdjustCiphertext
-        // lEnc = approxModDepth + depthLeveledComputation + AdjustDepthFBT(coeffs, PIn, order, skd) - lvlsAfterBoot;
-        // lDec = levelBudget[0] + 1 + approxModDepth + depthLeveledComputation + AdjustDepthFBT(coeffs, PIn, order, skd) - lvlsAfterBoot;
-
         lEnc = L0 - levelBudget[0] - 1;  // Subtract 1 level is because division by k is done before CtS
         lDec = 1;
     }
@@ -3746,6 +3734,20 @@ Ciphertext<DCRTPoly> FHECKKSRNS::EvalHermiteTrigSeries(ConstCiphertext<DCRTPoly>
 }
 
 template <typename VectorDataType>
+uint32_t FHECKKSRNS::GetFBTDepth(const std::vector<uint32_t>& levelBudget,
+                                 const std::vector<VectorDataType>& coefficients, const BigInteger& PInput,
+                                 size_t order, SecretKeyDist skd) {
+    return levelBudget[0] + levelBudget[1] + AdjustDepthFBT(coefficients, PInput, order, skd);
+}
+
+template uint32_t FHECKKSRNS::GetFBTDepth(const std::vector<uint32_t>& levelBudget,
+                                          const std::vector<int64_t>& coefficients, const BigInteger& PInput,
+                                          size_t order, SecretKeyDist skd);
+template uint32_t FHECKKSRNS::GetFBTDepth(const std::vector<uint32_t>& levelBudget,
+                                          const std::vector<std::complex<double>>& coefficients,
+                                          const BigInteger& PInput, size_t order, SecretKeyDist skd);
+
+template <typename VectorDataType>
 uint32_t FHECKKSRNS::AdjustDepthFBT(const std::vector<VectorDataType>& coefficients, const BigInteger& PInput,
                                     size_t order, SecretKeyDist skd) {
     auto& coeff_cos = (skd == SPARSE_ENCAPSULATED) ? coeff_cos_16_double : coeff_cos_25_double;
@@ -3774,6 +3776,7 @@ uint32_t FHECKKSRNS::AdjustDepthFBT(const std::vector<VectorDataType>& coefficie
             depth += GetMultiplicativeDepthByCoeffVector(coeff_exp, false);
             break;
     }
+    depth += 2;  // the number of double-angle iterations is fixed to 2
     return depth;
 }
 

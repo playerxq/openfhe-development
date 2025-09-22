@@ -44,6 +44,7 @@ using namespace lbcrypto;
 const BigInteger QBFVINIT(BigInteger(1) << 60);
 const BigInteger QBFVINITLARGE(BigInteger(1) << 80);
 
+/*Note that scaleTHI *HAS* to be 1 for PInput = 2.*/
 void ArbitraryLUTRLWE(BigInteger QBFVInit, BigInteger PInput, BigInteger POutput, BigInteger Q, BigInteger Bigq,
                       uint32_t scaleTHI, size_t order, uint32_t numSlots, uint32_t ringDim,
                       std::function<int64_t(int64_t)> func);
@@ -102,8 +103,8 @@ int main() {
     uint32_t dcrtBits = 50;
     BigInteger Bigq(1UL << dcrtBits);
     uint32_t order = 1;
-    // scaleTHI HAS to be 1 for PInput = 2. Andreea: hardcode this.
-    double scaleTHI = 16;
+    // scaleTHI *HAS* to be 1 for PInput = 2.
+    double scaleTHI = (PInput == BigInteger(2)) ? 1 : 16;
 
     auto a    = PInput.ConvertToInt<int64_t>();
     auto b    = POutput.ConvertToInt<int64_t>();
@@ -145,14 +146,12 @@ int main() {
     parameters.SetBatchSize(numSlots);
     parameters.SetRingDim(ringDim);
     parameters.SetCKKSDataType(COMPLEX);
-    uint32_t depth = levelsAvailableAfterBootstrap + lvlb[0] + 2;
+    uint32_t depth = levelsAvailableAfterBootstrap;
 
     if (binaryLUT)
-        depth += FHECKKSRNS::AdjustDepthFBT(coeffint, PInput, order, secretKeyDist);
+        depth += FHECKKSRNS::GetFBTDepth({lvlb[0], 0}, coeffint, PInput, order, secretKeyDist);
     else
-        depth += FHECKKSRNS::AdjustDepthFBT(coeffcomp, PInput, order, secretKeyDist);
-
-    // Andreea: We should get this from a function GetFBTBootstrapDepth; that 2 comes from the double-angle formula
+        depth += FHECKKSRNS::GetFBTDepth({lvlb[0], 0}, coeffcomp, PInput, order, secretKeyDist);
 
     parameters.SetMultiplicativeDepth(depth);
 
@@ -327,12 +326,12 @@ void ArbitraryLUTRLWE(BigInteger QBFVInit, BigInteger PInput, BigInteger POutput
     parameters.SetNumLargeDigits(dnum);
     parameters.SetBatchSize(numSlotsCKKS);
     parameters.SetRingDim(ringDim);
-    uint32_t depth = levelsAvailableAfterBootstrap + lvlb[0] + lvlb[1] + 2;
+    uint32_t depth = levelsAvailableAfterBootstrap;
 
     if (binaryLUT)
-        depth += FHECKKSRNS::AdjustDepthFBT(coeffint, PInput, order, secretKeyDist);
+        depth += FHECKKSRNS::GetFBTDepth(lvlb, coeffint, PInput, order, secretKeyDist);
     else
-        depth += FHECKKSRNS::AdjustDepthFBT(coeffcomp, PInput, order, secretKeyDist);
+        depth += FHECKKSRNS::GetFBTDepth(lvlb, coeffcomp, PInput, order, secretKeyDist);
 
     parameters.SetMultiplicativeDepth(depth);
 
@@ -485,12 +484,12 @@ void MultiValueBootstrappingRLWE(BigInteger QBFVInit, BigInteger PInput, BigInte
     parameters.SetNumLargeDigits(dnum);
     parameters.SetBatchSize(numSlotsCKKS);
     parameters.SetRingDim(ringDim);
-    uint32_t depth = levelsAvailableAfterBootstrap + lvlb[0] + lvlb[1] + 2 + levelsComputation;
+    uint32_t depth = levelsAvailableAfterBootstrap + levelsComputation;
 
     if (binaryLUT)
-        depth += FHECKKSRNS::AdjustDepthFBT(coeffint1, PInput, order, secretKeyDist);
+        depth += FHECKKSRNS::GetFBTDepth(lvlb, coeffint1, PInput, order, secretKeyDist);
     else
-        depth += FHECKKSRNS::AdjustDepthFBT(coeffcomp1, PInput, order, secretKeyDist);
+        depth += FHECKKSRNS::GetFBTDepth(lvlb, coeffcomp1, PInput, order, secretKeyDist);
 
     parameters.SetMultiplicativeDepth(depth);
 
@@ -732,12 +731,12 @@ void MultiPrecisionSignRLWE(BigInteger QBFVInit, BigInteger PInput, BigInteger P
     parameters.SetBatchSize(numSlotsCKKS);
     parameters.SetRingDim(ringDim);
 
-    uint32_t depth = levelsAvailableAfterBootstrap + lvlb[0] + lvlb[1] + 2;
+    uint32_t depth = levelsAvailableAfterBootstrap;
 
     if (binaryLUT)
-        depth += FHECKKSRNS::AdjustDepthFBT(coeffintMod, PDigit, order, secretKeyDist);
+        depth += FHECKKSRNS::GetFBTDepth(lvlb, coeffintMod, PDigit, order, secretKeyDist);
     else
-        depth += FHECKKSRNS::AdjustDepthFBT(coeffcompMod, PDigit, order, secretKeyDist);
+        depth += FHECKKSRNS::GetFBTDepth(lvlb, coeffcompMod, PDigit, order, secretKeyDist);
 
     parameters.SetMultiplicativeDepth(depth);
 
