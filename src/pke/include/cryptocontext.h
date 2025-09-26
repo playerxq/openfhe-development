@@ -3602,26 +3602,22 @@ public:
     }
 
     template <typename VectorDataType>
-    std::shared_ptr<seriesPowers<Element>> EvalHomEncoding(ConstCiphertext<Element>& ciphertext,
-                                                           const std::vector<VectorDataType>& coeffs,
-                                                           uint32_t digitBitSize, const BigInteger& initialScaling,
-                                                           size_t order = 1, bool complexPacking = false) {
-        return GetScheme()->EvalHomEncoding(ciphertext, coeffs, digitBitSize, initialScaling, order, complexPacking);
-    }
-
-    template <typename VectorDataType>
     std::shared_ptr<seriesPowers<Element>> EvalMVBPrecompute(ConstCiphertext<Element>& ciphertext,
                                                              const std::vector<VectorDataType>& coeffs,
                                                              uint32_t digitBitSize, const BigInteger& initialScaling,
-                                                             size_t order = 1) {
-        return GetScheme()->EvalMVBPrecompute(ciphertext, coeffs, digitBitSize, initialScaling, order);
+                                                             size_t order = 1, bool pureCKKS = false,
+                                                             bool complexPacking = false) {
+        return GetScheme()->EvalMVBPrecompute(ciphertext, coeffs, digitBitSize, initialScaling, order, pureCKKS,
+                                              complexPacking);
     }
 
     template <typename VectorDataType>
     Ciphertext<Element> EvalMVB(const std::shared_ptr<seriesPowers<Element>> ciphertexts,
                                 const std::vector<VectorDataType>& coeffs, uint32_t digitBitSize,
-                                const uint64_t postScaling, uint32_t levelToReduce = 0, size_t order = 1) {
-        return GetScheme()->EvalMVB(ciphertexts, coeffs, digitBitSize, postScaling, levelToReduce, order);
+                                const uint64_t postScaling, uint32_t levelToReduce = 0, size_t order = 1,
+                                bool pureCKKS = false, bool complexPacking = false) {
+        return GetScheme()->EvalMVB(ciphertexts, coeffs, digitBitSize, postScaling, levelToReduce, order, pureCKKS,
+                                    complexPacking);
     }
 
     template <typename VectorDataType>

@@ -55,6 +55,12 @@ void MultiPrecisionSignRLWE(BigInteger QBFVInit, BigInteger PInput, BigInteger P
                             uint32_t scaleTHI, uint32_t scaleStepTHI, size_t order, uint32_t numSlots,
                             uint32_t ringDim);
 
+/*Note that the complex packing is just for throughput, i.e., the LUTs are integer functions applied individually over the real and imaginary parts.*/
+void ArbitraryLUTCKKS(BigInteger PInput, BigInteger POutput, uint32_t dcrtBits, uint32_t scaleTHI, size_t order,
+                      uint32_t numSlots, uint32_t ringDim, std::function<int64_t(int64_t)> func, bool complexPacking);
+void MultiValueBootstrappingCKKS(BigInteger PInput, BigInteger POutput, uint32_t dcrtBits, uint32_t scaleTHI,
+                                 size_t order, uint32_t numSlots, uint32_t ringDim, uint32_t levelComputation);
+
 int main() {
     // std::cerr << "\n*1.* Compute the function (x % PInput - POutput / 2) % POutput." << std::endl << std::endl;
     // // Boolean LUT
@@ -97,164 +103,35 @@ int main() {
 
     /*====Discrete CKKS Functional Bootstrapping====*/
 
-    /* Function */
-    BigInteger PInput(128);
-    BigInteger POutput(128);
-    uint32_t dcrtBits = 50;
-    BigInteger Bigq(1UL << dcrtBits);
-    uint32_t order = 1;
-    // scaleTHI *HAS* to be 1 for PInput = 2.
-    double scaleTHI = (PInput == BigInteger(2)) ? 1 : 16;
+    std::cerr << "\n*1'.* Compute the function (x % PInput - POutput / 2) % POutput." << std::endl << std::endl;
+    // Boolean LUT
+    std::cerr << "=====Boolean LUT order 1 sparsely packed=====" << std::endl << std::endl;
+    ArbitraryLUTCKKS(
+        BigInteger(2), BigInteger(2), 37, 1, 1, 8, 4096, [](int64_t x) { return (x % 2 - 2 / 2) % 2; }, false);
+    std::cerr << "=====Boolean LUT order 2 sparsely packed=====" << std::endl << std::endl;
+    ArbitraryLUTCKKS(
+        BigInteger(2), BigInteger(2), 37, 1, 2, 8, 4096, [](int64_t x) { return (x % 2 - 2 / 2) % 2; }, false);
+    std::cerr << "=====Boolean LUT order 1 fully complex packed=====" << std::endl << std::endl;
+    ArbitraryLUTCKKS(
+        BigInteger(2), BigInteger(2), 37, 1, 2, 2048, 4096, [](int64_t x) { return (x % 2 - 2 / 2) % 2; }, true);
+    // LUT with 8-bit input and 4-bit output
+    std::cerr << "=====8-to-4 bit LUT order 1 sparsely packed=====" << std::endl << std::endl;
+    ArbitraryLUTCKKS(
+        BigInteger(256), BigInteger(16), 47, 32, 1, 8, 4096, [](int64_t x) { return (x % 256 - 16 / 2) % 16; }, false);
 
-    auto a    = PInput.ConvertToInt<int64_t>();
-    auto b    = POutput.ConvertToInt<int64_t>();
-    auto func = [a, b](int64_t x) -> int64_t {
-        return (x % a) % b;
-    };
+    std::cerr << "=====8-to-8 bit LUT order 1 sparsely packed=====" << std::endl << std::endl;
+    ArbitraryLUTCKKS(
+        BigInteger(2048), BigInteger(2048), 55, 128, 1, 2048, 4096,
+        [](int64_t x) { return (x % 2048 - 2048 / 2) % 2048; }, true);
 
-    std::vector<int64_t> coeffint;
-    std::vector<std::complex<double>> coeffcomp;
-    bool binaryLUT = (a == 2) && (order == 1);
-
-    if (binaryLUT) {
-        coeffint = {
-            func(1),
-            func(0) -
-                func(1)};  // those are coefficients for [1, cos^2(pi x)], not [1, cos(2pi x)] as in the general case.
-    }
-    else {
-        coeffcomp = GetHermiteTrigCoefficients(func, a, order, scaleTHI);  // divided by 2
-    }
-
-    uint32_t ringDim            = 128;
-    uint32_t numSlots           = 64;
-    uint32_t firstMod           = 50;
-    uint32_t dnum               = 3;
-    SecretKeyDist secretKeyDist = SPARSE_ENCAPSULATED;
-    std::vector<uint32_t> lvlb  = {
-        3, 3};  // Note the different order in the lvlb, we do first StC but it is on position [1]
-    // We need at least 1 level after bootstrap to be able to correctly decrypt for non-boolean messages, and more levels if we want to support subsequent FBTs
-    uint32_t levelsAvailableAfterBootstrap = 1;  //  lvlb[1] + 1;
-
-    CCParams<CryptoContextCKKSRNS> parameters;
-    parameters.SetSecretKeyDist(secretKeyDist);
-    parameters.SetSecurityLevel(HEStd_NotSet);
-    parameters.SetScalingModSize(dcrtBits);
-    parameters.SetScalingTechnique(FIXEDMANUAL);
-    parameters.SetFirstModSize(firstMod);
-    parameters.SetNumLargeDigits(dnum);
-    parameters.SetBatchSize(numSlots);
-    parameters.SetRingDim(ringDim);
-    parameters.SetCKKSDataType(COMPLEX);
-    uint32_t depth = levelsAvailableAfterBootstrap;
-
-    if (binaryLUT)
-        depth += FHECKKSRNS::GetFBTDepth({lvlb[0], 0}, coeffint, PInput, order, secretKeyDist);
-    else
-        depth += FHECKKSRNS::GetFBTDepth({lvlb[0], 0}, coeffcomp, PInput, order, secretKeyDist);
-
-    parameters.SetMultiplicativeDepth(depth);
-
-    auto cc = GenCryptoContext(parameters);
-    cc->Enable(PKE);
-    cc->Enable(KEYSWITCH);
-    cc->Enable(LEVELEDSHE);
-    cc->Enable(ADVANCEDSHE);
-    cc->Enable(FHE);
-
-    std::cout << "CKKS scheme is using ring dimension " << cc->GetRingDimension() << " and a multiplicative depth of "
-              << depth << std::endl
+    std::cerr << "\n\n*2'.* Compute multiple functions over the same ciphertext." << std::endl << std::endl;
+    // Two LUTs with 8-bit input and 8-bit output. Additional leveled computations happen outside FBT.
+    std::cerr << "=====Multivalue bootstrapping for two 8-to-8 bit LUTs order 1 sparsely real packed=====" << std::endl
               << std::endl;
-
-    /* 5. Compute various moduli and scaling sizes, used for scheme conversions.
-     * Then generate the setup parameters and necessary keys.
-     */
-    auto keyPair = cc->KeyGen();
-
-    if (binaryLUT)
-        cc->EvalFBTSetup(coeffint, numSlots, PInput, POutput, Bigq, keyPair.publicKey, {0, 0}, lvlb,
-                         levelsAvailableAfterBootstrap, 0, order, true);
-    else
-        cc->EvalFBTSetup(coeffcomp, numSlots, PInput, POutput, Bigq, keyPair.publicKey, {0, 0}, lvlb,
-                         levelsAvailableAfterBootstrap, 0, order, true);
-
-    cc->EvalBootstrapKeyGen(keyPair.secretKey, numSlots);
-    cc->EvalMultKeyGen(keyPair.secretKey);
-
-    /* Input */
-    // std::vector<double> x = {PInput.ConvertToDouble() / 2 - 1, PInput.ConvertToDouble() / 2 + 1, 5, 4, 3, 2, 1, 0};
-    // std::cerr << "First elements of the input (repeated) up to size " << numSlots << ":" << std::endl;
-    // std::cerr << x << std::endl;
-    // if (x.size() < numSlots)
-    //     x = Fill<double>(x, numSlots);
-
-    std::vector<std::complex<double>> x = {PInput.ConvertToDouble() / 2 - 1,
-                                           PInput.ConvertToDouble() / 2 + 1 + 1i,
-                                           5. + 2i,
-                                           4. + 3i,
-                                           3. + 4i,
-                                           2. + 5i,
-                                           1. + (PInput.ConvertToDouble() / 2 + 1) * 1i,
-                                           0. + (PInput.ConvertToDouble() / 2 - 1) * 1.i};
-    std::cerr << "First elements of the input (repeated) up to size " << numSlots << ":" << std::endl;
-    std::cerr << x << std::endl;
-    if (x.size() < numSlots)
-        x = Fill<std::complex<double>>(x, numSlots);
-
-    auto ptxt = cc->MakeCKKSPackedPlaintext(x, 1, 0, nullptr,
-                                            numSlots);  // Levels are reduced automatically before EvalHomDecoding
-    // auto ptxt = cc->MakeCKKSPackedPlaintext(x, 1, depth - lvlb[1], nullptr, numSlots);
-    auto ctxt = cc->Encrypt(keyPair.publicKey, ptxt);
-
-    std::cerr << "#levels of ctxt: " << ctxt->GetLevel() << ", depth = " << ctxt->GetNoiseScaleDeg() << std::endl;
-
-    /* 8. Apply the LUT over the ciphertext.
-    */
-    Ciphertext<DCRTPoly> ctxtAfterFBT;
-    if (binaryLUT)
-        ctxtAfterFBT =
-            cc->EvalFBT(ctxt, coeffint, PInput.GetMSB() - 1, ptxt->GetElement<DCRTPoly>().GetParams()->GetModulus(),
-                        scaleTHI, 0, order, true, true);
-    else
-        ctxtAfterFBT =
-            cc->EvalFBT(ctxt, coeffcomp, PInput.GetMSB() - 1, ptxt->GetElement<DCRTPoly>().GetParams()->GetModulus(),
-                        scaleTHI, 0, order, true, true);
-
-    std::cerr << "#levels of ctxtAfterFBT: " << ctxtAfterFBT->GetLevel()
-              << ", depth = " << ctxtAfterFBT->GetNoiseScaleDeg() << std::endl;
-
-    Plaintext result;
-    cc->Decrypt(keyPair.secretKey, ctxtAfterFBT, &result);
-    result->SetLength(numSlots);
-    std::cerr << "Result after FBT: " << result << std::endl;
-
-    auto exact(x);
-
-    // std::transform(x.begin(), x.end(), exact.begin(), [&](const double& elem) {
-    //     return func(static_cast<int64_t>(elem));
-    // });
-
-    std::transform(x.begin(), x.end(), exact.begin(), [&](const std::complex<double>& elem) {
-        return static_cast<double>(func(static_cast<int64_t>(elem.real()))) +
-               static_cast<double>(func(static_cast<int64_t>(elem.imag()))) * 1.i;
-    });
-
-    std::cerr << "exact: " << exact << std::endl;
-
-    // auto computed = result->GetRealPackedValue();
-    // std::transform(exact.begin(), exact.end(), computed.begin(), exact.begin(), std::minus<double>());
-    // std::transform(exact.begin(), exact.end(), exact.begin(),
-    //                [&](const int64_t& elem) { return std::abs(elem); });
-    // auto max_error_it = std::max_element(exact.begin(), exact.end());
-
-    auto computed = result->GetCKKSPackedValue();
-    std::transform(exact.begin(), exact.end(), computed.begin(), exact.begin(), std::minus<std::complex<double>>());
-    std::vector<double> errorReal(exact.size());
-    std::transform(exact.begin(), exact.end(), errorReal.begin(),
-                   [&](const std::complex<double>& elem) { return std::abs(elem); });
-    auto max_error_it = std::max_element(errorReal.begin(), errorReal.end());
-
-    std::cerr << "Max absolute error obtained: " << *max_error_it << std::endl << std::endl;
+    MultiValueBootstrappingCKKS(BigInteger(256), BigInteger(256), 50, 16, 1, 8, 2048, 1);
+    std::cerr << "=====Multivalue bootstrapping for two 8-to-8 bit LUTs order 1 fully real packed=====" << std::endl
+              << std::endl;
+    MultiValueBootstrappingCKKS(BigInteger(256), BigInteger(256), 50, 32, 1, 2048, 4096, 1);
 
     return 0;
 }
@@ -878,4 +755,367 @@ void MultiPrecisionSignRLWE(BigInteger QBFVInit, BigInteger PInput, BigInteger P
             }
         }
     }
+}
+
+void ArbitraryLUTCKKS(BigInteger PInput, BigInteger POutput, uint32_t dcrtBits, uint32_t scaleTHI, size_t order,
+                      uint32_t numSlots, uint32_t ringDim, std::function<int64_t(int64_t)> func, bool complexPacking) {
+    /* 1. Input */
+    std::vector<std::complex<double>> x;
+    if (!complexPacking) {
+        x = {PInput.ConvertToDouble() / 2 - 1, PInput.ConvertToDouble() / 2 + 1, 5, 4, 3, 2, 1, 0};
+    }
+    else {
+        x = {PInput.ConvertToDouble() / 2 - 1,
+             PInput.ConvertToDouble() / 2 + 1 + 1i,
+             5. + 2i,
+             4. + 3i,
+             3. + 4i,
+             2. + 5i,
+             1. + (PInput.ConvertToDouble() / 2 + 1) * 1i,
+             0. + (PInput.ConvertToDouble() / 2 - 1) * 1.i};
+    }
+    std::cerr << "First elements of the input (repeated) up to size " << numSlots << ":" << std::endl;
+    std::cerr << x << std::endl;
+    if (x.size() < numSlots)
+        x = Fill<std::complex<double>>(x, numSlots);
+
+    /* 2. The case of Boolean LUTs using the first order Trigonometric Hermite Interpolation
+     * supports an optimized implementation.
+     * In particular, it supports real coefficients as opposed to complex coefficients.
+     * Therefore, we separate between this case and the general case.
+     * There is no need to scale the coefficients in the Boolean case.
+     * However, in the general case, it is recommended to scale down the Hermite
+     * coefficients in order to bring their magnitude close to one. This scaling
+     * is reverted later.
+     */
+    std::vector<int64_t> coeffint;
+    std::vector<std::complex<double>> coeffcomp;
+    bool binaryLUT = (PInput.ConvertToInt() == 2) && (order == 1);
+
+    if (binaryLUT) {
+        coeffint = {
+            func(1),
+            func(0) -
+                func(1)};  // those are coefficients for [1, cos^2(pi x)], not [1, cos(2pi x)] as in the general case.
+    }
+    else {
+        coeffcomp = GetHermiteTrigCoefficients(func, PInput.ConvertToInt(), order, scaleTHI);  // divided by 2
+    }
+
+    /* 3. Set up the cryptoparameters.
+    * The number of levels to be reserved before and after the LUT evaluation should be specified.
+    * The secret key distribution for CKKS should either be SPARSE_TERNARY or SPARSE_ENCAPSULATED.
+    * The SPARSE_TERNARY distribution is for testing purposes as it gives a larger probability of
+    * failure but less noise, while the SPARSE_ENCAPSULATED distribution gives a smaller probability
+    * of failure at a cost of slightly more noise.
+    * In the pure CKKS case, SPARSE_ENCAPSULATED gives much smaller noise than SPARSE_TERNARY
+    * for smaller inputs <= 10bits, but the trend reverses after 11 bits.
+    */
+
+    uint32_t firstMod           = dcrtBits;
+    uint32_t dnum               = 3;
+    SecretKeyDist secretKeyDist = SPARSE_TERNARY;
+    std::vector<uint32_t> lvlb  = {
+        3, 3};  // Note the different order in the lvlb, we do first StC but it is on position [1]
+    // We need at least 1 level after bootstrap to be able to correctly decrypt for non-boolean messages, and more levels if we want to support subsequent FBTs
+    uint32_t levelsAvailableAfterBootstrap = 1;  // lvlb[1] + 1;
+
+    CCParams<CryptoContextCKKSRNS> parameters;
+    parameters.SetSecretKeyDist(secretKeyDist);
+    parameters.SetSecurityLevel(HEStd_NotSet);
+    parameters.SetScalingModSize(dcrtBits);
+    parameters.SetScalingTechnique(FIXEDMANUAL);
+    parameters.SetFirstModSize(firstMod);
+    parameters.SetNumLargeDigits(dnum);
+    parameters.SetBatchSize(numSlots);
+    parameters.SetRingDim(ringDim);
+    if (complexPacking) {
+        parameters.SetCKKSDataType(COMPLEX);
+    }
+    else {
+        parameters.SetCKKSDataType(REAL);
+    }
+    uint32_t depth = levelsAvailableAfterBootstrap;
+
+    if (binaryLUT)
+        depth += FHECKKSRNS::GetFBTDepth({lvlb[0], 0}, coeffint, PInput, order, secretKeyDist);
+    else
+        depth += FHECKKSRNS::GetFBTDepth({lvlb[0], 0}, coeffcomp, PInput, order, secretKeyDist);
+
+    parameters.SetMultiplicativeDepth(depth);
+
+    auto cc = GenCryptoContext(parameters);
+    cc->Enable(PKE);
+    cc->Enable(KEYSWITCH);
+    cc->Enable(LEVELEDSHE);
+    cc->Enable(ADVANCEDSHE);
+    cc->Enable(FHE);
+
+    std::cout << "CKKS scheme is using ring dimension " << cc->GetRingDimension() << " and a multiplicative depth of "
+              << depth << std::endl
+              << std::endl;
+
+    /* 4. Generate the setup parameters and necessary keys.
+     * The Bigq parameter in EvalFBTSetup is not required for the pure CKKS case, so we set it to 1.
+     */
+    auto keyPair = cc->KeyGen();
+
+    if (binaryLUT)
+        cc->EvalFBTSetup(coeffint, numSlots, PInput, POutput, BigInteger(1), keyPair.publicKey, {0, 0}, lvlb,
+                         levelsAvailableAfterBootstrap, 0, order, true);
+    else
+        cc->EvalFBTSetup(coeffcomp, numSlots, PInput, POutput, BigInteger(1), keyPair.publicKey, {0, 0}, lvlb,
+                         levelsAvailableAfterBootstrap, 0, order, true);
+
+    cc->EvalBootstrapKeyGen(keyPair.secretKey, numSlots);
+    cc->EvalMultKeyGen(keyPair.secretKey);
+
+    /* 5. Encode and encrypt the input in CKKS.
+     */
+    auto ptxt = cc->MakeCKKSPackedPlaintext(x, 1, 0, nullptr,
+                                            numSlots);  // Levels are reduced automatically before EvalHomDecoding
+    auto ctxt = cc->Encrypt(keyPair.publicKey, ptxt);
+
+    /* 6. Apply the LUT over the ciphertext.
+    */
+    Ciphertext<DCRTPoly> ctxtAfterFBT;
+    // In pureCKKS FBT, we do not need the initialScaling, so we set it to 1
+    if (binaryLUT)
+        ctxtAfterFBT =
+            cc->EvalFBT(ctxt, coeffint, PInput.GetMSB() - 1, BigInteger(1), scaleTHI, 0, order, true, complexPacking);
+    else
+        ctxtAfterFBT =
+            cc->EvalFBT(ctxt, coeffcomp, PInput.GetMSB() - 1, BigInteger(1), scaleTHI, 0, order, true, complexPacking);
+
+    Plaintext result;
+    cc->Decrypt(keyPair.secretKey, ctxtAfterFBT, &result);
+    result->SetLength(numSlots);
+
+    if (!complexPacking) {
+        std::vector<double> exact(x.size());
+        std::transform(x.begin(), x.end(), exact.begin(),
+                       [&](const std::complex<double>& elem) { return func(static_cast<int64_t>(elem.real())); });
+        auto computed = result->GetRealPackedValue();
+        std::transform(exact.begin(), exact.end(), computed.begin(), exact.begin(), std::minus<double>());
+        std::transform(exact.begin(), exact.end(), exact.begin(), [&](const double& elem) { return std::abs(elem); });
+        auto max_error_it = std::max_element(exact.begin(), exact.end());
+        std::cerr << "Max absolute error obtained: " << *max_error_it << std::endl << std::endl;
+    }
+    else {
+        auto exact(x);
+        std::transform(x.begin(), x.end(), exact.begin(), [&](const std::complex<double>& elem) {
+            return static_cast<double>(func(static_cast<int64_t>(elem.real()))) +
+                   static_cast<double>(func(static_cast<int64_t>(elem.imag()))) * 1.i;
+        });
+        auto computed = result->GetCKKSPackedValue();
+        std::transform(exact.begin(), exact.end(), computed.begin(), exact.begin(), std::minus<std::complex<double>>());
+        std::vector<double> errorReal(exact.size());
+        std::transform(exact.begin(), exact.end(), errorReal.begin(),
+                       [&](const std::complex<double>& elem) { return std::abs(elem); });
+        auto max_error_it = std::max_element(errorReal.begin(), errorReal.end());
+
+        std::cerr << "Max absolute error obtained: " << *max_error_it << std::endl << std::endl;
+    }
+}
+
+void MultiValueBootstrappingCKKS(BigInteger PInput, BigInteger POutput, uint32_t dcrtBits, uint32_t scaleTHI,
+                                 size_t order, uint32_t numSlots, uint32_t ringDim, uint32_t levelsComputation) {
+    /* 1. Input. This example is set up only for real packing, for simplicity */
+    std::vector<double> x = {PInput.ConvertToDouble() / 2 - 1, PInput.ConvertToDouble() / 2 + 1, 5, 4, 3, 2, 1, 0};
+    std::cerr << "First elements of the input (repeated) up to size " << numSlots << ":" << std::endl;
+    std::cerr << x << std::endl;
+    if (x.size() < numSlots)
+        x = Fill<double>(x, numSlots);
+
+    /* 2. Distinct functions to compute over the same input. */
+    auto a     = PInput.ConvertToInt<int64_t>();
+    auto b     = POutput.ConvertToInt<int64_t>();
+    auto func1 = [a, b](int64_t x) -> int64_t {
+        return (x % a - a / 2) % b;
+    };
+
+    auto func2 = [a, b](int64_t x) -> int64_t {
+        return (x % a) % b;
+    };
+
+    /* 3. The case of Boolean LUTs using the first order Trigonometric Hermite Interpolation
+     * supports an optimized implementation.
+     * In particular, it supports real coefficients as opposed to complex coefficients.
+     * Therefore, we separate between this case and the general case.
+     * There is no need to scale the coefficients in the Boolean case.
+     * However, in the general case, it is recommended to scale down the Hermite
+     * coefficients in order to bring their magnitude close to one. This scaling
+     * is reverted later.
+     */
+    std::vector<int64_t> coeffint1;
+    std::vector<int64_t> coeffint2;
+    std::vector<std::complex<double>> coeffcomp1;
+    std::vector<std::complex<double>> coeffcomp2;
+    bool binaryLUT = (PInput.ConvertToInt() == 2) && (order == 1);
+
+    if (binaryLUT) {
+        coeffint1 = {func1(1), func1(0) - func1(1)};
+        coeffint2 = {func2(1), func2(0) - func2(1)};
+    }
+    else {
+        coeffcomp1 = GetHermiteTrigCoefficients(func1, PInput.ConvertToInt(), order, scaleTHI);
+        coeffcomp2 = GetHermiteTrigCoefficients(func2, PInput.ConvertToInt(), order, scaleTHI);
+    }
+
+    /* 4. Set up the cryptoparameters.
+     * The scaling factor in CKKS should have the same bit length as the RLWE ciphertext modulus.
+     * The number of levels to be reserved before and after the LUT evaluation should be specified.
+     * The secret key distribution for CKKS should either be SPARSE_TERNARY or SPARSE_ENCAPSULATED.
+     * The SPARSE_TERNARY distribution is for testing purposes as it gives a larger probability of
+     * failure but less noise, while the SPARSE_ENCAPSULATED distribution gives a smaller probability
+     * of failure at a cost of slightly more noise.
+    * In the pure CKKS case, SPARSE_ENCAPSULATED gives much smaller noise than SPARSE_TERNARY
+    * for smaller inputs <= 10bits, but the trend reverses after 11 bits.
+     */
+    uint32_t firstMod                      = dcrtBits;
+    uint32_t dnum                          = 3;
+    SecretKeyDist secretKeyDist            = SPARSE_ENCAPSULATED;
+    std::vector<uint32_t> lvlb             = {3, 3};
+    uint32_t levelsAvailableAfterBootstrap = 1;
+
+    CCParams<CryptoContextCKKSRNS> parameters;
+    parameters.SetSecretKeyDist(secretKeyDist);
+    parameters.SetSecurityLevel(HEStd_NotSet);
+    parameters.SetScalingModSize(dcrtBits);
+    parameters.SetScalingTechnique(FIXEDMANUAL);
+    parameters.SetFirstModSize(firstMod);
+    parameters.SetNumLargeDigits(dnum);
+    parameters.SetBatchSize(numSlots);
+    parameters.SetRingDim(ringDim);
+    uint32_t depth = levelsAvailableAfterBootstrap + levelsComputation;
+
+    if (binaryLUT)
+        depth += FHECKKSRNS::GetFBTDepth({lvlb[0], 0}, coeffint1, PInput, order, secretKeyDist);
+    else
+        depth += FHECKKSRNS::GetFBTDepth({lvlb[0], 0}, coeffcomp1, PInput, order, secretKeyDist);
+
+    parameters.SetMultiplicativeDepth(depth);
+
+    auto cc = GenCryptoContext(parameters);
+    cc->Enable(PKE);
+    cc->Enable(KEYSWITCH);
+    cc->Enable(LEVELEDSHE);
+    cc->Enable(ADVANCEDSHE);
+    cc->Enable(FHE);
+
+    std::cout << "CKKS scheme is using ring dimension " << cc->GetRingDimension() << " and a multiplicative depth of "
+              << depth << std::endl
+              << std::endl;
+
+    /* 5. Compute various moduli and scaling sizes, used for scheme conversions.
+     * Then generate the setup parameters and necessary keys.
+     */
+    auto keyPair = cc->KeyGen();
+
+    if (binaryLUT)
+        cc->EvalFBTSetup(coeffint1, numSlots, PInput, POutput, BigInteger(1), keyPair.publicKey, {0, 0}, lvlb,
+                         levelsAvailableAfterBootstrap, levelsComputation, order, true);
+    else
+        cc->EvalFBTSetup(coeffcomp1, numSlots, PInput, POutput, BigInteger(1), keyPair.publicKey, {0, 0}, lvlb,
+                         levelsAvailableAfterBootstrap, levelsComputation, order, true);
+
+    cc->EvalBootstrapKeyGen(keyPair.secretKey, numSlots);
+    cc->EvalMultKeyGen(keyPair.secretKey);
+    cc->EvalAtIndexKeyGen(keyPair.secretKey, std::vector<int32_t>({-2}));
+
+    auto mask_real = Fill<double>({1, 1, 1, 1, 0, 0, 0, 0}, numSlots);
+
+    // Note that the corresponding plaintext mask for full packing can be just real, as real times complex multiplies both real and imaginary parts
+    Plaintext ptxt_mask =
+        cc->MakeCKKSPackedPlaintext(Fill<double>({1, 1, 1, 1, 0, 0, 0, 0}, numSlots), 1,
+                                    depth - levelsAvailableAfterBootstrap - levelsComputation, nullptr, numSlots);
+
+    /* 6. Encode and encrypt the input in CKKS.
+     */
+    auto ptxt = cc->MakeCKKSPackedPlaintext(x, 1, 0, nullptr,
+                                            numSlots);  // Levels are reduced automatically before EvalHomDecoding
+    auto ctxt = cc->Encrypt(keyPair.publicKey, ptxt);
+
+    /* 7. Apply the LUTs over the ciphertext.
+     * First, compute the complex exponential and its powers to reuse.
+     * Second, apply multiple LUTs over these powers.
+    */
+    std::vector<Ciphertext<DCRTPoly>> complexExp;
+    Ciphertext<DCRTPoly> ctxtAfterFBT1, ctxtAfterFBT2;
+
+    auto exact(x);
+    std::transform(x.begin(), x.end(), exact.begin(),
+                   [&](const double& elem) { return func1(static_cast<int64_t>(elem)); });
+    auto exact2(x);
+    std::transform(x.begin(), x.end(), exact2.begin(),
+                   [&](const double& elem) { return func2(static_cast<int64_t>(elem)); });
+
+    if (binaryLUT) {
+        // In pure CKKS FBT, we do not need the initialScaling, so we set it to 1
+        auto complexExpPowers = cc->EvalMVBPrecompute(ctxt, coeffint1, PInput.GetMSB() - 1, BigInteger(1), order, true);
+
+        ctxtAfterFBT1 = cc->EvalMVB(complexExpPowers, coeffint1, PInput.GetMSB() - 1, scaleTHI, 0, order, true);
+
+        // Compared to the RLWE->CKKS->RLWE case, all leveled computations are done outside FBT, since we start and end with CKKS slots
+        ctxtAfterFBT2 = cc->EvalMVB(complexExpPowers, coeffint2, PInput.GetMSB() - 1, scaleTHI, 0, order, true);
+
+        // Apply a rotation
+        ctxtAfterFBT2 = cc->EvalRotate(ctxtAfterFBT2, -2);
+        // exact2        = flagSP ? Rotate(exact2, -2) : RotateTwoHalves(exact2, -2);
+        exact2 = Rotate(exact2, -2);
+
+        // Apply a multiplicative mask
+        ctxtAfterFBT2 = cc->EvalMult(ctxtAfterFBT2, ptxt_mask);
+        cc->ModReduceInPlace(ctxtAfterFBT2);
+
+        std::transform(exact2.begin(), exact2.end(), mask_real.begin(), exact2.begin(), std::multiplies<double>());
+    }
+    else {
+        auto complexExpPowers =
+            cc->EvalMVBPrecompute(ctxt, coeffcomp1, PInput.GetMSB() - 1, BigInteger(1), order, true);
+
+        ctxtAfterFBT1 = cc->EvalMVB(complexExpPowers, coeffcomp1, PInput.GetMSB() - 1, scaleTHI, 0, order, true);
+
+        ctxtAfterFBT2 = cc->EvalMVB(complexExpPowers, coeffcomp2, PInput.GetMSB() - 1, scaleTHI, 0, order, true);
+
+        // Apply a rotation
+        ctxtAfterFBT2 = cc->EvalRotate(ctxtAfterFBT2, -2);
+        // exact2        = flagSP ? Rotate(exact2, -2) : RotateTwoHalves(exact2, -2);
+        exact2 = Rotate(exact2, -2);
+
+        // Apply a multiplicative mask
+        ctxtAfterFBT2 = cc->EvalMult(ctxtAfterFBT2, ptxt_mask);
+        cc->ModReduceInPlace(ctxtAfterFBT2);
+
+        std::transform(exact2.begin(), exact2.end(), mask_real.begin(), exact2.begin(), std::multiplies<double>());
+    }
+
+    /* 8. Decrypt and verify correctness.
+    */
+    Plaintext result;
+    cc->Decrypt(keyPair.secretKey, ctxtAfterFBT1, &result);
+    result->SetLength(numSlots);
+    auto computed = result->GetRealPackedValue();
+
+    std::cerr << "First 8 elements of the obtained output = (input % PInput - POutput / 2) % POutput: [";
+    std::copy_n(computed.begin(), 8, std::ostream_iterator<double>(std::cerr, " "));
+    std::cerr << "]" << std::endl;
+
+    std::transform(exact.begin(), exact.end(), computed.begin(), exact.begin(), std::minus<double>());
+    std::transform(exact.begin(), exact.end(), exact.begin(), [&](const double& elem) { return std::abs(elem); });
+    auto max_error_it = std::max_element(exact.begin(), exact.end());
+    std::cerr << "Max absolute error obtained in the first LUT: " << *max_error_it << std::endl << std::endl;
+
+    cc->Decrypt(keyPair.secretKey, ctxtAfterFBT2, &result);
+    result->SetLength(numSlots);
+    computed = result->GetRealPackedValue();
+
+    std::cerr << "First 8 elements of the obtained output = (input % PInput) % POutput, rotated by -2 and masked: [";
+    std::copy_n(computed.begin(), 8, std::ostream_iterator<double>(std::cerr, " "));
+    std::cerr << "]" << std::endl;
+
+    std::transform(exact2.begin(), exact2.end(), computed.begin(), exact2.begin(), std::minus<double>());
+    std::transform(exact2.begin(), exact2.end(), exact2.begin(), [&](const double& elem) { return std::abs(elem); });
+    max_error_it = std::max_element(exact2.begin(), exact2.end());
+    std::cerr << "Max absolute error obtained in the second LUT: " << *max_error_it << std::endl << std::endl;
 }

@@ -370,6 +370,7 @@ std::vector<VecDType> Rotate(const std::vector<VecDType>& a, int32_t index) {
     return result;
 }
 template std::vector<std::complex<double>> Rotate(const std::vector<std::complex<double>>& a, int32_t index);
+template std::vector<double> Rotate(const std::vector<double>& a, int32_t index);
 template std::vector<int64_t> Rotate(const std::vector<int64_t>& a, int32_t index);
 
 template <typename VectorDataType>
