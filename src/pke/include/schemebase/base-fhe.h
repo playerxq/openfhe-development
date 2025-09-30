@@ -84,7 +84,7 @@ public:
    */
     virtual void EvalBootstrapSetup(const CryptoContextImpl<Element>& cc, std::vector<uint32_t> levelBudget,
                                     std::vector<uint32_t> dim1, uint32_t slots, uint32_t correctionFactor,
-                                    bool precompute) {
+                                    bool precompute, bool StCFirst) {
         OPENFHE_THROW("Not supported");
     }
 
@@ -127,6 +127,11 @@ public:
    */
     virtual Ciphertext<Element> EvalBootstrap(ConstCiphertext<Element>& ciphertext, uint32_t numIterations,
                                               uint32_t precision) const {
+        OPENFHE_THROW("EvalBootstrap is not implemented for this scheme");
+    }
+
+    virtual Ciphertext<Element> EvalBootstrapStCFirst(ConstCiphertext<Element>& ciphertext, uint32_t numIterations,
+                                                      uint32_t precision) const {
         OPENFHE_THROW("EvalBootstrap is not implemented for this scheme");
     }
 
