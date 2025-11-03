@@ -38,7 +38,6 @@
 
 // header files needed for serialization
 #include "ciphertext-ser.h"
-#include "cryptocontext-ser.h"
 #include "key/key-ser.h"
 #include "scheme/bgvrns/bgvrns-ser.h"
 

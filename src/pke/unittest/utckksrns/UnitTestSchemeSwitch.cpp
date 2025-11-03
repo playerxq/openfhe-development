@@ -37,7 +37,6 @@
 #include "UnitTestCCParams.h"
 #include "UnitTestCryptoContext.h"
 #include "scheme/ckksrns/ckksrns-utils.h"
-#include "cryptocontext-ser.h"
 #include "scheme/ckksrns/ckksrns-ser.h"
 #include "ciphertext-ser.h"
 #include "key/key-ser.h"

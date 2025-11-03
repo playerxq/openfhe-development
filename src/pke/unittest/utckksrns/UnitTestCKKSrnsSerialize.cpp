@@ -30,7 +30,6 @@
 //==================================================================================
 
 #include "ciphertext-ser.h"
-#include "cryptocontext-ser.h"
 #include "globals.h"  // for SERIALIZE_PRECOMPUTE
 #include "gtest/gtest.h"
 #include "scheme/ckksrns/ckksrns-ser.h"

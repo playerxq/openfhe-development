@@ -40,6 +40,7 @@
 #include "ciphertext.h"
 #include "cryptocontextfactory.h"
 #include "cryptocontext-fwd.h"
+#include "cryptocontext-ser.h"
 #include "encoding/plaintextfactory.h"
 #include "key/evalkey.h"
 #include "key/keypair.h"
@@ -4069,5 +4070,7 @@ std::unordered_map<uint32_t, DCRTPoly> CryptoContextImpl<DCRTPoly>::ShareKeys(co
                                                                               uint32_t index,
                                                                               const std::string& shareType) const;
 }  // namespace lbcrypto
+
+#include "cryptocontext-ser-extern.h"
 
 #endif /* SRC_PKE_CRYPTOCONTEXT_H_ */

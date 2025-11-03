@@ -33,7 +33,6 @@
   Unit tests for the CKKS scheme
  */
 
-#include "cryptocontext-ser.h"
 #include "gtest/gtest.h"
 #include "scheme/ckksrns/ckksrns-ser.h"
 #include "scheme/ckksrns/ckksrns-utils.h"
