@@ -42,7 +42,6 @@
 #include "openfhe.h"
 
 // header files needed for serialization
-#include "ciphertext-ser.h"
 #include "key/key-ser.h"
 #include "scheme/ckksrns/ckksrns-ser.h"
 

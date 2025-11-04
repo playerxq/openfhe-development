@@ -37,6 +37,7 @@
 #define LBCRYPTO_CRYPTO_CIPHERTEXT_H
 
 #include "ciphertext-fwd.h"
+#include "ciphertext-ser.h"
 #include "cryptoobject.h"
 #include "key/key.h"
 #include "metadata.h"
@@ -617,5 +618,7 @@ Ciphertext<Element>& operator*=(Ciphertext<Element>& a, const Ciphertext<Element
 }
 
 }  // namespace lbcrypto
+
+#include "ciphertext-ser-extern.h"
 
 #endif

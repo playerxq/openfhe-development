@@ -33,21 +33,16 @@
   serialize ciphertexts; include this in any app that needs to serialize them
  */
 
-#ifndef __CIPHERTEXT_SER_H__
-#define __CIPHERTEXT_SER_H__
+#ifndef __CIPHERTEXT_SER_EXTERN_H__
+#define __CIPHERTEXT_SER_EXTERN_H__
 
-#include "ciphertext-fwd.h"
-// #include "utils/serial.h"
+namespace lbcrypto {
 
-// extern template class lbcrypto::CiphertextImpl<lbcrypto::Poly>;
-// extern template class lbcrypto::CiphertextImpl<lbcrypto::NativePoly>;
-// extern template class lbcrypto::CiphertextImpl<lbcrypto::DCRTPoly>;
+// extern *declarations* (suppress implicit instantiation in other TUs)
+extern template class CiphertextImpl<Poly>;
+extern template class CiphertextImpl<NativePoly>;
+extern template class CiphertextImpl<DCRTPoly>;
 
-// CEREAL_CLASS_VERSION(lbcrypto::CiphertextImpl<lbcrypto::Poly>,
-//                      lbcrypto::CiphertextImpl<lbcrypto::Poly>::SerializedVersion());
-// CEREAL_CLASS_VERSION(lbcrypto::CiphertextImpl<lbcrypto::NativePoly>,
-//                      lbcrypto::CiphertextImpl<lbcrypto::NativePoly>::SerializedVersion());
-// CEREAL_CLASS_VERSION(lbcrypto::CiphertextImpl<lbcrypto::DCRTPoly>,
-//                      lbcrypto::CiphertextImpl<lbcrypto::DCRTPoly>::SerializedVersion());
+} // namespace lbcrypto
 
-#endif // __CIPHERTEXT_SER_H__
+#endif // __CIPHERTEXT_SER_EXTERN_H__

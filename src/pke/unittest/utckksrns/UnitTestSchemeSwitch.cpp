@@ -38,7 +38,6 @@
 #include "UnitTestCryptoContext.h"
 #include "scheme/ckksrns/ckksrns-utils.h"
 #include "scheme/ckksrns/ckksrns-ser.h"
-#include "ciphertext-ser.h"
 #include "key/key-ser.h"
 #include "schemeswitching-data-serializer.h"
 

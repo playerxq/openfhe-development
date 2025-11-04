@@ -29,7 +29,6 @@
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //==================================================================================
 
-#include "ciphertext-ser.h"
 #include "globals.h"  // for SERIALIZE_PRECOMPUTE
 #include "gtest/gtest.h"
 #include "scheme/ckksrns/ckksrns-ser.h"

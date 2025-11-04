@@ -29,25 +29,26 @@
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //==================================================================================
 
-/*
-  serialize ciphertexts; include this in any app that needs to serialize them
- */
+#include "ciphertext-ser.h"
+#include "ciphertext.h"        // full definition of CiphertextImpl
 
-#ifndef __CIPHERTEXT_SER_H__
-#define __CIPHERTEXT_SER_H__
+// cereal headers (if needed by the class’ save/load) and anything heavy
+#include "cereal/archives/json.hpp"
+#include "cereal/archives/portable_binary.hpp"
 
-#include "ciphertext-fwd.h"
-// #include "utils/serial.h"
+// IMPORTANT: CEREAL_CLASS_VERSION must be at global scope (not inside lbcrypto)
+CEREAL_CLASS_VERSION(lbcrypto::CiphertextImpl<lbcrypto::Poly>,
+                     lbcrypto::CiphertextImpl<lbcrypto::Poly>::SerializedVersion());
+CEREAL_CLASS_VERSION(lbcrypto::CiphertextImpl<lbcrypto::NativePoly>,
+                     lbcrypto::CiphertextImpl<lbcrypto::NativePoly>::SerializedVersion());
+CEREAL_CLASS_VERSION(lbcrypto::CiphertextImpl<lbcrypto::DCRTPoly>,
+                     lbcrypto::CiphertextImpl<lbcrypto::DCRTPoly>::SerializedVersion());
 
-// extern template class lbcrypto::CiphertextImpl<lbcrypto::Poly>;
-// extern template class lbcrypto::CiphertextImpl<lbcrypto::NativePoly>;
-// extern template class lbcrypto::CiphertextImpl<lbcrypto::DCRTPoly>;
+namespace lbcrypto {
 
-// CEREAL_CLASS_VERSION(lbcrypto::CiphertextImpl<lbcrypto::Poly>,
-//                      lbcrypto::CiphertextImpl<lbcrypto::Poly>::SerializedVersion());
-// CEREAL_CLASS_VERSION(lbcrypto::CiphertextImpl<lbcrypto::NativePoly>,
-//                      lbcrypto::CiphertextImpl<lbcrypto::NativePoly>::SerializedVersion());
-// CEREAL_CLASS_VERSION(lbcrypto::CiphertextImpl<lbcrypto::DCRTPoly>,
-//                      lbcrypto::CiphertextImpl<lbcrypto::DCRTPoly>::SerializedVersion());
+// Single-point explicit instantiation **definitions**
+template class CiphertextImpl<Poly>;
+template class CiphertextImpl<NativePoly>;
+template class CiphertextImpl<DCRTPoly>;
 
-#endif // __CIPHERTEXT_SER_H__
+} // namespace lbcrypto

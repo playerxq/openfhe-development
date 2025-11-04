@@ -29,7 +29,6 @@
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //==================================================================================
 
-#include "ciphertext-ser.h"
 #include "key/key-ser.h"
 #include "scheme/bgvrns/bgvrns-ser.h"
 
