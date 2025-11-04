@@ -31,7 +31,6 @@
 #include "schemeswitching-data-serializer.h"
 
 #include "key/key-ser.h"
-#include "scheme/ckksrns/ckksrns-ser.h"
 #include <filesystem>
 
 // includes for getProgramPath()

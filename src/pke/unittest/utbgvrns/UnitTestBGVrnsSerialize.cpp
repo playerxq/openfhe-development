@@ -30,7 +30,6 @@
 //==================================================================================
 
 #include "key/key-ser.h"
-#include "scheme/bgvrns/bgvrns-ser.h"
 
 #include "UnitTestUtils.h"
 #include "UnitTestSer.h"

@@ -31,7 +31,6 @@
 
 #include "globals.h"  // for SERIALIZE_PRECOMPUTE
 #include "gtest/gtest.h"
-#include "scheme/ckksrns/ckksrns-ser.h"
 #include "UnitTestCCParams.h"
 #include "UnitTestCryptoContext.h"
 #include "UnitTestSer.h"

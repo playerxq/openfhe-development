@@ -38,7 +38,6 @@
 
 // header files needed for serialization
 #include "key/key-ser.h"
-#include "scheme/bfvrns/bfvrns-ser.h"
 
 using namespace lbcrypto;
 
