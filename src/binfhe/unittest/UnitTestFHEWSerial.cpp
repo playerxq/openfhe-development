@@ -36,7 +36,8 @@
 #include "gtest/gtest.h"
 
 // these header files are needed for serialization
-#include "binfhecontext-ser.h"
+#include "utils/serial.h"
+#include "binfhecontext.h"
 
 using namespace lbcrypto;
 

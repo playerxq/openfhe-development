@@ -1,7 +1,7 @@
 //==================================================================================
 // BSD 2-Clause License
 //
-// Copyright (c) 2014-2022, NJIT, Duality Technologies Inc. and other contributors
+// Copyright (c) 2014-2025, NJIT, Duality Technologies Inc. and other contributors
 //
 // All rights reserved.
 //
@@ -30,24 +30,50 @@
 //==================================================================================
 
 /*
-  Definition of serialization type
+  Header file adding serialization support to Boolean circuit FHE
  */
 
-#ifndef LBCRYPTO_SERTYPE_H
-#define LBCRYPTO_SERTYPE_H
+#ifndef __BINFHECONTEXT_SERIAL_EXTERN_H__
+#define __BINFHECONTEXT_SERIAL_EXTERN_H__
+
+#include "utils/serial-extern.h"
+#include <memory>
 
 namespace lbcrypto {
+class BinFHEContext;
 
-namespace SerType {
+class LWECryptoParams;
+class LWECiphertextImpl;
+class LWEPrivateKeyImpl;
+class LWEPublicKeyImpl;
+class LWESwitchingKeyImpl;
 
-class SERJSON {};
-static constexpr SERJSON JSON;  // should be const static to avoid compilation failure
+class RLWECiphertextImpl;
 
-class SERBINARY {};
-static constexpr SERBINARY BINARY;  // should be const static to avoid compilation failure
+class RingGSWCryptoParams;
+class RingGSWEvalKeyImpl;
+class RingGSWACCKeyImpl;
 
-}  // namespace SerType
+class BinFHECryptoParams;
+} // namespace lbcrypto
 
-}  // namespace lbcrypto
+EXTERN_SERIAL_FOR(lbcrypto::LWECryptoParams)
+EXTERN_SERIAL_FOR(lbcrypto::LWECiphertextImpl)
+EXTERN_SERIAL_FOR(lbcrypto::LWEPrivateKeyImpl)
+EXTERN_SERIAL_FOR(lbcrypto::LWEPublicKeyImpl)
+EXTERN_SERIAL_FOR(lbcrypto::LWESwitchingKeyImpl)
+EXTERN_SERIAL_FOR(lbcrypto::RLWECiphertextImpl)
+EXTERN_SERIAL_FOR(lbcrypto::RingGSWCryptoParams)
+EXTERN_SERIAL_FOR(lbcrypto::RingGSWEvalKeyImpl)
+EXTERN_SERIAL_FOR(lbcrypto::RingGSWACCKeyImpl)
+EXTERN_SERIAL_FOR(lbcrypto::BinFHECryptoParams)
+EXTERN_SERIAL_FOR(lbcrypto::BinFHEContext)
 
-#endif
+EXTERN_SERIAL_FOR(std::shared_ptr<lbcrypto::RingGSWACCKeyImpl>)
+EXTERN_SERIAL_FOR(std::shared_ptr<lbcrypto::LWESwitchingKeyImpl>)
+EXTERN_SERIAL_FOR(std::shared_ptr<lbcrypto::LWEPrivateKeyImpl>)
+EXTERN_SERIAL_FOR(std::shared_ptr<lbcrypto::LWEPublicKeyImpl>)
+EXTERN_SERIAL_FOR(std::shared_ptr<lbcrypto::LWECiphertextImpl>)
+
+#endif // __BINFHECONTEXT_SERIAL_EXTERN_H__
+

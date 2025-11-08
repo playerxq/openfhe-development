@@ -1,7 +1,7 @@
 //==================================================================================
 // BSD 2-Clause License
 //
-// Copyright (c) 2014-2022, NJIT, Duality Technologies Inc. and other contributors
+// Copyright (c) 2014-2025, NJIT, Duality Technologies Inc. and other contributors
 //
 // All rights reserved.
 //
@@ -29,17 +29,13 @@
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //==================================================================================
 
-/*
-  Header file adding serialization support to Boolean circuit FHE
- */
+#include "utils/serial-templates-impl.h"
+#include "utils/serial-instantiator.h"
 
-#ifndef BINFHE_BINFHECONTEXT_SER_H
-#define BINFHE_BINFHECONTEXT_SER_H
+#include <cereal/types/polymorphic.hpp>
 
 #include "binfhecontext.h"
-#include "utils/serial.h"
 
-// Registers types needed for serialization
 CEREAL_REGISTER_TYPE(lbcrypto::LWECryptoParams);
 CEREAL_REGISTER_TYPE(lbcrypto::LWECiphertextImpl);
 CEREAL_REGISTER_TYPE(lbcrypto::LWEPrivateKeyImpl);
@@ -52,4 +48,10 @@ CEREAL_REGISTER_TYPE(lbcrypto::RingGSWACCKeyImpl);
 CEREAL_REGISTER_TYPE(lbcrypto::BinFHECryptoParams);
 CEREAL_REGISTER_TYPE(lbcrypto::BinFHEContext);
 
-#endif
+// Explicit instantiations for BinFHE types
+INSTANTIATE_SERIAL_FOR(lbcrypto::BinFHEContext)
+INSTANTIATE_SERIAL_FOR(std::shared_ptr<lbcrypto::RingGSWACCKeyImpl>)
+INSTANTIATE_SERIAL_FOR(std::shared_ptr<lbcrypto::LWESwitchingKeyImpl>)
+INSTANTIATE_SERIAL_FOR(std::shared_ptr<lbcrypto::LWEPrivateKeyImpl>)
+INSTANTIATE_SERIAL_FOR(std::shared_ptr<lbcrypto::LWEPublicKeyImpl>)
+INSTANTIATE_SERIAL_FOR(std::shared_ptr<lbcrypto::LWECiphertextImpl>)

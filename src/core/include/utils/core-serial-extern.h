@@ -1,7 +1,7 @@
 //==================================================================================
 // BSD 2-Clause License
 //
-// Copyright (c) 2014-2022, NJIT, Duality Technologies Inc. and other contributors
+// Copyright (c) 2014-2025, NJIT, Duality Technologies Inc. and other contributors
 //
 // All rights reserved.
 //
@@ -29,25 +29,43 @@
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //==================================================================================
 
-/*
-  Definition of serialization type
- */
+#ifndef __CORE_SERIAL_EXTERN_H__
+#define __CORE_SERIAL_EXTERN_H__
 
-#ifndef LBCRYPTO_SERTYPE_H
-#define LBCRYPTO_SERTYPE_H
+#include "utils/serial-extern.h"
+#include <memory>
 
+// ---- Forward declarations ----
+namespace intnat {
+    template <class LimbT> class NativeIntegerT;
+    template <class IntT>  class NativeVectorT;
+}
+namespace bigintdyn {
+    template <class LimbT> class ubint;
+    template <class IntT>  class mubintvec;
+}
 namespace lbcrypto {
+    template <typename T> class Matrix;
+    template <typename Integer> class ILParamsImpl;
+    template <typename Integer> class ILDCRTParams;
+    template <typename VecType> class PolyImpl;
+    template <typename VecType> class DCRTPolyImpl;
+}
 
-namespace SerType {
+EXTERN_SERIAL_FOR(intnat::NativeIntegerT<unsigned long>)
+EXTERN_SERIAL_FOR(bigintdyn::ubint<unsigned long>)
 
-class SERJSON {};
-static constexpr SERJSON JSON;  // should be const static to avoid compilation failure
+EXTERN_SERIAL_FOR(std::shared_ptr<lbcrypto::ILDCRTParams<bigintdyn::ubint<unsigned long>>>)
+EXTERN_SERIAL_FOR(std::shared_ptr<lbcrypto::ILParamsImpl<bigintdyn::ubint<unsigned long>>>)
+EXTERN_SERIAL_FOR(std::shared_ptr<lbcrypto::ILParamsImpl<intnat::NativeIntegerT<unsigned long>>>)
 
-class SERBINARY {};
-static constexpr SERBINARY BINARY;  // should be const static to avoid compilation failure
+EXTERN_SERIAL_FOR(lbcrypto::PolyImpl<bigintdyn::mubintvec<bigintdyn::ubint<unsigned long>>>)
+EXTERN_SERIAL_FOR(lbcrypto::PolyImpl<intnat::NativeVectorT<intnat::NativeIntegerT<unsigned long>>>)
 
-}  // namespace SerType
+EXTERN_SERIAL_FOR(lbcrypto::DCRTPolyImpl<bigintdyn::mubintvec<bigintdyn::ubint<unsigned long>>>)
 
-}  // namespace lbcrypto
+EXTERN_SERIAL_FOR(lbcrypto::Matrix<bigintdyn::ubint<unsigned long>>)
+EXTERN_SERIAL_FOR(lbcrypto::Matrix<intnat::NativeIntegerT<unsigned long>>)
 
-#endif
+
+#endif // __CORE_SERIAL_EXTERN_H__

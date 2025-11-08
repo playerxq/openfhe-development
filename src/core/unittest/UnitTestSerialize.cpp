@@ -34,6 +34,7 @@
  */
 
 #include "gtest/gtest.h"
+#include "utils/core-serial-extern.h"
 #include "lattice/lat-hal.h"
 #include "math/distrgen.h"
 #include "math/matrix.h"
