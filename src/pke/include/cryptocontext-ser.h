@@ -36,55 +36,57 @@
 #ifndef __CRYPTOCONTEXT_SER_H__
 #define __CRYPTOCONTEXT_SER_H__
 
-#include "pke-serial-extern.h"
-// #include "cryptocontext-fwd.h"  // forward decl of CryptoContextImpl and alias CryptoContext
-// #include "utils/sertype.h"
+// #include "pke-serial-extern.h"
+#include "cryptocontext-fwd.h"  // forward decl of CryptoContextImpl and alias CryptoContext
+#include "utils/sertype.h"
 
-// #include <istream>
-// #include <string>
+#include <istream>
+#include <string>
 
 // #if !defined(OPENFHE_ENABLE_SERIALIZATION)
 //   #define OPENFHE_ENABLE_SERIALIZATION
 // #endif
 
-// namespace lbcrypto {
-// namespace Serial {
+// clang-format off
+namespace lbcrypto {
+namespace Serial {
 
-// // ================================= JSON serialization/deserialization
-// /**
-//  * Deserialize for a CryptoContext (that is, a shared pointer to a
-//  * CryptoContextImpl OpenFHE doesn't want multiple copies of the same crypto
-//  * context floating around, and it enforces that here
-//  *
-//  * @param obj - the target for the deserialization
-//  * @param stream - where the serialization is coming from
-//  * @param sertype - JSON serialization type
-//  */
-// template <typename Element>
-// void Deserialize(CryptoContext<Element>& obj, std::istream& stream, const SerType::SERJSON&);
+// ================================= JSON serialization/deserialization
+/**
+ * Deserialize for a CryptoContext (that is, a shared pointer to a
+ * CryptoContextImpl OpenFHE doesn't want multiple copies of the same crypto
+ * context floating around, and it enforces that here
+ *
+ * @param obj - the target for the deserialization
+ * @param stream - where the serialization is coming from
+ * @param sertype - JSON serialization type
+ */
+template <typename Element>
+void Deserialize(CryptoContext<Element>& obj, std::istream& stream, const SerType::SERJSON&);
 
-// template <typename Element>
-// bool DeserializeFromFile(const std::string& filename, CryptoContext<Element>& obj, const SerType::SERJSON&);
-// template <typename Element>
-// void DeserializeFromString(CryptoContext<Element>& obj, const std::string& json);
+template <typename Element>
+bool DeserializeFromFile(const std::string& filename, CryptoContext<Element>& obj, const SerType::SERJSON&);
+template <typename Element>
+void DeserializeFromString(CryptoContext<Element>& obj, const std::string& json);
 
-// // ================================= BINARY serialization/deserialization
-// /**
-//  * Deserialize for a CryptoContext (that is, a shared pointer to a
-//  * CryptoContextImpl OpenFHE doesn't want multiple copies of the same crypto
-//  * context floating around, and it enforces that here
-//  *
-//  * @param obj - the target for the deserialization
-//  * @param stream - where the serialization is coming from
-//  * @param sertype - BINARY serialization type
-//  */
-// template <typename Element>
-// void Deserialize(CryptoContext<Element>& obj, std::istream& stream, const SerType::SERBINARY&);
+// ================================= BINARY serialization/deserialization
+/**
+ * Deserialize for a CryptoContext (that is, a shared pointer to a
+ * CryptoContextImpl OpenFHE doesn't want multiple copies of the same crypto
+ * context floating around, and it enforces that here
+ *
+ * @param obj - the target for the deserialization
+ * @param stream - where the serialization is coming from
+ * @param sertype - BINARY serialization type
+ */
+template <typename Element>
+void Deserialize(CryptoContext<Element>& obj, std::istream& stream, const SerType::SERBINARY&);
 
-// template <typename Element>
-// bool DeserializeFromFile(const std::string& filename, CryptoContext<Element>& obj, const SerType::SERBINARY&);
+template <typename Element>
+bool DeserializeFromFile(const std::string& filename, CryptoContext<Element>& obj, const SerType::SERBINARY&);
 
-// }  // namespace Serial
-// }  // namespace lbcrypto
+}  // namespace Serial
+}  // namespace lbcrypto
+// clang-format on
 
 #endif // __CRYPTOCONTEXT_SER_H__

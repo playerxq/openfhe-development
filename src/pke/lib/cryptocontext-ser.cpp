@@ -29,17 +29,18 @@
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //==================================================================================
 
-#include <cereal/archives/json.hpp>
-#include <cereal/archives/portable_binary.hpp>
-#include <fstream>
-#include <sstream>
-
-#include "cryptocontext-fwd.h"
+#include "cryptocontext-ser.h"
 #include "cryptocontext.h"
 #include "utils/serial.h"
 #include "utils/sertype.h"
 
+#include <cereal/archives/json.hpp>
+#include <cereal/archives/portable_binary.hpp>
+#include <cereal/types/memory.hpp>
+#include <fstream>
+#include <sstream>
 
+// clang-format off
 namespace lbcrypto {
 namespace Serial {
 // ================================= JSON serialization/deserialization
@@ -93,7 +94,14 @@ bool DeserializeFromFile(const std::string& filename, CryptoContext<T>& obj, con
     return false;
 }
 
+// Explicit instantiations for CryptoContext<DCRTPoly>
+template void Deserialize<DCRTPoly>(CryptoContext<DCRTPoly>& obj, std::istream& stream, const SerType::SERJSON&);
+template bool DeserializeFromFile<DCRTPoly>(const std::string& filename, CryptoContext<DCRTPoly>& obj, const SerType::SERJSON&);
+template void DeserializeFromString<DCRTPoly>(CryptoContext<DCRTPoly>& obj, const std::string& json);
+
+template void Deserialize<DCRTPoly>(CryptoContext<DCRTPoly>& obj, std::istream& stream, const SerType::SERBINARY&);
+template bool DeserializeFromFile<DCRTPoly>(const std::string& filename, CryptoContext<DCRTPoly>& obj, const SerType::SERBINARY&);
+
 }  // namespace Serial
-
 }  // namespace lbcrypto
-
+// clang-format on
