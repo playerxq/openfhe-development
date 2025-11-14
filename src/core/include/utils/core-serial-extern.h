@@ -54,6 +54,7 @@ namespace lbcrypto {
 
 EXTERN_SERIAL_FOR(intnat::NativeIntegerT<unsigned long>)
 EXTERN_SERIAL_FOR(bigintdyn::ubint<unsigned long>)
+EXTERN_SERIAL_FOR(std::vector<unsigned int>)
 
 EXTERN_SERIAL_FOR(std::shared_ptr<lbcrypto::ILDCRTParams<bigintdyn::ubint<unsigned long>>>)
 EXTERN_SERIAL_FOR(std::shared_ptr<lbcrypto::ILParamsImpl<bigintdyn::ubint<unsigned long>>>)

@@ -29,33 +29,13 @@
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //==================================================================================
 
-/*
-  Serialization utilities
- */
-#include "utils/serial-templates-impl.h"
-#include "utils/serial-instantiator.h"
-
-#include "math/hal/intnat/ubintnat.h"
-#include "math/hal/bigintdyn/ubintdyn.h"
-#include "math/hal/bigintdyn/mubintvecdyn.h"
-#include "math/matrix.h"
-#include "lattice/hal/default/ildcrtparams.h"
-#include "lattice/hal/default/ilparams.h"
-#include "math/hal/vector.h"
-#include "lattice/hal/default/dcrtpoly.h"
+#ifndef __PKE_SERIAL_H__
+#define __PKE_SERIAL_H__
 
 
-INSTANTIATE_SERIAL_FOR(intnat::NativeIntegerT<unsigned long>)
-INSTANTIATE_SERIAL_FOR(bigintdyn::ubint<unsigned long>)
+#include "binfhe-serial-extern.h"
+#include "pke-serial-extern.h"
+#include "cryptocontext-ser.h"
 
-INSTANTIATE_SERIAL_FOR(std::shared_ptr<lbcrypto::ILDCRTParams<bigintdyn::ubint<unsigned long>>>)
-INSTANTIATE_SERIAL_FOR(std::shared_ptr<lbcrypto::ILParamsImpl<bigintdyn::ubint<unsigned long>>>)
-INSTANTIATE_SERIAL_FOR(std::shared_ptr<lbcrypto::ILParamsImpl<intnat::NativeIntegerT<unsigned long>>>)
 
-INSTANTIATE_SERIAL_FOR(lbcrypto::PolyImpl<bigintdyn::mubintvec<bigintdyn::ubint<unsigned long>>>)
-INSTANTIATE_SERIAL_FOR(lbcrypto::PolyImpl<intnat::NativeVectorT<intnat::NativeIntegerT<unsigned long>>>)
-
-INSTANTIATE_SERIAL_FOR(lbcrypto::DCRTPolyImpl<bigintdyn::mubintvec<bigintdyn::ubint<unsigned long>>>)
-
-INSTANTIATE_SERIAL_FOR(lbcrypto::Matrix<bigintdyn::ubint<unsigned long>>)
-INSTANTIATE_SERIAL_FOR(lbcrypto::Matrix<intnat::NativeIntegerT<unsigned long>>)
+#endif // __PKE_SERIAL_H__

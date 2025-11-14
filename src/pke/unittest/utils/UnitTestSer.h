@@ -37,6 +37,7 @@
 #define __UNITTESTSER_H__
 
 #include "UnitTestException.h"
+#include "cryptocontext.h"
 #include "cryptocontext-ser.h"
 #include "gtest/gtest.h"
 #include <string>

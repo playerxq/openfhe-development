@@ -33,21 +33,9 @@
   serialize ciphertexts; include this in any app that needs to serialize them
  */
 
-#ifndef LBCRYPTO_CRYPTO_CIPHERTEXTSER_H
-#define LBCRYPTO_CRYPTO_CIPHERTEXTSER_H
+#ifndef __CIPHERTEXT_SER_H__
+#define __CIPHERTEXT_SER_H__
 
-#include "ciphertext.h"
-#include "utils/serial.h"
+#include "pke-serial-extern.h"
 
-extern template class lbcrypto::CiphertextImpl<lbcrypto::Poly>;
-extern template class lbcrypto::CiphertextImpl<lbcrypto::NativePoly>;
-extern template class lbcrypto::CiphertextImpl<lbcrypto::DCRTPoly>;
-
-CEREAL_CLASS_VERSION(lbcrypto::CiphertextImpl<lbcrypto::Poly>,
-                     lbcrypto::CiphertextImpl<lbcrypto::Poly>::SerializedVersion());
-CEREAL_CLASS_VERSION(lbcrypto::CiphertextImpl<lbcrypto::NativePoly>,
-                     lbcrypto::CiphertextImpl<lbcrypto::NativePoly>::SerializedVersion());
-CEREAL_CLASS_VERSION(lbcrypto::CiphertextImpl<lbcrypto::DCRTPoly>,
-                     lbcrypto::CiphertextImpl<lbcrypto::DCRTPoly>::SerializedVersion());
-
-#endif
+#endif // __CIPHERTEXT_SER_H__

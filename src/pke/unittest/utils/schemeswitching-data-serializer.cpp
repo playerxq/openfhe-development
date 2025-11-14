@@ -35,6 +35,7 @@
 #include "key/key-ser.h"
 #include "scheme/ckksrns/ckksrns-ser.h"
 #include <filesystem>
+#include <fstream>
 
 // includes for getProgramPath()
 #if defined(_WIN32) && (defined(__MINGW32__) || defined(__MINGW64__))

@@ -50,6 +50,7 @@ CEREAL_REGISTER_TYPE(lbcrypto::BinFHEContext);
 
 // Explicit instantiations for BinFHE types
 INSTANTIATE_SERIAL_FOR(lbcrypto::BinFHEContext)
+INSTANTIATE_SERIAL_FOR(std::shared_ptr<lbcrypto::BinFHEContext>)
 INSTANTIATE_SERIAL_FOR(std::shared_ptr<lbcrypto::RingGSWACCKeyImpl>)
 INSTANTIATE_SERIAL_FOR(std::shared_ptr<lbcrypto::LWESwitchingKeyImpl>)
 INSTANTIATE_SERIAL_FOR(std::shared_ptr<lbcrypto::LWEPrivateKeyImpl>)

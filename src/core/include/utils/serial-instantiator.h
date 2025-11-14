@@ -35,24 +35,40 @@
 #include "utils/serial-fwd.h"
 
 // clang-format off
-#define INSTANTIATE_SERIAL_FOR(TYPE)   \
-template void        lbcrypto::Serial::Serialize<TYPE>(const TYPE&, std::ostream&, const ::lbcrypto::SerType::SERJSON&);              \
-template void        lbcrypto::Serial::Deserialize<TYPE>(TYPE&, std::istream&, const ::lbcrypto::SerType::SERJSON&);                  \
-template void        lbcrypto::Serial::Serialize<TYPE>(const TYPE&, std::ostream&, const ::lbcrypto::SerType::SERBINARY&);            \
-template void        lbcrypto::Serial::Deserialize<TYPE>(TYPE&, std::istream&, const ::lbcrypto::SerType::SERBINARY&);                \
-template bool        lbcrypto::Serial::SerializeToFile<TYPE>(const std::string&, const TYPE&, const ::lbcrypto::SerType::SERJSON&);   \
-template bool        lbcrypto::Serial::DeserializeFromFile<TYPE>(const std::string&, TYPE&, const ::lbcrypto::SerType::SERJSON&);     \
-template bool        lbcrypto::Serial::SerializeToFile<TYPE>(const std::string&, const TYPE&, const ::lbcrypto::SerType::SERBINARY&); \
-template bool        lbcrypto::Serial::DeserializeFromFile<TYPE>(const std::string&, TYPE&, const ::lbcrypto::SerType::SERBINARY&);   \
-template std::string lbcrypto::Serial::SerializeToString<TYPE>(const TYPE&);                                                          \
-template void        lbcrypto::Serial::DeserializeFromString<TYPE>(TYPE&, const std::string&);
+// the preprocessor treats commas in template parameters as macro argument separators.
+// example:
+// for this type "std::map<std::string, std::vector<lbcrypto::EvalKey<lbcrypto::DCRTPoly>>>"
+// i get an error "INSTANTIATE_SERIAL_FOR" passed 2 arguments, but takes just 1".
+// so, i have to use variadic macros.
+// example:
+// use
+// #define INSTANTIATE_SERIAL_FOR(...)
+//     extern template void ::lbcrypto::Serial::Serialize<__VA_ARGS__>(const __VA_ARGS__&, std::ostream&, const ::lbcrypto::SerType::SERJSON&);
+//     extern template void ::lbcrypto::Serial::Deserialize<__VA_ARGS__>(__VA_ARGS__&, std::istream&, const ::lbcrypto::SerType::SERJSON&);
+// instead of
+// #define INSTANTIATE_SERIAL_FOR(TYPE)
+//     extern template void        lbcrypto::Serial::Serialize<TYPE>(const TYPE&, std::ostream&, const ::lbcrypto::SerType::SERJSON&);
+//     extern template void        lbcrypto::Serial::Deserialize<TYPE>(TYPE&, std::istream&, const ::lbcrypto::SerType::SERJSON&);
+
+
+#define INSTANTIATE_SERIAL_FOR(...)                                                                                                                 \
+template void        lbcrypto::Serial::Serialize<__VA_ARGS__>(const __VA_ARGS__&, std::ostream&, const ::lbcrypto::SerType::SERJSON&);              \
+template void        lbcrypto::Serial::Deserialize<__VA_ARGS__>(__VA_ARGS__&, std::istream&, const ::lbcrypto::SerType::SERJSON&);                  \
+template void        lbcrypto::Serial::Serialize<__VA_ARGS__>(const __VA_ARGS__&, std::ostream&, const ::lbcrypto::SerType::SERBINARY&);            \
+template void        lbcrypto::Serial::Deserialize<__VA_ARGS__>(__VA_ARGS__&, std::istream&, const ::lbcrypto::SerType::SERBINARY&);                \
+template bool        lbcrypto::Serial::SerializeToFile<__VA_ARGS__>(const std::string&, const __VA_ARGS__&, const ::lbcrypto::SerType::SERJSON&);   \
+template bool        lbcrypto::Serial::DeserializeFromFile<__VA_ARGS__>(const std::string&, __VA_ARGS__&, const ::lbcrypto::SerType::SERJSON&);     \
+template bool        lbcrypto::Serial::SerializeToFile<__VA_ARGS__>(const std::string&, const __VA_ARGS__&, const ::lbcrypto::SerType::SERBINARY&); \
+template bool        lbcrypto::Serial::DeserializeFromFile<__VA_ARGS__>(const std::string&, __VA_ARGS__&, const ::lbcrypto::SerType::SERBINARY&);   \
+template std::string lbcrypto::Serial::SerializeToString<__VA_ARGS__>(const __VA_ARGS__&);                                                          \
+template void        lbcrypto::Serial::DeserializeFromString<__VA_ARGS__>(__VA_ARGS__&, const std::string&);
 
 // Version without file/string helpers:
-#define INSTANTIATE_SERIAL_MAIN_ONLY(TYPE)                                                                            \
-template void   lbcrypto::Serial::Serialize<TYPE>(const TYPE&, std::ostream&, const ::lbcrypto::SerType::SERJSON&);   \
-template void   lbcrypto::Serial::Deserialize<TYPE>(TYPE&, std::istream&, const ::lbcrypto::SerType::SERJSON&);       \
-template void   lbcrypto::Serial::Serialize<TYPE>(const TYPE&, std::ostream&, const ::lbcrypto::SerType::SERBINARY&); \
-template void   lbcrypto::Serial::Deserialize<TYPE>(TYPE&, std::istream&, const ::lbcrypto::SerType::SERBINARY&);
+#define INSTANTIATE_SERIAL_MAIN_ONLY(...)                                                                                           \
+template void   lbcrypto::Serial::Serialize<__VA_ARGS__>(const __VA_ARGS__&, std::ostream&, const ::lbcrypto::SerType::SERJSON&);   \
+template void   lbcrypto::Serial::Deserialize<__VA_ARGS__>(__VA_ARGS__&, std::istream&, const ::lbcrypto::SerType::SERJSON&);       \
+template void   lbcrypto::Serial::Serialize<__VA_ARGS__>(const __VA_ARGS__&, std::ostream&, const ::lbcrypto::SerType::SERBINARY&); \
+template void   lbcrypto::Serial::Deserialize<__VA_ARGS__>(__VA_ARGS__&, std::istream&, const ::lbcrypto::SerType::SERBINARY&);
 // clang-format on
 
 #endif // __SERIAL_INSTANTIATOR_H__

@@ -30,55 +30,38 @@
 //==================================================================================
 
 /*
-  Header file adding serialization support to Boolean circuit FHE
+  Serialization utilities
  */
+#include "utils/serial-templates-impl.h"
+#include "utils/serial-instantiator.h"
 
-#ifndef __BINFHECONTEXT_SERIAL_EXTERN_H__
-#define __BINFHECONTEXT_SERIAL_EXTERN_H__
+#include "math/hal/intnat/ubintnat.h"
+#include "math/hal/bigintdyn/ubintdyn.h"
+#include "math/hal/bigintdyn/mubintvecdyn.h"
+#include "math/matrix.h"
+#include "lattice/hal/default/ildcrtparams.h"
+#include "lattice/hal/default/ilparams.h"
+#include "math/hal/vector.h"
+#include "lattice/hal/default/dcrtpoly.h"
 
-#include "utils/serial-extern.h"
-#include <memory>
 
-// #if !defined(OPENFHE_ENABLE_SERIALIZATION)
-//   #define OPENFHE_ENABLE_SERIALIZATION
+INSTANTIATE_SERIAL_FOR(intnat::NativeIntegerT<unsigned long>)
+// INSTANTIATE_SERIAL_FOR(intnat::NativeIntegerT<uint32_t>)
+// INSTANTIATE_SERIAL_FOR(intnat::NativeIntegerT<uint64_t>)
+// #ifdef HAVE_INT128
+// INSTANTIATE_SERIAL_FOR(intnat::NativeIntegerT<uint128_t>)
 // #endif
+INSTANTIATE_SERIAL_FOR(bigintdyn::ubint<unsigned long>)
+INSTANTIATE_SERIAL_FOR(std::vector<unsigned int>)
 
-namespace lbcrypto {
-class BinFHEContext;
+INSTANTIATE_SERIAL_FOR(std::shared_ptr<lbcrypto::ILDCRTParams<bigintdyn::ubint<unsigned long>>>)
+INSTANTIATE_SERIAL_FOR(std::shared_ptr<lbcrypto::ILParamsImpl<bigintdyn::ubint<unsigned long>>>)
+INSTANTIATE_SERIAL_FOR(std::shared_ptr<lbcrypto::ILParamsImpl<intnat::NativeIntegerT<unsigned long>>>)
 
-class LWECryptoParams;
-class LWECiphertextImpl;
-class LWEPrivateKeyImpl;
-class LWEPublicKeyImpl;
-class LWESwitchingKeyImpl;
+INSTANTIATE_SERIAL_FOR(lbcrypto::PolyImpl<bigintdyn::mubintvec<bigintdyn::ubint<unsigned long>>>)
+INSTANTIATE_SERIAL_FOR(lbcrypto::PolyImpl<intnat::NativeVectorT<intnat::NativeIntegerT<unsigned long>>>)
 
-class RLWECiphertextImpl;
+INSTANTIATE_SERIAL_FOR(lbcrypto::DCRTPolyImpl<bigintdyn::mubintvec<bigintdyn::ubint<unsigned long>>>)
 
-class RingGSWCryptoParams;
-class RingGSWEvalKeyImpl;
-class RingGSWACCKeyImpl;
-
-class BinFHECryptoParams;
-} // namespace lbcrypto
-
-EXTERN_SERIAL_FOR(lbcrypto::LWECryptoParams)
-EXTERN_SERIAL_FOR(lbcrypto::LWECiphertextImpl)
-EXTERN_SERIAL_FOR(lbcrypto::LWEPrivateKeyImpl)
-EXTERN_SERIAL_FOR(lbcrypto::LWEPublicKeyImpl)
-EXTERN_SERIAL_FOR(lbcrypto::LWESwitchingKeyImpl)
-EXTERN_SERIAL_FOR(lbcrypto::RLWECiphertextImpl)
-EXTERN_SERIAL_FOR(lbcrypto::RingGSWCryptoParams)
-EXTERN_SERIAL_FOR(lbcrypto::RingGSWEvalKeyImpl)
-EXTERN_SERIAL_FOR(lbcrypto::RingGSWACCKeyImpl)
-EXTERN_SERIAL_FOR(lbcrypto::BinFHECryptoParams)
-EXTERN_SERIAL_FOR(lbcrypto::BinFHEContext)
-EXTERN_SERIAL_FOR(std::shared_ptr<lbcrypto::BinFHEContext>)
-
-EXTERN_SERIAL_FOR(std::shared_ptr<lbcrypto::RingGSWACCKeyImpl>)
-EXTERN_SERIAL_FOR(std::shared_ptr<lbcrypto::LWESwitchingKeyImpl>)
-EXTERN_SERIAL_FOR(std::shared_ptr<lbcrypto::LWEPrivateKeyImpl>)
-EXTERN_SERIAL_FOR(std::shared_ptr<lbcrypto::LWEPublicKeyImpl>)
-EXTERN_SERIAL_FOR(std::shared_ptr<lbcrypto::LWECiphertextImpl>)
-
-#endif // __BINFHECONTEXT_SERIAL_EXTERN_H__
-
+INSTANTIATE_SERIAL_FOR(lbcrypto::Matrix<bigintdyn::ubint<unsigned long>>)
+INSTANTIATE_SERIAL_FOR(lbcrypto::Matrix<intnat::NativeIntegerT<unsigned long>>)
