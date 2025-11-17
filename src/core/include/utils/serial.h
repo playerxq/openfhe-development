@@ -36,52 +36,10 @@
 #ifndef LBCRYPTO_SERIAL_H
 #define LBCRYPTO_SERIAL_H
 
+#include "utils/serial-cereal-headers.h"
 #include "utils/sertype.h"
 
 #include <iostream>
-
-#ifndef CEREAL_RAPIDJSON_HAS_STDSTRING
-    #define CEREAL_RAPIDJSON_HAS_STDSTRING 1
-#endif
-#ifndef CEREAL_RAPIDJSON_HAS_CXX11_RVALUE_REFS
-    #define CEREAL_RAPIDJSON_HAS_CXX11_RVALUE_REFS 1
-#endif
-#define CEREAL_RAPIDJSON_HAS_CXX11_NOEXCEPT 0
-
-// In order to correctly identify GCC and clang we must either:
-// 1. use "#if defined(__GNUC__) && !defined(__clang__)" (preferred option)
-// 2. or check the condition "#if defined __clang__" first
-// The reason is: clang always defines __GNUC__ and __GNUC_MINOR__ and __GNUC_PATCHLEVEL__ according to the version of gcc that it claims full compatibility with.
-#if defined(__GNUC__) && !defined(__clang__)
-    #if __GNUC__ >= 8
-        #pragma GCC diagnostic push
-        #pragma GCC diagnostic ignored "-Wclass-memaccess"
-        #if __GNUC__ >= 13
-            #pragma GCC diagnostic ignored "-Wdangling-reference"
-        #endif
-    #endif
-#elif defined __clang__
-    #pragma clang diagnostic push
-    #pragma clang diagnostic ignored "-Wunused-private-field"
-    #pragma clang diagnostic ignored "-Wdeprecated-declarations"
-#endif
-
-#include "cereal/archives/portable_binary.hpp"
-#include "cereal/archives/json.hpp"
-#include "cereal/cereal.hpp"
-#include "cereal/types/map.hpp"
-#include "cereal/types/memory.hpp"
-#include "cereal/types/polymorphic.hpp"
-#include "cereal/types/string.hpp"
-#include "cereal/types/vector.hpp"
-
-#if defined(__GNUC__) && !defined(__clang__)
-    #if __GNUC__ >= 8
-        #pragma GCC diagnostic pop
-    #endif
-#elif defined __clang__
-    #pragma clang diagnostic pop
-#endif
 
 #include <fstream>
 #include <sstream>
@@ -92,11 +50,11 @@ namespace lbcrypto {
 namespace Serial {
 //========================== BINARY serialization ==========================
 /**
-		 * Serialize an object
-		 * @param obj - object to serialize
-		 * @param stream - Stream to serialize to
-		 * @param sertype - type of serialization; default is BINARY
-		 */
+ * Serialize an object
+ * @param obj - object to serialize
+ * @param stream - Stream to serialize to
+ * @param sertype - type of serialization; default is BINARY
+ */
 template <typename T>
 void Serialize(const T& obj, std::ostream& stream, const SerType::SERBINARY& st) {
     cereal::PortableBinaryOutputArchive archive(stream);
@@ -104,11 +62,11 @@ void Serialize(const T& obj, std::ostream& stream, const SerType::SERBINARY& st)
 }
 
 /**
-		 * Deserialize an object
-		 * @param obj - object to deserialize into
-		 * @param stream - Stream to deserialize from
-		 * @param sertype - type of de-serialization; default is BINARY
-		 */
+ * Deserialize an object
+ * @param obj - object to deserialize into
+ * @param stream - Stream to deserialize from
+ * @param sertype - type of de-serialization; default is BINARY
+ */
 template <typename T>
 void Deserialize(T& obj, std::istream& stream, const SerType::SERBINARY& st) {
     cereal::PortableBinaryInputArchive archive(stream);
@@ -139,11 +97,11 @@ bool DeserializeFromFile(const std::string& filename, T& obj, const SerType::SER
 
 //========================== JSON serialization ==========================
 /**
-		 * Serialize an object
-		 * @param obj - object to serialize
-		 * @param stream - Stream to serialize to
-		 * @param sertype - type of serialization; default is BINARY
-		 */
+ * Serialize an object
+ * @param obj - object to serialize
+ * @param stream - Stream to serialize to
+ * @param sertype - type of serialization; default is BINARY
+ */
 template <typename T>
 void Serialize(const T& obj, std::ostream& stream, const SerType::SERJSON& ser) {
     cereal::JSONOutputArchive archive(stream);
@@ -151,11 +109,11 @@ void Serialize(const T& obj, std::ostream& stream, const SerType::SERJSON& ser) 
 }
 
 /**
-		 * Deserialize an object
-		 * @param obj - object to deserialize into
-		 * @param stream - Stream to deserialize from
-		 * @param sertype - type of serialization; default is BINARY
-		 */
+ * Deserialize an object
+ * @param obj - object to deserialize into
+ * @param stream - Stream to deserialize from
+ * @param sertype - type of serialization; default is BINARY
+ */
 template <typename T>
 void Deserialize(T& obj, std::istream& stream, const SerType::SERJSON& ser) {
     cereal::JSONInputArchive archive(stream);
@@ -185,11 +143,11 @@ bool DeserializeFromFile(const std::string& filename, T& obj, const SerType::SER
 }
 
 /**
-		 * SerializeToString - serialize the object to a JSON string and return the
-		 * string
-		 * @param t - any serializable object
-		 * @return JSON string
-		 */
+ * SerializeToString - serialize the object to a JSON string and return the
+ * string
+ * @param t - any serializable object
+ * @return JSON string
+ */
 template <typename T>
 std::string SerializeToString(const T& t) {
     std::stringstream s;
@@ -198,10 +156,10 @@ std::string SerializeToString(const T& t) {
 }
 
 /**
-		 * DeserializeFromString - deserialize the object from a JSON string
-		 * @param obj - any object to deserialize into
-		 * @param json - JSON string
-		 */
+ * DeserializeFromString - deserialize the object from a JSON string
+ * @param obj - any object to deserialize into
+ * @param json - JSON string
+ */
 template <typename T>
 void DeserializeFromString(T& obj, const std::string& json) {
     std::stringstream s;

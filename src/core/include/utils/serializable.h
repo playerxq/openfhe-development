@@ -31,42 +31,7 @@
 #ifndef LBCRYPTO_SERIALIZABLE_H
 #define LBCRYPTO_SERIALIZABLE_H
 
-#ifndef CEREAL_RAPIDJSON_HAS_STDSTRING
-    #define CEREAL_RAPIDJSON_HAS_STDSTRING 1
-#endif
-#ifndef CEREAL_RAPIDJSON_HAS_CXX11_RVALUE_REFS
-    #define CEREAL_RAPIDJSON_HAS_CXX11_RVALUE_REFS 1
-#endif
-#define CEREAL_RAPIDJSON_HAS_CXX11_NOEXCEPT 0
-
-// In order to correctly identify GCC and clang we must either:
-// 1. use "#if defined(__GNUC__) && !defined(__clang__)" (preferred option)
-// 2. or check the condition "#if defined __clang__" first
-// The reason is: clang always defines __GNUC__ and __GNUC_MINOR__ and __GNUC_PATCHLEVEL__ according to the version of gcc that it claims full compatibility with.
-#if defined(__GNUC__) && !defined(__clang__)
-    #if __GNUC__ >= 8
-        #pragma GCC diagnostic push
-        #pragma GCC diagnostic ignored "-Wclass-memaccess"
-        #if __GNUC__ >= 13
-            #pragma GCC diagnostic ignored "-Wdangling-reference"
-        #endif
-    #endif
-#elif defined __clang__
-    #pragma clang diagnostic push
-    #pragma clang diagnostic ignored "-Wunused-private-field"
-    #pragma clang diagnostic ignored "-Wdeprecated-declarations"
-#endif
-
-#include "cereal/cereal.hpp"
-#include "cereal/types/polymorphic.hpp"
-
-#if defined(__GNUC__) && !defined(__clang__)
-    #if __GNUC__ >= 8
-        #pragma GCC diagnostic pop
-    #endif
-#elif defined __clang__
-    #pragma clang diagnostic pop
-#endif
+#include "utils/serial-cereal-headers.h"
 
 #include <ostream>
 #include <string>
