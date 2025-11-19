@@ -36,6 +36,7 @@
 #ifndef BINFHE_BINFHECONTEXT_SER_H
 #define BINFHE_BINFHECONTEXT_SER_H
 
+#include "config_core.h"
 #if defined(WITH_SERIALIZATION)
 
 #include "binfhecontext.h"

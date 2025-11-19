@@ -31,7 +31,7 @@
 #ifndef LBCRYPTO_SERIALIZABLE_H
 #define LBCRYPTO_SERIALIZABLE_H
 
-#include "utils/serial-cereal-headers.h"
+#include "utils/serializable-cereal-headers.h"
 
 #include <ostream>
 #include <string>

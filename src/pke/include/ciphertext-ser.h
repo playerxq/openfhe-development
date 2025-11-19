@@ -36,6 +36,7 @@
 #ifndef LBCRYPTO_CRYPTO_CIPHERTEXTSER_H
 #define LBCRYPTO_CRYPTO_CIPHERTEXTSER_H
 
+#include "config_core.h"
 #if defined(WITH_SERIALIZATION)
 
 #include "ciphertext.h"

@@ -32,6 +32,7 @@
 #ifndef LBCRYPTO_CRYPTO_METADATASER_H
 #define LBCRYPTO_CRYPTO_METADATASER_H
 
+#include "config_core.h"
 #if defined(WITH_SERIALIZATION)
 
 #include "metadata.h"

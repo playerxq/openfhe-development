@@ -36,6 +36,7 @@
 #ifndef __SERIAL_H__
 #define __SERIAL_H__
 
+#include "config_core.h"
 #if defined(WITH_SERIALIZATION)
 
 #include "utils/serial-cereal-headers.h"

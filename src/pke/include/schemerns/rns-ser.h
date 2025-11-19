@@ -36,6 +36,7 @@
 #ifndef LBCRYPTO_CRYPTO_RNS_SER_H
 #define LBCRYPTO_CRYPTO_RNS_SER_H
 
+#include "config_core.h"
 #if defined(WITH_SERIALIZATION)
 
 #include "schemerns/rns-scheme.h"

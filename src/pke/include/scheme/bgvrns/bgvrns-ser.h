@@ -36,6 +36,7 @@
 #ifndef LBCRYPTO_CRYPTO_BGVRNSSER_H
 #define LBCRYPTO_CRYPTO_BGVRNSSER_H
 
+#include "config_core.h"
 #if defined(WITH_SERIALIZATION)
 
 #include "scheme/bgvrns/bgvrns-scheme.h"

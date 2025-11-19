@@ -31,7 +31,9 @@
 #ifndef __SCHEMESWITCHING_DATA_SERIALIZER_IMPL_H__
 #define __SCHEMESWITCHING_DATA_SERIALIZER_IMPL_H__
 
+#include "config_core.h"
 #if defined(WITH_SERIALIZATION)
+
 #include "schemeswitching-data-serializer.h"
 
 #include "ciphertext-ser.h"

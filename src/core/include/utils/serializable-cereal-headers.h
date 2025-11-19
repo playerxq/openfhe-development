@@ -28,18 +28,55 @@
 // OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //==================================================================================
-#ifndef __UNITTESTMETADATATESTSER_H__
-#define __UNITTESTMETADATATESTSER_H__
+
+/*
+ * ATTN: Very heavy header file for serialization. Include this file very carefully
+ */
+
+#ifndef __SERIALIZABLE_CEREAL_HEADERS_H__
+#define __SERIALIZABLE_CEREAL_HEADERS_H__
 
 #include "config_core.h"
+// #if !defined(OPENFHE_ENABLE_SERIALIZATION)
+//   #define OPENFHE_ENABLE_SERIALIZATION
+// #endif
 #if defined(WITH_SERIALIZATION)
 
-#include "UnitTestMetadataTest.h"
-#include "utils/serial.h"
+#ifndef CEREAL_RAPIDJSON_HAS_STDSTRING
+    #define CEREAL_RAPIDJSON_HAS_STDSTRING 1
+#endif
+#ifndef CEREAL_RAPIDJSON_HAS_CXX11_RVALUE_REFS
+    #define CEREAL_RAPIDJSON_HAS_CXX11_RVALUE_REFS 1
+#endif
+#define CEREAL_RAPIDJSON_HAS_CXX11_NOEXCEPT 0
 
-CEREAL_REGISTER_TYPE(lbcrypto::MetadataTest);
-CEREAL_REGISTER_POLYMORPHIC_RELATION(lbcrypto::Metadata, lbcrypto::MetadataTest);
+// In order to correctly identify GCC and clang we must either:
+// 1. use "#if defined(__GNUC__) && !defined(__clang__)" (preferred option)
+// 2. or check the condition "#if defined __clang__" first
+// The reason is: clang always defines __GNUC__ and __GNUC_MINOR__ and __GNUC_PATCHLEVEL__ according to the version of gcc that it claims full compatibility with.
+#if defined(__GNUC__) && !defined(__clang__)
+    #if __GNUC__ >= 8
+        #pragma GCC diagnostic push
+        #pragma GCC diagnostic ignored "-Wclass-memaccess"
+        #if __GNUC__ >= 13
+            #pragma GCC diagnostic ignored "-Wdangling-reference"
+        #endif
+    #endif
+#elif defined __clang__
+    #pragma clang diagnostic push
+    #pragma clang diagnostic ignored "-Wunused-private-field"
+    #pragma clang diagnostic ignored "-Wdeprecated-declarations"
+#endif
 
-#endif  // WITH_SERIALIZATION
+#include "cereal/cereal.hpp"
 
-#endif  // __UNITTESTMETADATATESTSER_H__
+#if defined(__GNUC__) && !defined(__clang__)
+    #if __GNUC__ >= 8
+        #pragma GCC diagnostic pop
+    #endif
+#elif defined __clang__
+    #pragma clang diagnostic pop
+#endif
+
+#endif // WITH_SERIALIZATION
+#endif // __SERIALIZABLE_CEREAL_HEADERS_H__

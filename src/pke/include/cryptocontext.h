@@ -48,7 +48,6 @@
 #include "schemebase/base-scheme.h"
 #include "schemerns/rns-cryptoparameters.h"
 #include "utils/caller_info.h"
-#include "utils/serial.h"
 #include "utils/type_name.h"
 
 #include <algorithm>

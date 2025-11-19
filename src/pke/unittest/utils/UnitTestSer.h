@@ -36,7 +36,9 @@
 #ifndef __UNITTEST_SER_H__
 #define __UNITTEST_SER_H__
 
+#include "config_core.h"
 #if defined(WITH_SERIALIZATION)
+
 #include "UnitTestException.h"
 #include "cryptocontext.h"
 #include "gtest/gtest.h"

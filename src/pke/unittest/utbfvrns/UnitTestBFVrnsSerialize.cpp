@@ -29,6 +29,7 @@
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //==================================================================================
 
+#include "config_core.h"
 #if defined(WITH_SERIALIZATION)
 #include "UnitTestSer.h"
 #include "gtest/gtest.h"

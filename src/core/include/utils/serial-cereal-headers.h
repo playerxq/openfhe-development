@@ -36,9 +36,7 @@
 #ifndef __SERIAL_CEREAL_HEADERS_H__
 #define __SERIAL_CEREAL_HEADERS_H__
 
-// #if !defined(OPENFHE_ENABLE_SERIALIZATION)
-//   #define OPENFHE_ENABLE_SERIALIZATION
-// #endif
+#include "config_core.h"
 #if defined(WITH_SERIALIZATION)
 
 #ifndef CEREAL_RAPIDJSON_HAS_STDSTRING

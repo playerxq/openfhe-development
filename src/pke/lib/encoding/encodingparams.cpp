@@ -29,6 +29,7 @@
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //==================================================================================
 
+#include "config_core.h"
 #if defined(WITH_SERIALIZATION)
 /*
   Represents and defines parameters for plaintext encoding
