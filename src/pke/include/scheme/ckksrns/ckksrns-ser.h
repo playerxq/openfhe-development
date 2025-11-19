@@ -36,6 +36,8 @@
 #ifndef LBCRYPTO_CRYPTO_CKKSRNS_SER_H
 #define LBCRYPTO_CRYPTO_CKKSRNS_SER_H
 
+#if defined(WITH_SERIALIZATION)
+
 #include "scheme/ckksrns/ckksrns-scheme.h"
 #include "utils/serial.h"
 
@@ -48,4 +50,7 @@ CEREAL_REGISTER_TYPE(lbcrypto::SWITCHCKKSRNS);
 CEREAL_REGISTER_POLYMORPHIC_RELATION(lbcrypto::CryptoParametersRNS, lbcrypto::CryptoParametersCKKSRNS);
 CEREAL_REGISTER_POLYMORPHIC_RELATION(lbcrypto::FHERNS, lbcrypto::FHECKKSRNS);
 CEREAL_REGISTER_POLYMORPHIC_RELATION(lbcrypto::FHERNS, lbcrypto::SWITCHCKKSRNS);
+
+#endif  // WITH_SERIALIZATION
+
 #endif

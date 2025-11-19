@@ -604,6 +604,7 @@ public:
 
     // SERIALIZATION
 
+#if defined(WITH_SERIALIZATION)
     template <class Archive>
     void save(Archive& ar, std::uint32_t const version) const {
         ar(::cereal::make_nvp("d", m_data));
@@ -621,6 +622,7 @@ public:
         ar(::cereal::make_nvp("m", m_modulus));
         ar(::cereal::make_nvp("ms", m_modulus_state));
     }
+#endif
 
     std::string SerializedObjectName() const override {
         return "ExpVector";

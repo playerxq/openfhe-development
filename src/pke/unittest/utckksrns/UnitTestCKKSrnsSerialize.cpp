@@ -29,8 +29,9 @@
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //==================================================================================
 
+#if defined(WITH_SERIALIZATION)
 #include "ciphertext-ser.h"
-#include "cryptocontext-ser.h"
+#include "cryptocontext.h"
 #include "globals.h"  // for SERIALIZE_PRECOMPUTE
 #include "gtest/gtest.h"
 #include "scheme/ckksrns/ckksrns-ser.h"
@@ -470,3 +471,5 @@ TEST_P(UTCKKSRNS_SER, CKKSSer) {
 }
 
 INSTANTIATE_TEST_SUITE_P(UnitTests, UTCKKSRNS_SER, ::testing::ValuesIn(testCases), testName);
+
+#endif // WITH_SERIALIZATION

@@ -881,6 +881,7 @@ public:
    */
     static void PrintIntegerConstants();
 
+#if defined(WITH_SERIALIZATION)
     template <class Archive>
     void save(Archive& ar, std::uint32_t const version) const {
         ar(::cereal::make_nvp("v", m_value));
@@ -896,6 +897,7 @@ public:
         ar(::cereal::make_nvp("v", m_value));
         ar(::cereal::make_nvp("m", m_MSB));
     }
+#endif
 
     std::string SerializedObjectName() const {
         return "DYNInteger";

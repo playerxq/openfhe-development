@@ -29,6 +29,7 @@
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //==================================================================================
 
+#if defined(WITH_SERIALIZATION)
 #include "UnitTestSer.h"
 #include "gtest/gtest.h"
 
@@ -69,3 +70,5 @@ TEST_F(UTBFVRNS_SER, BFVRNS_SERIAL) {
 
     UnitTestContext<DCRTPoly>(cc);
 }
+
+#endif

@@ -36,6 +36,8 @@
 #ifndef LBCRYPTO_CRYPTO_RNS_SER_H
 #define LBCRYPTO_CRYPTO_RNS_SER_H
 
+#if defined(WITH_SERIALIZATION)
+
 #include "schemerns/rns-scheme.h"
 #include "utils/serial.h"
 
@@ -45,5 +47,7 @@ CEREAL_REGISTER_TYPE(lbcrypto::FHERNS);
 
 CEREAL_REGISTER_POLYMORPHIC_RELATION(lbcrypto::FHEBase<DCRTPoly>, lbcrypto::FHERNS);
 CEREAL_REGISTER_POLYMORPHIC_RELATION(lbcrypto::CryptoParametersRLWE<DCRTPoly>, lbcrypto::CryptoParametersRNS);
+
+#endif  // WITH_SERIALIZATION
 
 #endif

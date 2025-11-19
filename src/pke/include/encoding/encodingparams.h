@@ -253,6 +253,7 @@ public:
         return !(*this == other);
     }
 
+#if defined(WITH_SERIALIZATION)
     template <class Archive>
     void save(Archive& ar, std::uint32_t const version) const {
         ar(::cereal::make_nvp("m", m_plaintextModulus));
@@ -276,6 +277,7 @@ public:
         ar(::cereal::make_nvp("g", m_plaintextGenerator));
         ar(::cereal::make_nvp("bs", m_batchSize));
     }
+#endif
 
     std::string SerializedObjectName() const {
         return "EncodingParms";

@@ -31,10 +31,14 @@
 #ifndef __UNITTESTMETADATATESTSER_H__
 #define __UNITTESTMETADATATESTSER_H__
 
+#if defined(WITH_SERIALIZATION)
+
 #include "UnitTestMetadataTest.h"
 #include "utils/serial.h"
 
 CEREAL_REGISTER_TYPE(lbcrypto::MetadataTest);
 CEREAL_REGISTER_POLYMORPHIC_RELATION(lbcrypto::Metadata, lbcrypto::MetadataTest);
+
+#endif  // WITH_SERIALIZATION
 
 #endif  // __UNITTESTMETADATATESTSER_H__

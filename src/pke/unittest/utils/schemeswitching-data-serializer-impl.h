@@ -28,10 +28,14 @@
 // OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //==================================================================================
+#ifndef __SCHEMESWITCHING_DATA_SERIALIZER_IMPL_H__
+#define __SCHEMESWITCHING_DATA_SERIALIZER_IMPL_H__
+
+#if defined(WITH_SERIALIZATION)
 #include "schemeswitching-data-serializer.h"
 
 #include "ciphertext-ser.h"
-#include "cryptocontext-ser.h"
+#include "cryptocontext.h"
 #include "key/key-ser.h"
 #include "scheme/ckksrns/ckksrns-ser.h"
 #include <filesystem>
@@ -300,3 +304,7 @@ void SchemeSwitchingDataDeserializer::Deserialize() {
 }
 
 }  // namespace lbcrypto
+
+#endif // WITH_SERIALIZATION
+
+#endif // __SCHEMESWITCHING_DATA_SERIALIZER_IMPL_H__

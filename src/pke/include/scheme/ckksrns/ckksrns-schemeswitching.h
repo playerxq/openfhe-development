@@ -139,6 +139,7 @@ public:
     // SERIALIZATION
     //------------------------------------------------------------------------------
 
+#if defined(WITH_SERIALIZATION)
     template <class Archive>
     void save(Archive& ar) const {
         ar(cereal::base_class<FHERNS>(this));
@@ -178,6 +179,7 @@ public:
         // ar(cereal::make_nvp("swkFC", m_FHEWtoCKKSswk)); // Avoid a circular issue when deserializing
         ar(cereal::make_nvp("ctKS", m_ctxtKS));
     }
+#endif
 
     std::string SerializedObjectName() const {
         return "SWITCHCKKSRNS";

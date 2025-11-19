@@ -36,6 +36,8 @@
 #ifndef LBCRYPTO_CRYPTO_CIPHERTEXTSER_H
 #define LBCRYPTO_CRYPTO_CIPHERTEXTSER_H
 
+#if defined(WITH_SERIALIZATION)
+
 #include "ciphertext.h"
 #include "utils/serial.h"
 
@@ -49,5 +51,7 @@ CEREAL_CLASS_VERSION(lbcrypto::CiphertextImpl<lbcrypto::NativePoly>,
                      lbcrypto::CiphertextImpl<lbcrypto::NativePoly>::SerializedVersion());
 CEREAL_CLASS_VERSION(lbcrypto::CiphertextImpl<lbcrypto::DCRTPoly>,
                      lbcrypto::CiphertextImpl<lbcrypto::DCRTPoly>::SerializedVersion());
+
+#endif  // WITH_SERIALIZATION
 
 #endif

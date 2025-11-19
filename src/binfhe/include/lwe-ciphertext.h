@@ -131,6 +131,7 @@ public:
         return !(*this == other);
     }
 
+#if defined(WITH_SERIALIZATION)
     template <class Archive>
     void save(Archive& ar, std::uint32_t const version) const {
         ar(::cereal::make_nvp("a", m_a));
@@ -147,6 +148,7 @@ public:
         ar(::cereal::make_nvp("a", m_a));
         ar(::cereal::make_nvp("b", m_b));
     }
+#endif
 
     std::string SerializedObjectName() const override {
         return "LWECiphertext";

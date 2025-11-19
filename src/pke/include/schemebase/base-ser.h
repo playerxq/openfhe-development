@@ -36,6 +36,8 @@
 #ifndef LBCRYPTO_CRYPTO_BASE_SER_H
 #define LBCRYPTO_CRYPTO_BASE_SER_H
 
+#if defined(WITH_SERIALIZATION)
+
 #include "lattice/hal/default/lat-backend-default.h"
 #include "utils/serial.h"
 
@@ -52,4 +54,7 @@ CEREAL_REGISTER_TYPE(lbcrypto::FHEBase<lbcrypto::DCRTPoly>);
 
 CEREAL_REGISTER_POLYMORPHIC_RELATION(lbcrypto::CryptoParametersBase<lbcrypto::DCRTPoly>, lbcrypto::CryptoParametersRLWE<lbcrypto::DCRTPoly>);
 CEREAL_REGISTER_POLYMORPHIC_RELATION(lbcrypto::Serializable, lbcrypto::CryptoParametersBase<lbcrypto::DCRTPoly>);
+
+#endif  // WITH_SERIALIZATION
+
 #endif

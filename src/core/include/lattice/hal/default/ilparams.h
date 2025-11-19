@@ -135,6 +135,7 @@ public:
         return ElemParams<IntType>::operator==(rhs);
     }
 
+#if defined(WITH_SERIALIZATION)
     template <class Archive>
     void save(Archive& ar, std::uint32_t const version) const {
         ar(::cereal::base_class<ElemParams<IntType>>(this));
@@ -147,6 +148,7 @@ public:
                           " is from a later version of the library");
         ar(::cereal::base_class<ElemParams<IntType>>(this));
     }
+#endif
 
     std::string SerializedObjectName() const override {
         return "ILParms";

@@ -36,6 +36,8 @@
 #ifndef BINFHE_BINFHECONTEXT_SER_H
 #define BINFHE_BINFHECONTEXT_SER_H
 
+#if defined(WITH_SERIALIZATION)
+
 #include "binfhecontext.h"
 #include "utils/serial.h"
 
@@ -52,4 +54,5 @@ CEREAL_REGISTER_TYPE(lbcrypto::RingGSWACCKeyImpl);
 CEREAL_REGISTER_TYPE(lbcrypto::BinFHECryptoParams);
 CEREAL_REGISTER_TYPE(lbcrypto::BinFHEContext);
 
+#endif // WITH_SERIALIZATION
 #endif

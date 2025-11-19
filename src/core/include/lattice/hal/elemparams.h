@@ -225,6 +225,7 @@ public:
         return !(*this == other);
     }
 
+#if defined(WITH_SERIALIZATION)
     template <class Archive>
     void save(Archive& ar, std::uint32_t const version) const {
         ar(::cereal::make_nvp("co", m_cyclotomicOrder));
@@ -247,6 +248,7 @@ public:
         ar(::cereal::make_nvp("bm", m_bigCiphertextModulus));
         ar(::cereal::make_nvp("br", m_bigRootOfUnity));
     }
+#endif
 
     std::string SerializedObjectName() const override {
         return "ElemParams";

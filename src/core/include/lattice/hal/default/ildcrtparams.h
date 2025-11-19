@@ -329,6 +329,7 @@ public:
                 IntType(m_params[i]->GetBigModulus().template ConvertToInt<BasicInteger>());
     }
 
+#if defined(WITH_SERIALIZATION)
     template <class Archive>
     void save(Archive& ar, std::uint32_t const version) const {
         ar(::cereal::base_class<ElemParams<IntType>>(this));
@@ -344,6 +345,7 @@ public:
         ar(::cereal::base_class<ElemParams<IntType>>(this));
         ar(::cereal::make_nvp("p", m_params));
     }
+#endif
 
     std::string SerializedObjectName() const override {
         return "DCRTParams";

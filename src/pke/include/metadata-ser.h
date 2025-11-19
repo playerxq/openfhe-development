@@ -32,10 +32,14 @@
 #ifndef LBCRYPTO_CRYPTO_METADATASER_H
 #define LBCRYPTO_CRYPTO_METADATASER_H
 
+#if defined(WITH_SERIALIZATION)
+
 #include "metadata.h"
 #include "utils/serial.h"
 
 CEREAL_CLASS_VERSION(lbcrypto::Metadata, lbcrypto::Metadata::SerializedVersion());
 CEREAL_REGISTER_TYPE(lbcrypto::Metadata);
+
+#endif  // WITH_SERIALIZATION
 
 #endif

@@ -75,14 +75,15 @@ if(BUILD_EXAMPLES)
     file(GLOB PKE_EXAMPLES_SRC_FILES CONFIGURE_DEPENDS examples/*.cpp)
     foreach(app ${PKE_EXAMPLES_SRC_FILES})
         get_filename_component(exe ${app} NAME_WE)
-        if(${exe} STREQUAL "scheme-switching-serial")
-            # add schemeswitching-data-serializer.cpp to link line and
-            # include the unittest/utils directory where schemeswitching-data-serializer.h is
-            add_executable(${exe} ${app} "${CMAKE_CURRENT_SOURCE_DIR}/unittest/utils/schemeswitching-data-serializer.cpp")
-            target_include_directories(${exe} PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/unittest/utils")
-        else()
-            add_executable(${exe} ${app})
-        endif()
+        # if(${exe} STREQUAL "scheme-switching-serial")
+        #     # add schemeswitching-data-serializer.cpp to link line and
+        #     # include the unittest/utils directory where schemeswitching-data-serializer.h is
+        #     add_executable(${exe} ${app} "${CMAKE_CURRENT_SOURCE_DIR}/unittest/utils/schemeswitching-data-serializer.cpp")
+        #     target_include_directories(${exe} PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/unittest/utils")
+        # else()
+        #     add_executable(${exe} ${app})
+        # endif()
+        add_executable(${exe} ${app})
         set_property(TARGET ${exe} PROPERTY RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin/examples/pke)
         set(PKEAPPS ${PKEAPPS} ${exe})
         target_link_libraries(${exe} ${PKELIBS} ${ADDITIONAL_LIBS})

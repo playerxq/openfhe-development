@@ -454,6 +454,7 @@ public:
         return out << *c;
     }
 
+#if defined(WITH_SERIALIZATION)
     template <class Archive>
     void save(Archive& ar, std::uint32_t const version) const {
         ar(cereal::base_class<CryptoObject<Element>>(this));
@@ -484,6 +485,7 @@ public:
         ar(cereal::make_nvp("e", m_encodingType));
         ar(cereal::make_nvp("m", m_metadataMap));
     }
+#endif
 
     std::string SerializedObjectName() const {
         return "Ciphertext";

@@ -29,6 +29,7 @@
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //==================================================================================
 
+#if defined(WITH_SERIALIZATION)
 /*
   This code exercises serialization in CORE for the OpenFHE lattice encryption library
  */
@@ -299,3 +300,5 @@ void serialize_matrix_bigint(const std::string& msg) {
 TEST(UTSer, serialize_matrix_bigint) {
     RUN_ALL_BACKENDS(serialize_matrix_bigint, "serialize_matrix_bigint")
 }
+
+#endif

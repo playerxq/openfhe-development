@@ -407,6 +407,7 @@ public:
         return m_binfhescheme;
     }
 
+#if defined(WITH_SERIALIZATION)
     template <class Archive>
     void save(Archive& ar, std::uint32_t const version) const {
         ar(::cereal::make_nvp("params", m_params));
@@ -421,6 +422,7 @@ public:
         ar(::cereal::make_nvp("params", m_params));
         m_binfhescheme = std::make_shared<BinFHEScheme>(m_params->GetRingGSWParams()->GetMethod());
     }
+#endif
 
     std::string SerializedObjectName() const override {
         return "BinFHEContext";

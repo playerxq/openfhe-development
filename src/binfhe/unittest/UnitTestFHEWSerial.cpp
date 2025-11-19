@@ -29,6 +29,7 @@
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //==================================================================================
 
+#if defined(WITH_SERIALIZATION)
 /*
   This code runs unit tests for the FHEW methods of the OpenFHE lattice encryption library
  */
@@ -141,3 +142,5 @@ TEST(UnitTestFHEWSerialLMKCDEY, BINARY) {
     std::string msg = "UnitTestFHEWSerialGINX.BINARY serialization test failed: ";
     UnitTestFHEWSerial(SerType::BINARY, TOY, LMKCDEY, SMALL_DIM, msg);
 }
+
+#endif

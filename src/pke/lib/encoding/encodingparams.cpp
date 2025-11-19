@@ -29,6 +29,7 @@
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //==================================================================================
 
+#if defined(WITH_SERIALIZATION)
 /*
   Represents and defines parameters for plaintext encoding
  */
@@ -36,3 +37,4 @@
 #include "encoding/encodingparams.h"
 
 CEREAL_CLASS_VERSION(lbcrypto::EncodingParamsImpl, lbcrypto::EncodingParamsImpl::SerializedVersion());
+#endif

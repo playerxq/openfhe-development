@@ -33,7 +33,7 @@
   Unit tests for the CKKS scheme
  */
 
-#include "cryptocontext-ser.h"
+#include "cryptocontext.h"
 #include "gtest/gtest.h"
 #include "scheme/ckksrns/ckksrns-ser.h"
 #include "scheme/ckksrns/ckksrns-utils.h"
@@ -684,6 +684,7 @@ protected:
     void UnitTest_Bootstrap_Serialize(const TEST_CASE_UTCKKSRNS_BOOT& testData,
                                       const std::string& failmsg = std::string()) {
         try {
+#if defined(WITH_SERIALIZATION)
             CryptoContextImpl<DCRTPoly>::ClearEvalMultKeys();
             CryptoContextImpl<DCRTPoly>::ClearEvalSumKeys();
             CryptoContextImpl<DCRTPoly>::ClearEvalAutomorphismKeys();
@@ -766,6 +767,7 @@ protected:
                           failmsg + " Bootstrapping for fully packed ciphertexts fails");
             //====================================================================================================
             EXPECT_TRUE(1 == 1) << failmsg;
+#endif
         }
         catch (std::exception& e) {
             std::cerr << "Exception thrown from " << __func__ << "(): " << e.what() << std::endl;

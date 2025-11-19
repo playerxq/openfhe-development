@@ -33,8 +33,10 @@
   Serialization utilities
  */
 
-#ifndef LBCRYPTO_SERIAL_H
-#define LBCRYPTO_SERIAL_H
+#ifndef __SERIAL_H__
+#define __SERIAL_H__
+
+#if defined(WITH_SERIALIZATION)
 
 #include "utils/serial-cereal-headers.h"
 #include "utils/sertype.h"
@@ -171,4 +173,6 @@ void DeserializeFromString(T& obj, const std::string& json) {
 
 }  // namespace lbcrypto
 
-#endif
+#endif // WITH_SERIALIZATION
+
+#endif // __SERIAL_H__

@@ -360,6 +360,7 @@ protected:
     // SERIALIZATION
     /////////////////////////////////////
 
+#if defined(WITH_SERIALIZATION)
     template <class Archive>
     void save(Archive& ar) const {
         ar(cereal::base_class<LeveledSHEBase<DCRTPoly>>(this));
@@ -369,6 +370,7 @@ protected:
     void load(Archive& ar) {
         ar(cereal::base_class<LeveledSHEBase<DCRTPoly>>(this));
     }
+#endif
 
     std::string SerializedObjectName() const {
         return "LeveledSHERNS";

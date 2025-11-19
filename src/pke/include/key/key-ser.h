@@ -36,6 +36,8 @@
 #ifndef LBCRYPTO_CRYPTO_KEY_KEY_SER_H
 #define LBCRYPTO_CRYPTO_KEY_KEY_SER_H
 
+#if defined(WITH_SERIALIZATION)
+
 #include "key/evalkeyrelin.h"
 #include "utils/serial.h"
 
@@ -44,5 +46,7 @@ CEREAL_REGISTER_TYPE(lbcrypto::EvalKeyRelinImpl<lbcrypto::DCRTPoly>);
 
 CEREAL_REGISTER_POLYMORPHIC_RELATION(lbcrypto::EvalKeyImpl<lbcrypto::DCRTPoly>,
                                      lbcrypto::EvalKeyRelinImpl<lbcrypto::DCRTPoly>);
+
+#endif  // WITH_SERIALIZATION
 
 #endif

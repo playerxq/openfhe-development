@@ -117,6 +117,7 @@ public:
     // SERIALIZATION
     /////////////////////////////////////
 
+#if defined(WITH_SERIALIZATION)
     template <class Archive>
     void save(Archive& ar, std::uint32_t const version) const {
         ar(cereal::base_class<CryptoParametersRNS>(this));
@@ -136,6 +137,7 @@ public:
                                 m_extraBits);
         }
     }
+#endif
 
     std::string SerializedObjectName() const override {
         return "CryptoParametersCKKSRNS";

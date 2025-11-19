@@ -1776,6 +1776,7 @@ public:
         return os;
     }
 
+#if defined(WITH_SERIALIZATION)
     template <class Archive, typename T = void>
     typename std::enable_if_t<std::is_same_v<NativeInt, uint64_t> || std::is_same_v<NativeInt, uint32_t>, T> load(
         Archive& ar, std::uint32_t const version) {
@@ -1850,6 +1851,8 @@ public:
         vec[1] = m_value >> 64;   // most significant word
         ar(::cereal::make_nvp("i", vec));
     }
+#endif
+
 #endif
 
     std::string SerializedObjectName() const {

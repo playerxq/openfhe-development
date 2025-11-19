@@ -36,6 +36,10 @@
 #ifndef __SERIAL_CEREAL_HEADERS_H__
 #define __SERIAL_CEREAL_HEADERS_H__
 
+// #if !defined(OPENFHE_ENABLE_SERIALIZATION)
+//   #define OPENFHE_ENABLE_SERIALIZATION
+// #endif
+#if defined(WITH_SERIALIZATION)
 
 #ifndef CEREAL_RAPIDJSON_HAS_STDSTRING
     #define CEREAL_RAPIDJSON_HAS_STDSTRING 1
@@ -80,5 +84,5 @@
     #pragma clang diagnostic pop
 #endif
 
-
+#endif // WITH_SERIALIZATION
 #endif // __SERIAL_CEREAL_HEADERS_H__

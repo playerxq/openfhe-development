@@ -31,6 +31,7 @@
 #ifndef __SCHEMESWITCHING_DATA_SERIALIZER_H__
 #define __SCHEMESWITCHING_DATA_SERIALIZER_H__
 
+#if defined(WITH_SERIALIZATION)
 #include "cryptocontext.h"
 
 #include <memory>
@@ -118,5 +119,9 @@ public:
 };
 
 }  // namespace lbcrypto
+
+#include "schemeswitching-data-serializer-impl.h"
+
+#endif // WITH_SERIALIZATION)
 
 #endif  // __SCHEMESWITCHING_DATA_SERIALIZER_H__

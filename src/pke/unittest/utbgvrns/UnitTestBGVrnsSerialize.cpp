@@ -29,8 +29,9 @@
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //==================================================================================
 
+#if defined(WITH_SERIALIZATION)
 #include "ciphertext-ser.h"
-#include "cryptocontext-ser.h"
+#include "cryptocontext.h"
 #include "key/key-ser.h"
 #include "scheme/bgvrns/bgvrns-ser.h"
 
@@ -377,3 +378,5 @@ TEST_P(UTBGVRNS_SER, BGVSer) {
 }
 
 INSTANTIATE_TEST_SUITE_P(UnitTests, UTBGVRNS_SER, ::testing::ValuesIn(testCases), testName);
+
+#endif // WITH_SERIALIZATION
