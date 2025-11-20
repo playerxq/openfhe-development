@@ -39,7 +39,6 @@
 #include "config_core.h"
 #if defined(WITH_SERIALIZATION)
 
-#include "ciphertext.h"
 #include "utils/serial.h"
 
 extern template class lbcrypto::CiphertextImpl<lbcrypto::Poly>;

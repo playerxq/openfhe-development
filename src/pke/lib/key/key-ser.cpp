@@ -1,7 +1,7 @@
 //==================================================================================
 // BSD 2-Clause License
 //
-// Copyright (c) 2014-2022, NJIT, Duality Technologies Inc. and other contributors
+// Copyright (c) 2014-2025, NJIT, Duality Technologies Inc. and other contributors
 //
 // All rights reserved.
 //
@@ -29,17 +29,12 @@
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //==================================================================================
 
-/*
-  serialize keys; include this in any app that needs to serialize these objects
- */
-
-#ifndef LBCRYPTO_CRYPTO_KEY_KEY_SER_H
-#define LBCRYPTO_CRYPTO_KEY_KEY_SER_H
-
 #include "config_core.h"
 #if defined(WITH_SERIALIZATION)
 
+#include "cryptocontext.h"
 #include "key/evalkeyrelin.h"
+
 #include "utils/serial.h"
 
 CEREAL_REGISTER_TYPE(lbcrypto::EvalKeyImpl<lbcrypto::DCRTPoly>);
@@ -49,5 +44,3 @@ CEREAL_REGISTER_POLYMORPHIC_RELATION(lbcrypto::EvalKeyImpl<lbcrypto::DCRTPoly>,
                                      lbcrypto::EvalKeyRelinImpl<lbcrypto::DCRTPoly>);
 
 #endif  // WITH_SERIALIZATION
-
-#endif

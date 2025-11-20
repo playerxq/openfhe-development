@@ -29,18 +29,11 @@
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //==================================================================================
 
-/*
-  Header file adding serialization support to Boolean circuit FHE
- */
-
-#ifndef BINFHE_BINFHECONTEXT_SER_H
-#define BINFHE_BINFHECONTEXT_SER_H
-
 #include "config_core.h"
 #if defined(WITH_SERIALIZATION)
 
 #include "binfhecontext.h"
-#include "utils/serial.h"
+#include "utils/serial-cereal-headers.h"
 
 // Registers types needed for serialization
 CEREAL_REGISTER_TYPE(lbcrypto::LWECryptoParams);
@@ -56,4 +49,3 @@ CEREAL_REGISTER_TYPE(lbcrypto::BinFHECryptoParams);
 CEREAL_REGISTER_TYPE(lbcrypto::BinFHEContext);
 
 #endif // WITH_SERIALIZATION
-#endif

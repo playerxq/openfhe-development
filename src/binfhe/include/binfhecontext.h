@@ -469,4 +469,6 @@ private:
 
 }  // namespace lbcrypto
 
+#include "utils/serial.h"
+
 #endif

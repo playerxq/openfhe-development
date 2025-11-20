@@ -31,11 +31,9 @@
 
 #include "config_core.h"
 #if defined(WITH_SERIALIZATION)
-#include "ciphertext-ser.h"
 #include "cryptocontext.h"
 #include "globals.h"  // for SERIALIZE_PRECOMPUTE
 #include "gtest/gtest.h"
-#include "scheme/ckksrns/ckksrns-ser.h"
 #include "UnitTestCCParams.h"
 #include "UnitTestCryptoContext.h"
 #include "UnitTestSer.h"

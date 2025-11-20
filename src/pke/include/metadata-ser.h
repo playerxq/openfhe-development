@@ -28,7 +28,8 @@
 // OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //==================================================================================
-
+// NOTE: this file is not used for now
+#if 0
 #ifndef LBCRYPTO_CRYPTO_METADATASER_H
 #define LBCRYPTO_CRYPTO_METADATASER_H
 
@@ -42,5 +43,7 @@ CEREAL_CLASS_VERSION(lbcrypto::Metadata, lbcrypto::Metadata::SerializedVersion()
 CEREAL_REGISTER_TYPE(lbcrypto::Metadata);
 
 #endif  // WITH_SERIALIZATION
+
+#endif
 
 #endif

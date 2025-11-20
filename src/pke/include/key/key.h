@@ -33,7 +33,7 @@
 #define LBCRYPTO_CRYPTO_KEY_KEY_H
 
 #include "cryptoobject.h"
-#include "utils/serial.h"
+#include "utils/serializable.h"
 
 #include <memory>
 #include <string>
@@ -75,5 +75,7 @@ public:
 };
 
 }  // namespace lbcrypto
+
+#include "utils/serial.h"
 
 #endif

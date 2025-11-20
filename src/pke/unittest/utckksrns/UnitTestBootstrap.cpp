@@ -35,7 +35,6 @@
 
 #include "cryptocontext.h"
 #include "gtest/gtest.h"
-#include "scheme/ckksrns/ckksrns-ser.h"
 #include "scheme/ckksrns/ckksrns-utils.h"
 #include "UnitTestCCParams.h"
 #include "UnitTestCryptoContext.h"

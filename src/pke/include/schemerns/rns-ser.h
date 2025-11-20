@@ -28,7 +28,8 @@
 // OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //==================================================================================
-
+// NOTE: this file is not used for now
+#if 0
 /*
   serialize ckks; include this in any app that needs to serialize this scheme
  */
@@ -50,5 +51,7 @@ CEREAL_REGISTER_POLYMORPHIC_RELATION(lbcrypto::FHEBase<DCRTPoly>, lbcrypto::FHER
 CEREAL_REGISTER_POLYMORPHIC_RELATION(lbcrypto::CryptoParametersRLWE<DCRTPoly>, lbcrypto::CryptoParametersRNS);
 
 #endif  // WITH_SERIALIZATION
+
+#endif
 
 #endif

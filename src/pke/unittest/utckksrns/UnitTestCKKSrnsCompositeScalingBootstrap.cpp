@@ -38,7 +38,6 @@
 #include "UnitTestCryptoContext.h"
 #include "scheme/ckksrns/ckksrns-utils.h"
 #include "cryptocontext.h"
-#include "scheme/ckksrns/ckksrns-ser.h"
 
 #include <iostream>
 #include <vector>

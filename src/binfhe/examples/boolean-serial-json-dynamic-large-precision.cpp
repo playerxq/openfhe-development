@@ -33,7 +33,7 @@
   Example forFHEW with binary serialization
  */
 
-#include "binfhecontext-ser.h"
+#include "binfhecontext.h"
 
 using namespace lbcrypto;
 

@@ -29,6 +29,8 @@
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //==================================================================================
 
+// NOTE: this file is not used for now
+#if 0
 /*
   serialize keys; include this in any app that needs to serialize these objects
  */
@@ -57,5 +59,7 @@ CEREAL_REGISTER_POLYMORPHIC_RELATION(lbcrypto::CryptoParametersBase<lbcrypto::DC
 CEREAL_REGISTER_POLYMORPHIC_RELATION(lbcrypto::Serializable, lbcrypto::CryptoParametersBase<lbcrypto::DCRTPoly>);
 
 #endif  // WITH_SERIALIZATION
+
+#endif
 
 #endif

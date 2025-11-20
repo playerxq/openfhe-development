@@ -31,10 +31,7 @@
 
 #include "config_core.h"
 #if defined(WITH_SERIALIZATION)
-#include "ciphertext-ser.h"
 #include "cryptocontext.h"
-#include "key/key-ser.h"
-#include "scheme/bgvrns/bgvrns-ser.h"
 
 #include "UnitTestUtils.h"
 #include "UnitTestSer.h"
