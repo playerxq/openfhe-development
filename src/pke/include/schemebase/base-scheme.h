@@ -46,6 +46,7 @@
 #include "schemebase/base-pre.h"
 #include "utils/caller_info.h"
 #include "utils/exception.h"
+#include "utils/serializable-cereal-headers.h"
 
 #include <map>
 #include <memory>

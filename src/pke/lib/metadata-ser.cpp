@@ -28,26 +28,17 @@
 // OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //==================================================================================
-
-/*
-  serialize BFVrns; include this in any app that needs to serialize this scheme
- */
-
-#ifndef LBCRYPTO_CRYPTO_BFVRNSSER_H
-#define LBCRYPTO_CRYPTO_BFVRNSSER_H
+// NOTE: this file is not used for now
+#if 0
 
 #include "config_core.h"
 #if defined(WITH_SERIALIZATION)
 
-#include "scheme/bfvrns/bfvrns-scheme.h"
-#include "utils/serial.h"
+#include "metadata.h"
+#include "utils/serial-cereal-headers.h"
 
-CEREAL_REGISTER_TYPE(lbcrypto::CryptoParametersBFVRNS);
-CEREAL_REGISTER_TYPE(lbcrypto::SchemeBFVRNS);
-CEREAL_REGISTER_TYPE(lbcrypto::FHEBFVRNS);
-
-CEREAL_REGISTER_POLYMORPHIC_RELATION(lbcrypto::CryptoParametersRNS, lbcrypto::CryptoParametersBFVRNS);
-CEREAL_REGISTER_POLYMORPHIC_RELATION(lbcrypto::FHERNS, lbcrypto::FHEBFVRNS);
+CEREAL_CLASS_VERSION(lbcrypto::Metadata, lbcrypto::Metadata::SerializedVersion());
+CEREAL_REGISTER_TYPE(lbcrypto::Metadata);
 
 #endif  // WITH_SERIALIZATION
 

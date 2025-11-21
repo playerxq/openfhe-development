@@ -29,28 +29,28 @@
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //==================================================================================
 
-/*
-  serialize ciphertexts; include this in any app that needs to serialize them
- */
-
-#ifndef LBCRYPTO_CRYPTO_CIPHERTEXTSER_H
-#define LBCRYPTO_CRYPTO_CIPHERTEXTSER_H
+// NOTE: this file is not used for now
+#if 0
 
 #include "config_core.h"
 #if defined(WITH_SERIALIZATION)
 
-#include "utils/serial.h"
+#include "lattice/hal/default/lat-backend-default.h"
+#include "utils/serial-cereal-headers.h"
 
-extern template class lbcrypto::CiphertextImpl<lbcrypto::Poly>;
-extern template class lbcrypto::CiphertextImpl<lbcrypto::NativePoly>;
-extern template class lbcrypto::CiphertextImpl<lbcrypto::DCRTPoly>;
+extern template class lbcrypto::CryptoParametersBase<lbcrypto::DCRTPoly>;
+extern template class lbcrypto::CryptoParametersRLWE<lbcrypto::DCRTPoly>;
+extern template class lbcrypto::SchemeBase<lbcrypto::DCRTPoly>;
+extern template class lbcrypto::FHEBase<lbcrypto::DCRTPoly>;
 
-CEREAL_CLASS_VERSION(lbcrypto::CiphertextImpl<lbcrypto::Poly>,
-                     lbcrypto::CiphertextImpl<lbcrypto::Poly>::SerializedVersion());
-CEREAL_CLASS_VERSION(lbcrypto::CiphertextImpl<lbcrypto::NativePoly>,
-                     lbcrypto::CiphertextImpl<lbcrypto::NativePoly>::SerializedVersion());
-CEREAL_CLASS_VERSION(lbcrypto::CiphertextImpl<lbcrypto::DCRTPoly>,
-                     lbcrypto::CiphertextImpl<lbcrypto::DCRTPoly>::SerializedVersion());
+CEREAL_REGISTER_TYPE(lbcrypto::Serializable);
+CEREAL_REGISTER_TYPE(lbcrypto::CryptoParametersBase<lbcrypto::DCRTPoly>);
+CEREAL_REGISTER_TYPE(lbcrypto::CryptoParametersRLWE<lbcrypto::DCRTPoly>);
+CEREAL_REGISTER_TYPE(lbcrypto::SchemeBase<lbcrypto::DCRTPoly>);
+CEREAL_REGISTER_TYPE(lbcrypto::FHEBase<lbcrypto::DCRTPoly>);
+
+CEREAL_REGISTER_POLYMORPHIC_RELATION(lbcrypto::CryptoParametersBase<lbcrypto::DCRTPoly>, lbcrypto::CryptoParametersRLWE<lbcrypto::DCRTPoly>);
+CEREAL_REGISTER_POLYMORPHIC_RELATION(lbcrypto::Serializable, lbcrypto::CryptoParametersBase<lbcrypto::DCRTPoly>);
 
 #endif  // WITH_SERIALIZATION
 

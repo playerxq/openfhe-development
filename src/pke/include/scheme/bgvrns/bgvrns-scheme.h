@@ -35,7 +35,6 @@
 #include "schemerns/rns-scheme.h"
 
 #include "scheme/bgvrns/bgvrns-parametergeneration.h"
-#include "utils/serializable.h"
 
 #include <string>
 #include <memory>

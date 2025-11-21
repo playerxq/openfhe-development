@@ -28,28 +28,21 @@
 // OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //==================================================================================
-
-/*
-  serialize bgvrns; include this in any app that needs to serialize this scheme
- */
-
-#ifndef LBCRYPTO_CRYPTO_BGVRNSSER_H
-#define LBCRYPTO_CRYPTO_BGVRNSSER_H
+// NOTE: this file is not used for now
+#if 0
 
 #include "config_core.h"
 #if defined(WITH_SERIALIZATION)
 
-#include "scheme/bgvrns/bgvrns-scheme.h"
-#include "scheme/bgvrns/bgvrns-fhe.h"
-#include "scheme/bgvrns/bgvrns-cryptoparameters.h"
-#include "utils/serial.h"
+#include "schemerns/rns-scheme.h"
+#include "utils/serial-cereal-headers.h"
 
-CEREAL_REGISTER_TYPE(lbcrypto::CryptoParametersBGVRNS);
-CEREAL_REGISTER_TYPE(lbcrypto::SchemeBGVRNS);
-CEREAL_REGISTER_TYPE(lbcrypto::FHEBGVRNS);
+CEREAL_REGISTER_TYPE(lbcrypto::CryptoParametersRNS);
+CEREAL_REGISTER_TYPE(lbcrypto::SchemeRNS);
+CEREAL_REGISTER_TYPE(lbcrypto::FHERNS);
 
-CEREAL_REGISTER_POLYMORPHIC_RELATION(lbcrypto::FHERNS, lbcrypto::FHEBGVRNS);
-CEREAL_REGISTER_POLYMORPHIC_RELATION(lbcrypto::CryptoParametersRNS, lbcrypto::CryptoParametersBGVRNS);
+CEREAL_REGISTER_POLYMORPHIC_RELATION(lbcrypto::FHEBase<DCRTPoly>, lbcrypto::FHERNS);
+CEREAL_REGISTER_POLYMORPHIC_RELATION(lbcrypto::CryptoParametersRLWE<DCRTPoly>, lbcrypto::CryptoParametersRNS);
 
 #endif  // WITH_SERIALIZATION
 

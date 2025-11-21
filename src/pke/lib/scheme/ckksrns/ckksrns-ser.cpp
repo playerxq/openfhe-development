@@ -29,37 +29,21 @@
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //==================================================================================
 
-// NOTE: this file is not used for now
-#if 0
-/*
-  serialize keys; include this in any app that needs to serialize these objects
- */
-
-#ifndef LBCRYPTO_CRYPTO_BASE_SER_H
-#define LBCRYPTO_CRYPTO_BASE_SER_H
-
 #include "config_core.h"
 #if defined(WITH_SERIALIZATION)
 
-#include "lattice/hal/default/lat-backend-default.h"
-#include "utils/serial.h"
+#include "cryptocontext.h"
+#include "scheme/ckksrns/ckksrns-scheme.h"
+#include "utils/serial-cereal-headers.h"
 
-extern template class lbcrypto::CryptoParametersBase<lbcrypto::DCRTPoly>;
-extern template class lbcrypto::CryptoParametersRLWE<lbcrypto::DCRTPoly>;
-extern template class lbcrypto::SchemeBase<lbcrypto::DCRTPoly>;
-extern template class lbcrypto::FHEBase<lbcrypto::DCRTPoly>;
+CEREAL_REGISTER_TYPE(lbcrypto::CryptoParametersCKKSRNS);
+CEREAL_REGISTER_TYPE(lbcrypto::SchemeCKKSRNS);
+CEREAL_REGISTER_TYPE(lbcrypto::CKKSBootstrapPrecom);
+CEREAL_REGISTER_TYPE(lbcrypto::FHECKKSRNS);
+CEREAL_REGISTER_TYPE(lbcrypto::SWITCHCKKSRNS);
 
-CEREAL_REGISTER_TYPE(lbcrypto::Serializable);
-CEREAL_REGISTER_TYPE(lbcrypto::CryptoParametersBase<lbcrypto::DCRTPoly>);
-CEREAL_REGISTER_TYPE(lbcrypto::CryptoParametersRLWE<lbcrypto::DCRTPoly>);
-CEREAL_REGISTER_TYPE(lbcrypto::SchemeBase<lbcrypto::DCRTPoly>);
-CEREAL_REGISTER_TYPE(lbcrypto::FHEBase<lbcrypto::DCRTPoly>);
-
-CEREAL_REGISTER_POLYMORPHIC_RELATION(lbcrypto::CryptoParametersBase<lbcrypto::DCRTPoly>, lbcrypto::CryptoParametersRLWE<lbcrypto::DCRTPoly>);
-CEREAL_REGISTER_POLYMORPHIC_RELATION(lbcrypto::Serializable, lbcrypto::CryptoParametersBase<lbcrypto::DCRTPoly>);
+CEREAL_REGISTER_POLYMORPHIC_RELATION(lbcrypto::CryptoParametersRNS, lbcrypto::CryptoParametersCKKSRNS);
+CEREAL_REGISTER_POLYMORPHIC_RELATION(lbcrypto::FHERNS, lbcrypto::FHECKKSRNS);
+CEREAL_REGISTER_POLYMORPHIC_RELATION(lbcrypto::FHERNS, lbcrypto::SWITCHCKKSRNS);
 
 #endif  // WITH_SERIALIZATION
-
-#endif
-
-#endif

@@ -29,29 +29,19 @@
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //==================================================================================
 
-/*
-  serialize ckks; include this in any app that needs to serialize this scheme
- */
-
-#ifndef LBCRYPTO_CRYPTO_CKKSRNS_SER_H
-#define LBCRYPTO_CRYPTO_CKKSRNS_SER_H
-
 #include "config_core.h"
 #if defined(WITH_SERIALIZATION)
 
-#include "scheme/ckksrns/ckksrns-scheme.h"
-#include "utils/serial.h"
+#include "scheme/bgvrns/bgvrns-scheme.h"
+#include "scheme/bgvrns/bgvrns-fhe.h"
+#include "scheme/bgvrns/bgvrns-cryptoparameters.h"
+#include "utils/serial-cereal-headers.h"
 
-CEREAL_REGISTER_TYPE(lbcrypto::CryptoParametersCKKSRNS);
-CEREAL_REGISTER_TYPE(lbcrypto::SchemeCKKSRNS);
-CEREAL_REGISTER_TYPE(lbcrypto::CKKSBootstrapPrecom);
-CEREAL_REGISTER_TYPE(lbcrypto::FHECKKSRNS);
-CEREAL_REGISTER_TYPE(lbcrypto::SWITCHCKKSRNS);
+CEREAL_REGISTER_TYPE(lbcrypto::CryptoParametersBGVRNS);
+CEREAL_REGISTER_TYPE(lbcrypto::SchemeBGVRNS);
+CEREAL_REGISTER_TYPE(lbcrypto::FHEBGVRNS);
 
-CEREAL_REGISTER_POLYMORPHIC_RELATION(lbcrypto::CryptoParametersRNS, lbcrypto::CryptoParametersCKKSRNS);
-CEREAL_REGISTER_POLYMORPHIC_RELATION(lbcrypto::FHERNS, lbcrypto::FHECKKSRNS);
-CEREAL_REGISTER_POLYMORPHIC_RELATION(lbcrypto::FHERNS, lbcrypto::SWITCHCKKSRNS);
+CEREAL_REGISTER_POLYMORPHIC_RELATION(lbcrypto::FHERNS, lbcrypto::FHEBGVRNS);
+CEREAL_REGISTER_POLYMORPHIC_RELATION(lbcrypto::CryptoParametersRNS, lbcrypto::CryptoParametersBGVRNS);
 
 #endif  // WITH_SERIALIZATION
-
-#endif

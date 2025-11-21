@@ -28,30 +28,18 @@
 // OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //==================================================================================
-// NOTE: this file is not used for now
-#if 0
-/*
-  serialize ckks; include this in any app that needs to serialize this scheme
- */
-
-#ifndef LBCRYPTO_CRYPTO_RNS_SER_H
-#define LBCRYPTO_CRYPTO_RNS_SER_H
 
 #include "config_core.h"
 #if defined(WITH_SERIALIZATION)
 
-#include "schemerns/rns-scheme.h"
-#include "utils/serial.h"
+#include "scheme/bfvrns/bfvrns-scheme.h"
+#include "utils/serial-cereal-headers.h"
 
-CEREAL_REGISTER_TYPE(lbcrypto::CryptoParametersRNS);
-CEREAL_REGISTER_TYPE(lbcrypto::SchemeRNS);
-CEREAL_REGISTER_TYPE(lbcrypto::FHERNS);
+CEREAL_REGISTER_TYPE(lbcrypto::CryptoParametersBFVRNS);
+CEREAL_REGISTER_TYPE(lbcrypto::SchemeBFVRNS);
+CEREAL_REGISTER_TYPE(lbcrypto::FHEBFVRNS);
 
-CEREAL_REGISTER_POLYMORPHIC_RELATION(lbcrypto::FHEBase<DCRTPoly>, lbcrypto::FHERNS);
-CEREAL_REGISTER_POLYMORPHIC_RELATION(lbcrypto::CryptoParametersRLWE<DCRTPoly>, lbcrypto::CryptoParametersRNS);
+CEREAL_REGISTER_POLYMORPHIC_RELATION(lbcrypto::CryptoParametersRNS, lbcrypto::CryptoParametersBFVRNS);
+CEREAL_REGISTER_POLYMORPHIC_RELATION(lbcrypto::FHERNS, lbcrypto::FHEBFVRNS);
 
 #endif  // WITH_SERIALIZATION
-
-#endif
-
-#endif

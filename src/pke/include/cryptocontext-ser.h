@@ -38,9 +38,12 @@
 
 #include "config_core.h"
 #if defined(WITH_SERIALIZATION)
-#include "scheme/ckksrns/ckksrns-ser.h"
-#include "scheme/bgvrns/bgvrns-ser.h"
-#include "scheme/bfvrns/bfvrns-ser.h"
+#include "scheme/ckksrns/ckksrns-scheme.h"
+#include "scheme/bgvrns/bgvrns-scheme.h"
+#include "scheme/bgvrns/bgvrns-fhe.h"
+#include "scheme/bgvrns/bgvrns-cryptoparameters.h"
+#include "scheme/bfvrns/bfvrns-scheme.h"
+#include "utils/serial.h"
 
 #include <map>
 #include <memory>

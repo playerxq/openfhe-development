@@ -28,22 +28,18 @@
 // OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //==================================================================================
-// NOTE: this file is not used for now
-#if 0
-#ifndef LBCRYPTO_CRYPTO_METADATASER_H
-#define LBCRYPTO_CRYPTO_METADATASER_H
 
 #include "config_core.h"
 #if defined(WITH_SERIALIZATION)
 
-#include "metadata.h"
-#include "utils/serial.h"
+#include "ciphertext.h"
+#include "utils/serial-cereal-headers.h"
 
-CEREAL_CLASS_VERSION(lbcrypto::Metadata, lbcrypto::Metadata::SerializedVersion());
-CEREAL_REGISTER_TYPE(lbcrypto::Metadata);
+CEREAL_CLASS_VERSION(lbcrypto::CiphertextImpl<lbcrypto::Poly>,
+                     lbcrypto::CiphertextImpl<lbcrypto::Poly>::SerializedVersion());
+CEREAL_CLASS_VERSION(lbcrypto::CiphertextImpl<lbcrypto::NativePoly>,
+                     lbcrypto::CiphertextImpl<lbcrypto::NativePoly>::SerializedVersion());
+CEREAL_CLASS_VERSION(lbcrypto::CiphertextImpl<lbcrypto::DCRTPoly>,
+                     lbcrypto::CiphertextImpl<lbcrypto::DCRTPoly>::SerializedVersion());
 
 #endif  // WITH_SERIALIZATION
-
-#endif
-
-#endif

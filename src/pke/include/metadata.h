@@ -143,4 +143,6 @@ protected:
 
 }  // end namespace lbcrypto
 
+#include "utils/serial.h"
+
 #endif
