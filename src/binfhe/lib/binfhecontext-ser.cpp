@@ -48,4 +48,6 @@ CEREAL_REGISTER_TYPE(lbcrypto::RingGSWACCKeyImpl);
 CEREAL_REGISTER_TYPE(lbcrypto::BinFHECryptoParams);
 CEREAL_REGISTER_TYPE(lbcrypto::BinFHEContext);
 
+CEREAL_REGISTER_DYNAMIC_INIT(binfhecontext_ser)
+
 #endif // WITH_SERIALIZATION

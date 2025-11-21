@@ -30,7 +30,17 @@
 //==================================================================================
 
 #include "config_core.h"
+#ifdef WITH_SERIALIZATION
+#pragma message("WITH_SERIALIZATION is defined")
+#else
+#pragma message("WITH_SERIALIZATION is NOT defined")
+#endif
 #if defined(WITH_SERIALIZATION)
+
+namespace lbcrypto {
+// function used as a link anchor to force this TU in when another file references it
+void RegisterBFVRNSSerialization() {}
+}
 
 #include "scheme/bfvrns/bfvrns-scheme.h"
 #include "utils/serial-cereal-headers.h"
@@ -41,5 +51,7 @@ CEREAL_REGISTER_TYPE(lbcrypto::FHEBFVRNS);
 
 CEREAL_REGISTER_POLYMORPHIC_RELATION(lbcrypto::CryptoParametersRNS, lbcrypto::CryptoParametersBFVRNS);
 CEREAL_REGISTER_POLYMORPHIC_RELATION(lbcrypto::FHERNS, lbcrypto::FHEBFVRNS);
+
+CEREAL_REGISTER_DYNAMIC_INIT(bfvrns_ser)
 
 #endif  // WITH_SERIALIZATION

@@ -44,6 +44,8 @@ CEREAL_REGISTER_TYPE(lbcrypto::FHERNS);
 CEREAL_REGISTER_POLYMORPHIC_RELATION(lbcrypto::FHEBase<DCRTPoly>, lbcrypto::FHERNS);
 CEREAL_REGISTER_POLYMORPHIC_RELATION(lbcrypto::CryptoParametersRLWE<DCRTPoly>, lbcrypto::CryptoParametersRNS);
 
+CEREAL_REGISTER_DYNAMIC_INIT(rns_ser)
+
 #endif  // WITH_SERIALIZATION
 
 #endif

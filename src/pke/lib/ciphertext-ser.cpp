@@ -42,4 +42,6 @@ CEREAL_CLASS_VERSION(lbcrypto::CiphertextImpl<lbcrypto::NativePoly>,
 CEREAL_CLASS_VERSION(lbcrypto::CiphertextImpl<lbcrypto::DCRTPoly>,
                      lbcrypto::CiphertextImpl<lbcrypto::DCRTPoly>::SerializedVersion());
 
+CEREAL_REGISTER_DYNAMIC_INIT(ciphertext_ser)
+
 #endif  // WITH_SERIALIZATION

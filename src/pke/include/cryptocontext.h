@@ -68,6 +68,17 @@
 
 namespace lbcrypto {
 
+#if defined(WITH_SERIALIZATION)
+    // for serialization:
+    void RegisterBFVRNSSerialization();
+    void RegisterBGVRNSSerialization();
+    void RegisterCKKSRNSSerialization();
+    // the variables below force the linker to pull in the TUs that define the function above, along with the CEREAL_REGISTER_*.
+    [[maybe_unused]] static auto* g_force_bfvrns_serial_anchor  = &lbcrypto::RegisterBFVRNSSerialization;
+    [[maybe_unused]] static auto* g_force_bgvrns_serial_anchor  = &lbcrypto::RegisterBGVRNSSerialization;
+    [[maybe_unused]] static auto* g_force_ckksrns_serial_anchor = &lbcrypto::RegisterCKKSRNSSerialization;
+#endif
+
 /**
  * @class CryptoContextImpl
  * @brief A class to simplify access to OpenFHE's PKE functionality.

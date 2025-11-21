@@ -40,6 +40,8 @@
 CEREAL_CLASS_VERSION(lbcrypto::Metadata, lbcrypto::Metadata::SerializedVersion());
 CEREAL_REGISTER_TYPE(lbcrypto::Metadata);
 
+CEREAL_REGISTER_DYNAMIC_INIT(metadata_ser)
+
 #endif  // WITH_SERIALIZATION
 
 #endif

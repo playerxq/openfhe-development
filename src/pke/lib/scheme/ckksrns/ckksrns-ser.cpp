@@ -32,6 +32,11 @@
 #include "config_core.h"
 #if defined(WITH_SERIALIZATION)
 
+namespace lbcrypto {
+// function used as a link anchor to force this TU in when another file references it
+void RegisterCKKSRNSSerialization() {}
+}
+
 #include "cryptocontext.h"
 #include "scheme/ckksrns/ckksrns-scheme.h"
 #include "utils/serial-cereal-headers.h"
@@ -45,5 +50,7 @@ CEREAL_REGISTER_TYPE(lbcrypto::SWITCHCKKSRNS);
 CEREAL_REGISTER_POLYMORPHIC_RELATION(lbcrypto::CryptoParametersRNS, lbcrypto::CryptoParametersCKKSRNS);
 CEREAL_REGISTER_POLYMORPHIC_RELATION(lbcrypto::FHERNS, lbcrypto::FHECKKSRNS);
 CEREAL_REGISTER_POLYMORPHIC_RELATION(lbcrypto::FHERNS, lbcrypto::SWITCHCKKSRNS);
+
+CEREAL_REGISTER_DYNAMIC_INIT(ckksrns_ser)
 
 #endif  // WITH_SERIALIZATION
