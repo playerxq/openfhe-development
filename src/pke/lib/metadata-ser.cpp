@@ -29,7 +29,7 @@
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //==================================================================================
 // NOTE: this file is not used for now
-#if 0
+// #if 0
 
 #include "config_core.h"
 #if defined(WITH_SERIALIZATION)
@@ -40,8 +40,8 @@
 CEREAL_CLASS_VERSION(lbcrypto::Metadata, lbcrypto::Metadata::SerializedVersion());
 CEREAL_REGISTER_TYPE(lbcrypto::Metadata);
 
-// CEREAL_REGISTER_DYNAMIC_INIT(metadata_ser)
+CEREAL_REGISTER_DYNAMIC_INIT(metadata_ser)
 
 #endif  // WITH_SERIALIZATION
 
-#endif
+// #endif

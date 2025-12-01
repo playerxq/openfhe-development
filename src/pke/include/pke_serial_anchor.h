@@ -32,18 +32,29 @@
 #define __PKE_SERIAL_ANCHOR_H__
 
 #if defined(WITH_SERIALIZATION)
-    namespace lbcrypto {
-        void RegisterRNSSerialization();
-        void RegisterBFVRNSSerialization();
-        void RegisterBGVRNSSerialization();
-        void RegisterCKKSRNSSerialization();
-    }
+    // namespace lbcrypto {
+    //     // void RegisterRNSSerialization();
+    //     void RegisterBFVRNSSerialization();
+    //     void RegisterBGVRNSSerialization();
+    //     void RegisterCKKSRNSSerialization();
+    // }
 
-    // the variables below force the linker to pull in the TUs that define the function above, along with the CEREAL_REGISTER_*.
-    [[maybe_unused]] static auto* g_force_rns_serial_anchor     = &lbcrypto::RegisterRNSSerialization;
-    [[maybe_unused]] static auto* g_force_bfvrns_serial_anchor  = &lbcrypto::RegisterBFVRNSSerialization;
-    [[maybe_unused]] static auto* g_force_bgvrns_serial_anchor  = &lbcrypto::RegisterBGVRNSSerialization;
-    [[maybe_unused]] static auto* g_force_ckksrns_serial_anchor = &lbcrypto::RegisterCKKSRNSSerialization;
+    // // the variables below force the linker to pull in the TUs that define the function above, along with the CEREAL_REGISTER_*.
+    // [[maybe_unused]] static auto* g_force_rns_serial_anchor     = &lbcrypto::RegisterRNSSerialization;
+    // [[maybe_unused]] static auto* g_force_bfvrns_serial_anchor  = &lbcrypto::RegisterBFVRNSSerialization;
+    // [[maybe_unused]] static auto* g_force_bgvrns_serial_anchor  = &lbcrypto::RegisterBGVRNSSerialization;
+    // [[maybe_unused]] static auto* g_force_ckksrns_serial_anchor = &lbcrypto::RegisterCKKSRNSSerialization;
+
+    // Force dynamic init modules, so the linker pulls in the trnslation units that contain
+    // CEREAL_REGISTER_DYNAMIC_INIT(...) for each of these.
+    CEREAL_FORCE_DYNAMIC_INIT(rns_ser)
+    CEREAL_FORCE_DYNAMIC_INIT(bfvrns_ser)
+    CEREAL_FORCE_DYNAMIC_INIT(bgvrns_ser)
+    CEREAL_FORCE_DYNAMIC_INIT(ckksrns_ser)
+    CEREAL_FORCE_DYNAMIC_INIT(ciphertext_ser)
+    CEREAL_FORCE_DYNAMIC_INIT(key_ser)
+    CEREAL_FORCE_DYNAMIC_INIT(metadata_ser)
+    CEREAL_FORCE_DYNAMIC_INIT(base_ser)
 #endif
 
 #endif // __PKE_SERIAL_ANCHOR_H__

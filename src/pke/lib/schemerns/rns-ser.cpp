@@ -33,11 +33,10 @@
 
 #include "config_core.h"
 #if defined(WITH_SERIALIZATION)
-namespace lbcrypto {
-// function used as a link anchor to force this TU in when another file references it
-void RegisterRNSSerialization() {}
-}
-
+// namespace lbcrypto {
+// // function used as a link anchor to force this TU in when another file references it
+// void RegisterRNSSerialization() {}
+// }
 
 #include "schemerns/rns-scheme.h"
 #include "schemerns/rns-fhe.h"
@@ -50,7 +49,7 @@ CEREAL_REGISTER_TYPE(lbcrypto::FHERNS);
 CEREAL_REGISTER_POLYMORPHIC_RELATION(lbcrypto::FHEBase<lbcrypto::DCRTPoly>, lbcrypto::FHERNS);
 CEREAL_REGISTER_POLYMORPHIC_RELATION(lbcrypto::CryptoParametersRLWE<lbcrypto::DCRTPoly>, lbcrypto::CryptoParametersRNS);
 
-// CEREAL_REGISTER_DYNAMIC_INIT(rns_ser)
+CEREAL_REGISTER_DYNAMIC_INIT(rns_ser)
 
 #endif  // WITH_SERIALIZATION
 

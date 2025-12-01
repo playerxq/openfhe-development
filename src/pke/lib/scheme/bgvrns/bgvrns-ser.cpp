@@ -31,11 +31,10 @@
 
 #include "config_core.h"
 #if defined(WITH_SERIALIZATION)
-
-namespace lbcrypto {
-// function used as a link anchor to force this TU in when another file references it
-void RegisterBGVRNSSerialization() {}
-}
+// namespace lbcrypto {
+// // function used as a link anchor to force this TU in when another file references it
+// void RegisterBGVRNSSerialization() {}
+// }
 
 #include "scheme/bgvrns/bgvrns-scheme.h"
 #include "scheme/bgvrns/bgvrns-fhe.h"
@@ -49,6 +48,6 @@ CEREAL_REGISTER_TYPE(lbcrypto::FHEBGVRNS);
 CEREAL_REGISTER_POLYMORPHIC_RELATION(lbcrypto::FHERNS, lbcrypto::FHEBGVRNS);
 CEREAL_REGISTER_POLYMORPHIC_RELATION(lbcrypto::CryptoParametersRNS, lbcrypto::CryptoParametersBGVRNS);
 
-// CEREAL_REGISTER_DYNAMIC_INIT(bgvrns_ser)
+CEREAL_REGISTER_DYNAMIC_INIT(bgvrns_ser)
 
 #endif  // WITH_SERIALIZATION

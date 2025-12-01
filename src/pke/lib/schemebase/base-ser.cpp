@@ -30,12 +30,13 @@
 //==================================================================================
 
 // NOTE: this file is not used for now
-#if 0
+// #if 0
 
 #include "config_core.h"
 #if defined(WITH_SERIALIZATION)
 
-#include "lattice/hal/default/lat-backend-default.h"
+#include "schemebase/rlwe-cryptoparameters.h"
+#include "schemebase/base-scheme.h"
 #include "utils/serial-cereal-headers.h"
 
 extern template class lbcrypto::CryptoParametersBase<lbcrypto::DCRTPoly>;
@@ -52,8 +53,8 @@ CEREAL_REGISTER_TYPE(lbcrypto::FHEBase<lbcrypto::DCRTPoly>);
 CEREAL_REGISTER_POLYMORPHIC_RELATION(lbcrypto::CryptoParametersBase<lbcrypto::DCRTPoly>, lbcrypto::CryptoParametersRLWE<lbcrypto::DCRTPoly>);
 CEREAL_REGISTER_POLYMORPHIC_RELATION(lbcrypto::Serializable, lbcrypto::CryptoParametersBase<lbcrypto::DCRTPoly>);
 
-// CEREAL_REGISTER_DYNAMIC_INIT(base_ser)
+CEREAL_REGISTER_DYNAMIC_INIT(base_ser)
 
 #endif  // WITH_SERIALIZATION
 
-#endif
+// #endif
