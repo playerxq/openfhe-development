@@ -38,6 +38,7 @@
 
 #include "config_core.h"
 #if defined(WITH_SERIALIZATION)
+#include "pke_serial_anchor.h"
 #include "scheme/ckksrns/ckksrns-scheme.h"
 #include "scheme/bgvrns/bgvrns-scheme.h"
 #include "scheme/bgvrns/bgvrns-fhe.h"

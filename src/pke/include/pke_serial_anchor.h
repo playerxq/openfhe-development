@@ -1,7 +1,7 @@
 //==================================================================================
 // BSD 2-Clause License
 //
-// Copyright (c) 2014-2025, NJIT, Duality Technologies Inc. and other contributors
+// Copyright (c) 2014-2022, NJIT, Duality Technologies Inc. and other contributors
 //
 // All rights reserved.
 //
@@ -28,21 +28,21 @@
 // OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //==================================================================================
+#ifndef __PKE_SERIAL_ANCHOR_H__
+#define __PKE_SERIAL_ANCHOR_H__
 
-#include "config_core.h"
 #if defined(WITH_SERIALIZATION)
+    namespace lbcrypto {
+        void RegisterBFVRNSSerialization();
+        void RegisterBGVRNSSerialization();
+        void RegisterCKKSRNSSerialization();
+    }
 
-#include "cryptocontext.h"
-#include "key/evalkeyrelin.h"
+    // the variables below force the linker to pull in the TUs that define the function above, along with the CEREAL_REGISTER_*.
+    [[maybe_unused]] static auto* g_force_bfvrns_serial_anchor  = &lbcrypto::RegisterBFVRNSSerialization;
+    [[maybe_unused]] static auto* g_force_bgvrns_serial_anchor  = &lbcrypto::RegisterBGVRNSSerialization;
+    [[maybe_unused]] static auto* g_force_ckksrns_serial_anchor = &lbcrypto::RegisterCKKSRNSSerialization;
+#endif
 
-#include "utils/serial.h"
+#endif // __PKE_SERIAL_ANCHOR_H__
 
-CEREAL_REGISTER_TYPE(lbcrypto::EvalKeyImpl<lbcrypto::DCRTPoly>);
-CEREAL_REGISTER_TYPE(lbcrypto::EvalKeyRelinImpl<lbcrypto::DCRTPoly>);
-
-CEREAL_REGISTER_POLYMORPHIC_RELATION(lbcrypto::EvalKeyImpl<lbcrypto::DCRTPoly>,
-                                     lbcrypto::EvalKeyRelinImpl<lbcrypto::DCRTPoly>);
-
-// CEREAL_REGISTER_DYNAMIC_INIT(key_ser)
-
-#endif  // WITH_SERIALIZATION
