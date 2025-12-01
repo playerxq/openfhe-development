@@ -29,23 +29,29 @@
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //==================================================================================
 // NOTE: this file is not used for now
-#if 0
+// #if 0
 
 #include "config_core.h"
 #if defined(WITH_SERIALIZATION)
+namespace lbcrypto {
+// function used as a link anchor to force this TU in when another file references it
+void RegisterRNSSerialization() {}
+}
+
 
 #include "schemerns/rns-scheme.h"
+#include "schemerns/rns-fhe.h"
 #include "utils/serial-cereal-headers.h"
 
 CEREAL_REGISTER_TYPE(lbcrypto::CryptoParametersRNS);
 CEREAL_REGISTER_TYPE(lbcrypto::SchemeRNS);
 CEREAL_REGISTER_TYPE(lbcrypto::FHERNS);
 
-CEREAL_REGISTER_POLYMORPHIC_RELATION(lbcrypto::FHEBase<DCRTPoly>, lbcrypto::FHERNS);
-CEREAL_REGISTER_POLYMORPHIC_RELATION(lbcrypto::CryptoParametersRLWE<DCRTPoly>, lbcrypto::CryptoParametersRNS);
+CEREAL_REGISTER_POLYMORPHIC_RELATION(lbcrypto::FHEBase<lbcrypto::DCRTPoly>, lbcrypto::FHERNS);
+CEREAL_REGISTER_POLYMORPHIC_RELATION(lbcrypto::CryptoParametersRLWE<lbcrypto::DCRTPoly>, lbcrypto::CryptoParametersRNS);
 
 // CEREAL_REGISTER_DYNAMIC_INIT(rns_ser)
 
 #endif  // WITH_SERIALIZATION
 
-#endif
+// #endif
