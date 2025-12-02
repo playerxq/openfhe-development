@@ -670,6 +670,7 @@ public:
    */
     Matrix<Element> MultByRandomVector(std::vector<int> ranvec) const;
 
+#if defined(WITH_SERIALIZATION)
     template <class Archive>
     void save(Archive& ar, std::uint32_t const version) const {
         ar(::cereal::make_nvp("d", data));
@@ -689,6 +690,7 @@ public:
 
         // users will need to SetAllocator for any newly deserialized matrix
     }
+#endif
 
     std::string SerializedObjectName() const override {
         return "Matrix";

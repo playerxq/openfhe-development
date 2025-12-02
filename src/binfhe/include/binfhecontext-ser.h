@@ -36,6 +36,8 @@
 #ifndef BINFHE_BINFHECONTEXT_SER_H
 #define BINFHE_BINFHECONTEXT_SER_H
 
+#include "config_core.h"
+#if defined(WITH_SERIALIZATION)
 #include "binfhecontext.h"
 #include "utils/serial.h"
 
@@ -53,3 +55,4 @@ CEREAL_REGISTER_TYPE(lbcrypto::BinFHECryptoParams);
 CEREAL_REGISTER_TYPE(lbcrypto::BinFHEContext);
 
 #endif
+#endif // WITH_SERIALIZATION

@@ -50,6 +50,7 @@ public:
     // SERIALIZATION
     /////////////////////////////////////
 
+#if defined(WITH_SERIALIZATION)
     template <class Archive>
     void save(Archive& ar) const {
         ar(cereal::base_class<AdvancedSHERNS>(this));
@@ -59,6 +60,7 @@ public:
     void load(Archive& ar) {
         ar(cereal::base_class<AdvancedSHERNS>(this));
     }
+#endif
 
     std::string SerializedObjectName() const {
         return "AdvancedSHEBFVRNS";

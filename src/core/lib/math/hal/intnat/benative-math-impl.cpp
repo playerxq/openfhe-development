@@ -83,5 +83,7 @@ template class Matrix<NativeVector>;
 
 }  // namespace lbcrypto
 
+#if defined(WITH_SERIALIZATION)
 CEREAL_CLASS_VERSION(NativeInteger, NativeInteger::SerializedVersion());
 CEREAL_CLASS_VERSION(NativeVector, NativeVector::SerializedVersion());
+#endif

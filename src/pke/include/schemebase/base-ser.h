@@ -33,9 +33,11 @@
   serialize keys; include this in any app that needs to serialize these objects
  */
 
-#ifndef LBCRYPTO_CRYPTO_BASE_SER_H
-#define LBCRYPTO_CRYPTO_BASE_SER_H
+#ifndef __BASE_SER_H__
+#define __BASE_SER_H__
 
+#include "config_core.h"
+#if defined(WITH_SERIALIZATION)
 #include "lattice/hal/default/lat-backend-default.h"
 #include "utils/serial.h"
 
@@ -52,4 +54,6 @@ CEREAL_REGISTER_TYPE(lbcrypto::FHEBase<lbcrypto::DCRTPoly>);
 
 CEREAL_REGISTER_POLYMORPHIC_RELATION(lbcrypto::CryptoParametersBase<lbcrypto::DCRTPoly>, lbcrypto::CryptoParametersRLWE<lbcrypto::DCRTPoly>);
 CEREAL_REGISTER_POLYMORPHIC_RELATION(lbcrypto::Serializable, lbcrypto::CryptoParametersBase<lbcrypto::DCRTPoly>);
-#endif
+
+#endif // WITH_SERIALIZATION
+#endif // __BASE_SER_H__

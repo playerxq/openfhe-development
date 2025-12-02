@@ -33,9 +33,11 @@
   serialize keys; include this in any app that needs to serialize these objects
  */
 
-#ifndef LBCRYPTO_CRYPTO_KEY_KEY_SER_H
-#define LBCRYPTO_CRYPTO_KEY_KEY_SER_H
+#ifndef __KEY_SER_H__
+#define __KEY_SER_H__
 
+#include "config_core.h"
+#if defined(WITH_SERIALIZATION)
 #include "key/evalkeyrelin.h"
 #include "utils/serial.h"
 
@@ -45,4 +47,5 @@ CEREAL_REGISTER_TYPE(lbcrypto::EvalKeyRelinImpl<lbcrypto::DCRTPoly>);
 CEREAL_REGISTER_POLYMORPHIC_RELATION(lbcrypto::EvalKeyImpl<lbcrypto::DCRTPoly>,
                                      lbcrypto::EvalKeyRelinImpl<lbcrypto::DCRTPoly>);
 
-#endif
+#endif // WITH_SERIALIZATION
+#endif // __KEY_SER_H__

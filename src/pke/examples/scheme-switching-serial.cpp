@@ -35,6 +35,8 @@
   2 separate entities
  */
 
+#include "config_core.h"
+#if defined(WITH_SERIALIZATION)
 #include "openfhe.h"
 #include "binfhecontext.h"
 
@@ -289,3 +291,9 @@ int main() {
 
     std::cout << ArgminRes << std::endl;  // EXPECT: 1.0, 0.0, 0.0, 0.0
 }
+#else
+// empty main()
+int main() {
+    return 0;
+}
+#endif // WITH_SERIALIZATION

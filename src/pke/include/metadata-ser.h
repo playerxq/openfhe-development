@@ -29,13 +29,16 @@
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //==================================================================================
 
-#ifndef LBCRYPTO_CRYPTO_METADATASER_H
-#define LBCRYPTO_CRYPTO_METADATASER_H
+#ifndef __METADATA_SER_H__
+#define __METADATA_SER_H__
 
+#include "config_core.h"
+#if defined(WITH_SERIALIZATION)
 #include "metadata.h"
 #include "utils/serial.h"
 
 CEREAL_CLASS_VERSION(lbcrypto::Metadata, lbcrypto::Metadata::SerializedVersion());
 CEREAL_REGISTER_TYPE(lbcrypto::Metadata);
 
-#endif
+#endif // __METADATA_SER_H__
+#endif // __METADATA_SER_H__

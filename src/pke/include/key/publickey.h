@@ -148,6 +148,7 @@ public:
         return !(*this == other);
     }
 
+#if defined(WITH_SERIALIZATION)
     template <class Archive>
     void save(Archive& ar, std::uint32_t const version) const {
         ar(::cereal::base_class<Key<Element>>(this));
@@ -163,6 +164,7 @@ public:
         ar(::cereal::base_class<Key<Element>>(this));
         ar(::cereal::make_nvp("h", m_h));
     }
+#endif
 
     std::string SerializedObjectName() const override {
         return "PublicKey";

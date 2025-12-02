@@ -35,6 +35,8 @@
   2 separate entities
  */
 
+#include "config_core.h"
+#if defined(WITH_SERIALIZATION)
 #include <iomanip>
 #include <tuple>
 #include <unistd.h>
@@ -399,3 +401,9 @@ int main() {
     std::cout << rotRes << std::endl;     // EXPECT: {2, 3, 4, noise, noise}
     std::cout << rotNegRes << std::endl;  // EXPECT: {noise, 1, 2, 3, 4}
 }
+#else
+// empty main()
+int main() {
+    return 0;
+}
+#endif // WITH_SERIALIZATION

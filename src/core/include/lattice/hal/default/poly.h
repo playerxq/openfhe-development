@@ -332,6 +332,7 @@ public:
     std::vector<PolyImpl> BaseDecompose(usint baseBits, bool evalModeAnswer) const override;
     std::vector<PolyImpl> PowersOfBase(usint baseBits) const override;
 
+#if defined(WITH_SERIALIZATION)
     template <class Archive>
     void save(Archive& ar, std::uint32_t const version) const {
         ar(::cereal::make_nvp("v", m_values));
@@ -349,6 +350,7 @@ public:
         ar(::cereal::make_nvp("f", m_format));
         ar(::cereal::make_nvp("p", m_params));
     }
+#endif
 
     static const std::string GetElementName() {
         return "PolyImpl";

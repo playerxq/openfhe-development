@@ -165,6 +165,7 @@ public:
     // SERIALIZATION
     /////////////////////////////////////
 
+#if defined(WITH_SERIALIZATION)
     template <class Archive>
     void save(Archive& ar, std::uint32_t const version) const {
         ar(::cereal::make_nvp("elp", m_params));
@@ -180,6 +181,7 @@ public:
         ar(::cereal::make_nvp("elp", m_params));
         ar(::cereal::make_nvp("enp", m_encodingParams));
     }
+#endif
 
     std::string SerializedObjectName() const override {
         return "CryptoParametersBase";

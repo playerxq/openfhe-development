@@ -451,6 +451,7 @@ public:
         m_thresholdNumOfParties = thresholdNumOfParties;
     }
 
+#if defined(WITH_SERIALIZATION)
     template <class Archive>
     void save(Archive& ar, std::uint32_t const version) const {
         ar(::cereal::base_class<CryptoParametersBase<Element>>(this));
@@ -503,6 +504,7 @@ public:
         m_dgg.SetStd(m_distributionParameter);
         m_dggFlooding.SetStd(m_floodingDistributionParameter);
     }
+#endif
 
     std::string SerializedObjectName() const override {
         return "CryptoParametersRLWE";

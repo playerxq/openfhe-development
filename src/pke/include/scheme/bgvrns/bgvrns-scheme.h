@@ -64,6 +64,7 @@ public:
     // SERIALIZATION
     /////////////////////////////////////
 
+#if defined(WITH_SERIALIZATION)
     template <class Archive>
     void save(Archive& ar, std::uint32_t const version) const {
         ar(cereal::base_class<SchemeRNS>(this));
@@ -73,6 +74,7 @@ public:
     void load(Archive& ar, std::uint32_t const version) {
         ar(cereal::base_class<SchemeRNS>(this));
     }
+#endif
 
     std::string SerializedObjectName() const override {
         return "SchemeBGVRNS";

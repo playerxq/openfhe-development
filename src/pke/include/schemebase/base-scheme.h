@@ -1349,6 +1349,7 @@ public:
         m_SchemeSwitch->SetSwkFC(FHEWtoCKKSswk);
     }
 
+#if defined(WITH_SERIALIZATION)
     template <class Archive>
     void save(Archive& ar, std::uint32_t const version) const {
         // TODO (dsuponit): should we serialize all feature pointers???
@@ -1403,6 +1404,7 @@ public:
         ar(::cereal::make_nvp("enabled", enabled));
         Enable(enabled);
     }
+#endif
 
     virtual std::string SerializedObjectName() const {
         return "SchemeBase";

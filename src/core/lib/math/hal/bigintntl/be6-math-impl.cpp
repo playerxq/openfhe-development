@@ -82,7 +82,9 @@ template class Matrix<M6Vector>;
 
 }  // namespace lbcrypto
 
+#if defined(WITH_SERIALIZATION)
 CEREAL_CLASS_VERSION(M6Integer, M6Integer::SerializedVersion());
 CEREAL_CLASS_VERSION(M6Vector, M6Vector::SerializedVersion());
+#endif
 
 #endif  // WITH_NTL

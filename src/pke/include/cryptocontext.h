@@ -621,6 +621,7 @@ public:
     */
     static void ClearStaticMapsAndVectors();
 
+#if defined(WITH_SERIALIZATION)
     /**
     * @brief Serializes either all EvalMult keys (if keyTag is empty) or the EvalMult keys for keyTag
     *
@@ -692,6 +693,7 @@ public:
         }
         return true;
     }
+#endif
 
     /**
     * @brief Clears the entire EvalMultKey cache
@@ -719,6 +721,7 @@ public:
     */
     static void InsertEvalMultKey(const std::vector<EvalKey<Element>>& evalKeyVec, const std::string& keyTag = "");
 
+#if defined(WITH_SERIALIZATION)
     /**
     * @brief Serializes either all EvalSum keys (if keyTag is empty) or the EvalSum keys for keyTag
     *
@@ -757,6 +760,7 @@ public:
     static bool DeserializeEvalSumKey(std::istream& ser, const ST& sertype) {
         return CryptoContextImpl<Element>::DeserializeEvalAutomorphismKey(ser, sertype);
     }
+#endif
 
     /**
     * @brief Clears the entire EvalSumKey cache
@@ -787,6 +791,7 @@ public:
         CryptoContextImpl<Element>::InsertEvalAutomorphismKey(mapToInsert, keyTag);
     }
 
+#if defined(WITH_SERIALIZATION)
     /**
     * @brief Serializes either all EvalAutomorphism keys (if keyTag is empty) or the EvalAutomorphism keys for keyTag
     *
@@ -918,6 +923,7 @@ public:
         }
         return true;
     }
+#endif
 
     /**
     * @brief Clears the entire EvalAutomorphismKey cache
@@ -3970,6 +3976,7 @@ public:
     */
     static std::set<uint32_t> GetUniqueValues(const std::set<uint32_t>& oldValues, const std::set<uint32_t>& newValues);
 
+#if defined(WITH_SERIALIZATION)
     template <class Archive>
     void save(Archive& ar, std::uint32_t const version) const {
         ar(cereal::make_nvp("cc", m_params));
@@ -3995,6 +4002,7 @@ public:
         // object that's already existing in memory if it DOES exist, use it. If it
         // does NOT exist, add this to the cache of all contexts
     }
+#endif
 
     std::string SerializedObjectName() const override {
         return "CryptoContext";

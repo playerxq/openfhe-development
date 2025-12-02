@@ -99,6 +99,7 @@ public:
         return !(*this == other);
     }
 
+#if defined(WITH_SERIALIZATION)
     template <class Archive>
     void save(Archive& ar, std::uint32_t const version) const {
         ar(::cereal::make_nvp("lweparams", m_LWEParams));
@@ -114,6 +115,7 @@ public:
         ar(::cereal::make_nvp("lweparams", m_LWEParams));
         ar(::cereal::make_nvp("rgswparams", m_RGSWParams));
     }
+#endif
 
     std::string SerializedObjectName() const override {
         return "BinFHECryptoParams";

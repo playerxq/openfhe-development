@@ -34,6 +34,8 @@
   an example of how to use. this in a "client-server" setup
  */
 
+#include "config_core.h"
+#if defined(WITH_SERIALIZATION)
 #include "openfhe.h"
 
 // header files needed for serialization
@@ -311,3 +313,9 @@ int main() {
     std::cout << "Right rotation of #1 by 2: " << plaintextRot4 << std::endl;
     return 0;
 }
+#else
+// empty main()
+int main() {
+    return 0;
+}
+#endif // WITH_SERIALIZATION

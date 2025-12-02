@@ -108,6 +108,7 @@ public:
         }
     }
 
+#if defined(WITH_SERIALIZATION)
     /**
    * save method for serialization
    */
@@ -129,7 +130,7 @@ public:
         ar(cereal::base_class<Metadata>(this));
         ar(cereal::make_nvp("str", m_s));
     }
-
+#endif
     /**
    * This static method retrieves a MetadataTest object
    * from a Ciphertext, and clones it so we can further

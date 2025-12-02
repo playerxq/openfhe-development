@@ -34,6 +34,8 @@
  */
 
 
+#include "config_core.h"
+#if defined(WITH_SERIALIZATION)
 // #define PROFILE
 #define _USE_MATH_DEFINES
 #include "benchmark/benchmark.h"
@@ -122,3 +124,9 @@ void CKKS_serialize(benchmark::State& state) {
 BENCHMARK(CKKS_serialize)->Unit(benchmark::kMicrosecond)->MinTime(10.0);
 
 BENCHMARK_MAIN();
+#else
+// empty main()
+int main() {
+    return 0;
+}
+#endif // WITH_SERIALIZATION

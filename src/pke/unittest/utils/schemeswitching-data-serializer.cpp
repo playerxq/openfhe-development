@@ -28,6 +28,8 @@
 // OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //==================================================================================
+#include "config_core.h"
+#if defined(WITH_SERIALIZATION)
 #include "schemeswitching-data-serializer.h"
 
 #include "ciphertext-ser.h"
@@ -300,3 +302,5 @@ void SchemeSwitchingDataDeserializer::Deserialize() {
 }
 
 }  // namespace lbcrypto
+
+#endif // WITH_SERIALIZATION

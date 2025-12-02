@@ -33,8 +33,11 @@
   helper function to test serialization
  */
 
-#ifndef __UNITTESTSER_H__
-#define __UNITTESTSER_H__
+#ifndef __UNITTEST_SER_H__
+#define __UNITTEST_SER_H__
+
+#include "config_core.h"
+#if defined(WITH_SERIALIZATION)
 
 #include "UnitTestException.h"
 #include "cryptocontext-ser.h"
@@ -102,4 +105,6 @@ void UnitTestContextWithSertype(CryptoContext<Element> cc, const ST& sertype,
     }
 }
 
-#endif  // __UNITTESTSER_H__
+#endif // WITH_SERIALIZATION
+
+#endif  // __UNITTEST_SER_H__
