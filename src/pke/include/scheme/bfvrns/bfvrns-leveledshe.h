@@ -149,6 +149,7 @@ public:
     // SERIALIZATION
     /////////////////////////////////////
 
+#if defined(WITH_SERIALIZATION)
     template <class Archive>
     void save(Archive& ar) const {
         ar(cereal::base_class<LeveledSHERNS>(this));
@@ -158,6 +159,7 @@ public:
     void load(Archive& ar) {
         ar(cereal::base_class<LeveledSHERNS>(this));
     }
+#endif
 
     std::string SerializedObjectName() const {
         return "LeveledSHEBFVRNS";

@@ -182,6 +182,7 @@ public:
         return CryptoObject<Element>::operator==(rhs) && m_AKey == r.m_AKey && m_BKey == r.m_BKey;
     }
 
+#if defined(WITH_SERIALIZATION)
     template <class Archive>
     void save(Archive& ar, std::uint32_t const version) const {
         ar(::cereal::base_class<EvalKeyImpl<Element>>(this));
@@ -199,6 +200,7 @@ public:
         ar(::cereal::make_nvp("ak", m_AKey));
         ar(::cereal::make_nvp("bk", m_BKey));
     }
+#endif
 
     std::string SerializedObjectName() const override {
         return "EvalKeyRelin";

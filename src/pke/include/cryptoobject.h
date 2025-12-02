@@ -99,6 +99,7 @@ public:
         keyTag = tag;
     }
 
+#if defined(WITH_SERIALIZATION)
     template <class Archive>
     void save(Archive& ar, std::uint32_t const version) const {
         ar(::cereal::make_nvp("cc", context));
@@ -114,6 +115,7 @@ public:
         ar(::cereal::make_nvp("kt", keyTag));
         context = CryptoContextFactory<Element>::GetFullContextByDeserializedContext(context);
     }
+#endif
 
     std::string SerializedObjectName() const {
         return "CryptoObject";

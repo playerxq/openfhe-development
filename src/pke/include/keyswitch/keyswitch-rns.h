@@ -58,6 +58,7 @@ public:
     // SERIALIZATION
     /////////////////////////////////////////
 
+#if defined(WITH_SERIALIZATION)
     template <class Archive>
     void save(Archive& ar) const {
         ar(cereal::base_class<KeySwitchBase<DCRTPoly>>(this));
@@ -67,6 +68,7 @@ public:
     void load(Archive& ar) {
         ar(cereal::base_class<KeySwitchBase<DCRTPoly>>(this));
     }
+#endif
 
     virtual std::string SerializedObjectName() const {
         return "KeySwitchRNS";

@@ -97,6 +97,7 @@ public:
     Ciphertext<DCRTPoly> m_precompExp;
     Ciphertext<DCRTPoly> m_precompExpI;
 
+#if defined(WITH_SERIALIZATION)
     template <class Archive>
     void save(Archive& ar) const {
         ar(cereal::make_nvp("dim1_Enc", m_paramsEnc.g));
@@ -114,6 +115,7 @@ public:
         ar(cereal::make_nvp("lEnc", m_paramsEnc.lvlb));
         ar(cereal::make_nvp("lDec", m_paramsDec.lvlb));
     }
+#endif
 };
 
 using namespace std::literals::complex_literals;
@@ -254,6 +256,7 @@ public:
     // SERIALIZATION
     //------------------------------------------------------------------------------
 
+#if defined(WITH_SERIALIZATION)
     template <class Archive>
     void save(Archive& ar) const {
         ar(cereal::base_class<FHERNS>(this));
@@ -267,6 +270,7 @@ public:
         ar(cereal::make_nvp("paramMap", m_bootPrecomMap));
         ar(cereal::make_nvp("corFactor", m_correctionFactor));
     }
+#endif
 
     // To be deprecated; left for backwards compatibility
     static uint32_t GetBootstrapDepth(uint32_t approxModDepth, const std::vector<uint32_t>& levelBudget,

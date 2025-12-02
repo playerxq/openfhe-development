@@ -329,6 +329,7 @@ public:
         return a.Times(b);
     }
 
+#if defined(WITH_SERIALIZATION)
     template <class Archive>
     void save(Archive& ar, std::uint32_t const version) const {
         ar(::cereal::base_class<std::vector<std::complex<double>>>(this));
@@ -344,6 +345,7 @@ public:
         ar(::cereal::base_class<std::vector<std::complex<double>>>(this));
         ar(::cereal::make_nvp("f", format));
     }
+#endif
 
     std::string SerializedObjectName() const override {
         return "Field2n";

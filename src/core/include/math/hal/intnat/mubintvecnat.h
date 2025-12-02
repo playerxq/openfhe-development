@@ -653,6 +653,7 @@ public:
         return os;
     }
 
+#if defined(WITH_SERIALIZATION)
     template <class Archive>
     typename std::enable_if<!cereal::traits::is_text_archive<Archive>::value, void>::type save(
         Archive& ar, std::uint32_t const version) const {
@@ -702,6 +703,7 @@ public:
         ar(::cereal::make_nvp("v", m_data));
         ar(::cereal::make_nvp("m", m_modulus));
     }
+#endif
 
     std::string SerializedObjectName() const override {
         return "NativeVectorT";
@@ -713,6 +715,8 @@ public:
 };
 
 }  // namespace intnat
+
+#if defined(WITH_SERIALIZATION)
 
 namespace cereal {
 
@@ -770,6 +774,8 @@ inline void CEREAL_LOAD_FUNCTION_NAME(Archive& ar, std::vector<intnat::NativeInt
     }
 }
 #endif
+
 }  // namespace cereal
+#endif
 
 #endif  // LBCRYPTO_MATH_HAL_INTNAT_MUBINTVECNAT_H

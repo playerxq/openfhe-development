@@ -78,7 +78,9 @@ template class Matrix<M2Vector>;
 
 }  // namespace lbcrypto
 
+#if defined(WITH_SERIALIZATION)
 CEREAL_CLASS_VERSION(M2Integer, M2Integer::SerializedVersion());
 CEREAL_CLASS_VERSION(M2Vector, M2Vector::SerializedVersion());
+#endif
 
 #endif

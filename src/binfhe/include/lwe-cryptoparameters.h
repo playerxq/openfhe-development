@@ -178,6 +178,7 @@ public:
         return !(*this == other);
     }
 
+#if defined(WITH_SERIALIZATION)
     template <class Archive>
     void save(Archive& ar, std::uint32_t const version) const {
         ar(::cereal::make_nvp("n", m_n));
@@ -210,6 +211,7 @@ public:
         m_ks_dgg.SetStd(sigmaKS);
         ar(::cereal::make_nvp("bKS", m_baseKS));
     }
+#endif
 
     std::string SerializedObjectName() const override {
         return "LWECryptoParams";

@@ -333,6 +333,7 @@ public:
 
     void SwitchModulusAtIndex(size_t index, const Integer& modulus, const Integer& rootOfUnity) override;
 
+#if defined(WITH_SERIALIZATION)
     template <class Archive>
     void save(Archive& ar, std::uint32_t const version) const {
         ar(::cereal::make_nvp("v", m_vectors));
@@ -350,6 +351,7 @@ public:
         ar(::cereal::make_nvp("f", m_format));
         ar(::cereal::make_nvp("p", m_params));
     }
+#endif
 
     static const std::string GetElementName() {
         return "DCRTPolyImpl";

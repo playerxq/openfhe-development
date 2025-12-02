@@ -133,6 +133,7 @@ public:
         return !(*this == other);
     }
 
+#if defined(WITH_SERIALIZATION)
     template <class Archive>
     void save(Archive& ar, std::uint32_t const version) const {
         ar(::cereal::make_nvp("k", m_key));
@@ -146,6 +147,7 @@ public:
         }
         ar(::cereal::make_nvp("k", m_key));
     }
+#endif
 
     std::string SerializedObjectName() const override {
         return "RingGSWACCKey";

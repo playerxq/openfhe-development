@@ -33,6 +33,8 @@
   Example for FHEW with binary serialization
  */
 
+#include "config_core.h"
+#if defined(WITH_SERIALIZATION)
 #include "binfhecontext-ser.h"
 
 using namespace lbcrypto;
@@ -189,3 +191,9 @@ int main() {
 
     return 0;
 }
+#else
+// empty main()
+int main() {
+    return 0;
+}
+#endif // WITH_SERIALIZATION

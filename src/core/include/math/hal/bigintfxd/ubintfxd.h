@@ -1053,6 +1053,7 @@ public:
 
     // SERIALIZATION
 
+#if defined(WITH_SERIALIZATION)
     template <class Archive>
     typename std::enable_if<!cereal::traits::is_text_archive<Archive>::value, void>::type save(
         Archive& ar, std::uint32_t const version) const {
@@ -1088,6 +1089,7 @@ public:
         ar(::cereal::make_nvp("v", m_value));
         ar(::cereal::make_nvp("m", m_MSB));
     }
+#endif
 
     std::string SerializedObjectName() const {
         return "FXDInteger";

@@ -177,6 +177,7 @@ public:
         return !(*this == other);
     }
 
+#if defined(WITH_SERIALIZATION)
     template <class Archive>
     void save(Archive& ar, std::uint32_t const version) const {
         ar(::cereal::make_nvp("bN", m_N));
@@ -212,6 +213,7 @@ public:
 
         PreCompute();
     }
+#endif
 
     std::string SerializedObjectName() const override {
         return "RingGSWCryptoParams";

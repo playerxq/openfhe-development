@@ -1832,6 +1832,7 @@ public:
     // SERIALIZATION
     /////////////////////////////////////
 
+#if defined(WITH_SERIALIZATION)
     template <class Archive>
     void save(Archive& ar, std::uint32_t const version) const {
         ar(cereal::base_class<CryptoParametersRLWE<DCRTPoly>>(this));
@@ -1875,6 +1876,7 @@ public:
         ar(cereal::make_nvp("rws", m_registerWordSize));
         ar(cereal::make_nvp("cdt", m_ckksDataType));
     }
+#endif
 
     std::string SerializedObjectName() const override {
         return "SchemeParametersRNS";

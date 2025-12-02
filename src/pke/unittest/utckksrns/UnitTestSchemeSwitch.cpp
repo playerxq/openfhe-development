@@ -679,6 +679,7 @@ protected:
     void UnitTest_SchemeSwitch_Serialize(const TEST_CASE_UTCKKSRNS_SCHEMESWITCH& testData,
                                          const std::string& failmsg = std::string()) {
         try {
+#if defined(WITH_SERIALIZATION)
             CryptoContextImpl<Element>::ClearEvalMultKeys();
             CryptoContextImpl<Element>::ClearEvalSumKeys();
             CryptoContextImpl<Element>::ClearEvalAutomorphismKeys();
@@ -760,6 +761,7 @@ protected:
             xargminOH[xargmin] = 1;
             checkEquality(ptxtMin->GetCKKSPackedValue(), xargminOH, eps1,
                           failmsg + "Serialization for scheme switching fails.");
+#endif // WITH_SERIALIZATION
         }
         catch (std::exception& e) {
             std::cerr << "Exception thrown from " << __func__ << "(): " << e.what() << std::endl;

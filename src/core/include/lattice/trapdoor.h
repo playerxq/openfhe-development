@@ -69,6 +69,7 @@ public:
 
     RLWETrapdoorPair(const Matrix<Element>& r, const Matrix<Element>& e) : m_r(r), m_e(e) {}
 
+#if defined(WITH_SERIALIZATION)
     template <class Archive>
     void save(Archive& ar, std::uint32_t const version) const {
         ar(CEREAL_NVP(m_r));
@@ -80,6 +81,7 @@ public:
         ar(CEREAL_NVP(m_r));
         ar(CEREAL_NVP(m_e));
     }
+#endif
 };
 
 /**

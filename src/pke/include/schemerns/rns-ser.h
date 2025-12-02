@@ -33,9 +33,11 @@
   serialize ckks; include this in any app that needs to serialize this scheme
  */
 
-#ifndef LBCRYPTO_CRYPTO_RNS_SER_H
-#define LBCRYPTO_CRYPTO_RNS_SER_H
+#ifndef __RNS_SER_H__
+#define __RNS_SER_H__
 
+#include "config_core.h"
+#if defined(WITH_SERIALIZATION)
 #include "schemerns/rns-scheme.h"
 #include "utils/serial.h"
 
@@ -46,4 +48,5 @@ CEREAL_REGISTER_TYPE(lbcrypto::FHERNS);
 CEREAL_REGISTER_POLYMORPHIC_RELATION(lbcrypto::FHEBase<DCRTPoly>, lbcrypto::FHERNS);
 CEREAL_REGISTER_POLYMORPHIC_RELATION(lbcrypto::CryptoParametersRLWE<DCRTPoly>, lbcrypto::CryptoParametersRNS);
 
-#endif
+#endif // WITH_SERIALIZATION
+#endif // __RNS_SER_H__

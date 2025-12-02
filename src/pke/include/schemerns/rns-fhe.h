@@ -56,6 +56,7 @@ public:
     // SERIALIZATION
     /////////////////////////////////////
 
+#if defined(WITH_SERIALIZATION)
     template <class Archive>
     void save(Archive& ar) const {
         ar(cereal::base_class<FHEBase<DCRTPoly>>(this));
@@ -65,6 +66,7 @@ public:
     void load(Archive& ar) {
         ar(cereal::base_class<FHEBase<DCRTPoly>>(this));
     }
+#endif
 
     std::string SerializedObjectName() const {
         return "FHERNS";

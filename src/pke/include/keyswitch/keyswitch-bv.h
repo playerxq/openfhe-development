@@ -94,6 +94,7 @@ public:
     // SERIALIZATION
     /////////////////////////////////////////
 
+#if defined(WITH_SERIALIZATION)
     template <class Archive>
     void save(Archive& ar) const {
         ar(cereal::base_class<KeySwitchRNS>(this));
@@ -103,6 +104,7 @@ public:
     void load(Archive& ar) {
         ar(cereal::base_class<KeySwitchRNS>(this));
     }
+#endif
 
     std::string SerializedObjectName() const override {
         return "KeySwitchBV";

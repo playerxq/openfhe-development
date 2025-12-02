@@ -89,6 +89,7 @@ public:
         return !(*this == other);
     }
 
+#if defined(WITH_SERIALIZATION)
     template <class Archive>
     void save(Archive& ar, std::uint32_t const version) const {
         ar(::cereal::make_nvp("s", m_s));
@@ -103,6 +104,7 @@ public:
 
         ar(::cereal::make_nvp("s", m_s));
     }
+#endif
 
     std::string SerializedObjectName() const override {
         return "LWEPrivateKey";
