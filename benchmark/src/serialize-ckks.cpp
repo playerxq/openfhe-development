@@ -46,7 +46,7 @@
 #include <iterator>
 #include <random>
 
-#include "cryptocontext-ser.h"
+#include "cryptocontext.h"
 #include "ciphertext-ser.h"
 #include "scheme/ckksrns/ckksrns-ser.h"
 #include "scheme/ckksrns/gen-cryptocontext-ckksrns.h"

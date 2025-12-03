@@ -33,7 +33,7 @@
 #define LBCRYPTO_CRYPTO_RLWE_MP_H
 
 #include "ciphertext.h"
-#include "cryptocontext.h"
+#include "cryptocontext-fwd.h"
 #include "key/keypair.h"
 #include "openfhecore.h"
 

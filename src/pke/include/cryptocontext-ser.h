@@ -30,15 +30,13 @@
 //==================================================================================
 
 /*
-  serialize cryptocontext; include this in any app that needs to serialize them
+  serialize cryptocontext; to be included in the end of cryptocontext.h only
  */
 
 #ifndef __CRYPTOCONTEXT_SER_H__
 #define __CRYPTOCONTEXT_SER_H__
 
-#include "config_core.h"
 #if defined(WITH_SERIALIZATION)
-#include "cryptocontext.h"
 #include "scheme/ckksrns/ckksrns-ser.h"
 #include "scheme/bgvrns/bgvrns-ser.h"
 #include "scheme/bfvrns/bfvrns-ser.h"

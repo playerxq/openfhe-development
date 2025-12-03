@@ -4024,4 +4024,6 @@ std::unordered_map<uint32_t, DCRTPoly> CryptoContextImpl<DCRTPoly>::ShareKeys(co
                                                                               const std::string& shareType) const;
 }  // namespace lbcrypto
 
+#include "cryptocontext-ser.h"
+
 #endif /* SRC_PKE_CRYPTOCONTEXT_H_ */

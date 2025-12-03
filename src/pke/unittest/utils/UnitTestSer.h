@@ -40,7 +40,7 @@
 #if defined(WITH_SERIALIZATION)
 
 #include "UnitTestException.h"
-#include "cryptocontext-ser.h"
+#include "cryptocontext.h"
 #include "gtest/gtest.h"
 #include <string>
 #include <iostream>
