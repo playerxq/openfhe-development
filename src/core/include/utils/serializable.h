@@ -58,7 +58,6 @@
 #endif
 
 #include "cereal/cereal.hpp"
-#include "cereal/types/polymorphic.hpp"
 
 #if defined(__GNUC__) && !defined(__clang__)
     #if __GNUC__ >= 8

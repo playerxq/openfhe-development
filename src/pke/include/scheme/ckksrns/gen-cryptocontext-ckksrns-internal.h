@@ -37,7 +37,7 @@
 #define _GEN_CRYPTOCONTEXT_CKKSRNS_INTERNAL_H_
 
 #include "constants.h"
-#include "cryptocontext.h"
+#include "cryptocontext-fwd.h"
 #include "encoding/encodingparams.h"
 #include "scheme/scheme-id.h"
 #include "scheme/scheme-utils.h"
