@@ -40,7 +40,6 @@ BFV implementation. See https://eprint.iacr.org/2021/204 for details.
 #include "scheme/bfvrns/bfvrns-cryptoparameters.h"
 #include "schemebase/base-scheme.h"
 #include "cryptocontext.h"
-#include "ciphertext.h"
 
 #include <algorithm>
 #include <map>

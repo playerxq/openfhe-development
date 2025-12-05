@@ -620,4 +620,6 @@ Ciphertext<Element>& operator*=(Ciphertext<Element>& a, const Ciphertext<Element
 
 }  // namespace lbcrypto
 
+#include "ciphertext-ser.h"
+
 #endif

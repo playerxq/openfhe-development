@@ -30,7 +30,7 @@
 //==================================================================================
 
 /*
-  serialize ciphertexts; include this in any app that needs to serialize them
+  serialize ciphertexts; to be included in the end of ciphertext.h only
  */
 
 #ifndef __CIPHERTEXT_SER_H__
@@ -38,12 +38,7 @@
 
 #include "config_core.h"
 #if defined(WITH_SERIALIZATION)
-#include "ciphertext.h"
 #include "utils/serial.h"
-
-extern template class lbcrypto::CiphertextImpl<lbcrypto::Poly>;
-extern template class lbcrypto::CiphertextImpl<lbcrypto::NativePoly>;
-extern template class lbcrypto::CiphertextImpl<lbcrypto::DCRTPoly>;
 
 CEREAL_CLASS_VERSION(lbcrypto::CiphertextImpl<lbcrypto::Poly>,
                      lbcrypto::CiphertextImpl<lbcrypto::Poly>::SerializedVersion());

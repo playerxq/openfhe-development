@@ -29,7 +29,6 @@
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //==================================================================================
 
-#include "ciphertext.h"
 #include "cryptocontext.h"
 #include "key/evalkeyrelin.h"
 #include "key/privatekey.h"
