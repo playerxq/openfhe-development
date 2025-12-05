@@ -4024,4 +4024,11 @@ std::unordered_map<uint32_t, DCRTPoly> CryptoContextImpl<DCRTPoly>::ShareKeys(co
                                                                               const std::string& shareType) const;
 }  // namespace lbcrypto
 
+#define CRYPTOCONTEXT_H_ALREADY_INCLUDED
+// keep cryptocontext-ser.h included here as there are multiple complaints that there is
+// no indication that cryptocontext-ser.h is missing and CryptoContext objects get
+// serialized/deserialized incorrectly. CRYPTOCONTEXT_H_ALREADY_INCLUDED helps avoid
+// circular dependency in this case
+#include "cryptocontext-ser.h"
+
 #endif /* SRC_PKE_CRYPTOCONTEXT_H_ */

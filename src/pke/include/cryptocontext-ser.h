@@ -38,7 +38,9 @@
 
 #include "config_core.h"
 #if defined(WITH_SERIALIZATION)
-#include "cryptocontext.h"
+#ifndef CRYPTOCONTEXT_H_ALREADY_INCLUDED
+    #include "cryptocontext.h"
+#endif
 #include "scheme/ckksrns/ckksrns-ser.h"
 #include "scheme/bgvrns/bgvrns-ser.h"
 #include "scheme/bfvrns/bfvrns-ser.h"
