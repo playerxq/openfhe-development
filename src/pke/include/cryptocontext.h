@@ -1,7 +1,7 @@
 //==================================================================================
 // BSD 2-Clause License
 //
-// Copyright (c) 2014-2022, NJIT, Duality Technologies Inc. and other contributors
+// Copyright (c) 2014-2025, NJIT, Duality Technologies Inc. and other contributors
 //
 // All rights reserved.
 //
@@ -48,7 +48,6 @@
 #include "schemebase/base-scheme.h"
 #include "schemerns/rns-cryptoparameters.h"
 #include "utils/caller_info.h"
-#include "utils/serial.h"
 #include "utils/type_name.h"
 
 #include <algorithm>
@@ -4023,12 +4022,5 @@ std::unordered_map<uint32_t, DCRTPoly> CryptoContextImpl<DCRTPoly>::ShareKeys(co
                                                                               uint32_t index,
                                                                               const std::string& shareType) const;
 }  // namespace lbcrypto
-
-#define CRYPTOCONTEXT_H_ALREADY_INCLUDED
-// keep cryptocontext-ser.h included here as there are multiple complaints that there is
-// no indication that cryptocontext-ser.h is missing and CryptoContext objects get
-// serialized/deserialized incorrectly. CRYPTOCONTEXT_H_ALREADY_INCLUDED helps avoid
-// circular dependency in this case
-#include "cryptocontext-ser.h"
 
 #endif /* SRC_PKE_CRYPTOCONTEXT_H_ */

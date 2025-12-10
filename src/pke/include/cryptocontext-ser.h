@@ -1,7 +1,7 @@
 //==================================================================================
 // BSD 2-Clause License
 //
-// Copyright (c) 2014-2022, NJIT, Duality Technologies Inc. and other contributors
+// Copyright (c) 2014-2025, NJIT, Duality Technologies Inc. and other contributors
 //
 // All rights reserved.
 //
@@ -38,17 +38,16 @@
 
 #include "config_core.h"
 #if defined(WITH_SERIALIZATION)
-#ifndef CRYPTOCONTEXT_H_ALREADY_INCLUDED
     #include "cryptocontext.h"
-#endif
-#include "scheme/ckksrns/ckksrns-ser.h"
-#include "scheme/bgvrns/bgvrns-ser.h"
-#include "scheme/bfvrns/bfvrns-ser.h"
+    #include "utils/serial.h"
+    #include "scheme/ckksrns/ckksrns-ser.h"
+    #include "scheme/bgvrns/bgvrns-ser.h"
+    #include "scheme/bfvrns/bfvrns-ser.h"
 
-#include <map>
-#include <memory>
-#include <string>
-#include <vector>
+    #include <map>
+    #include <memory>
+    #include <string>
+    #include <vector>
 
 CEREAL_CLASS_VERSION(lbcrypto::CryptoContextImpl<lbcrypto::DCRTPoly>,
                      lbcrypto::CryptoContextImpl<lbcrypto::DCRTPoly>::SerializedVersion());
@@ -57,6 +56,19 @@ CEREAL_CLASS_VERSION(lbcrypto::CryptoContextImpl<lbcrypto::DCRTPoly>,
 // serialize-*.h file
 
 namespace lbcrypto {
+
+namespace internal_cc_traits {
+
+// Enable CryptoContextImpl<Element>
+template <typename Element>
+struct cc_ser_enabled<CryptoContextImpl<Element>> : std::true_type {};
+
+// And shared_ptr<CryptoContextImpl<Element>> (CryptoContext alias)
+template <typename Element>
+struct cc_ser_enabled<std::shared_ptr<CryptoContextImpl<Element>>> : std::true_type {};
+
+}  // namespace internal_cc_traits
+
 // ================================= JSON serialization/deserialization
 namespace Serial {
 /**
@@ -212,6 +224,6 @@ template bool CryptoContextImpl<DCRTPoly>::DeserializeEvalAutomorphismKey<SerTyp
 
 }  // namespace lbcrypto
 
-#endif // WITH_SERIALIZATION
+#endif  // WITH_SERIALIZATION
 
-#endif // __CRYPTOCONTEXT_SER_H__
+#endif  // __CRYPTOCONTEXT_SER_H__
