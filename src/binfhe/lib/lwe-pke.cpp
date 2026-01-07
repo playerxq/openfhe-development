@@ -29,6 +29,7 @@
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //==================================================================================
 
+#include "binfhe-constants.h"
 #include "lwe-pke.h"
 #include "math/binaryuniformgenerator.h"
 #include "math/discreteuniformgenerator.h"
@@ -153,15 +154,79 @@ LWECiphertext LWEEncryptionScheme::EncryptN(const std::shared_ptr<LWECryptoParam
     return ct;
 }
 
+inline NativeInteger LWEEncryptionScheme::ComputeM(ConstLWECiphertext& ctKS, ConstLWECiphertext& ctprime) const {
+    const auto qKS = ctKS->GetModulus();
+    const auto mid = qKS >> 1;
+
+    auto drift = ModSwitch(qKS, ctprime);
+    EvalSubEq(drift, ctKS);
+
+    auto& x = drift->GetA();
+    const uint32_t n = x.GetLength();
+    NativeInteger M = 0;
+    for (uint32_t i = 0; i < n; ++i) {
+        if (x[i] < mid)
+//            M += x[i];
+            M.ModAddFast(x[i], qKS);
+        else
+            M.ModSubFast(x[i], qKS);
+    }
+//    M.ModEq(qKS);
+    return M;
+}
+
+
+LWECiphertext LWEEncryptionScheme::Test1(ConstLWECiphertext& ctKS, LWECiphertext& ctMS2, const std::vector<LWECiphertext>& zeros) const {
+//std::cerr << "XXXXXXXXXXXXXXXXXXXXXXXXXXXXX  TEST 1 XXXXXXXXXXXXXXXXXXXXXX\n";
+//std::cerr << ComputeM(ctKS, ctMS2);
+
+    auto minM = ComputeM(ctKS, ctMS2);
+    auto minC = ctMS2;
+    for (uint32_t i = 0; i < ZERO_POOL_SIZE; ++i) {
+        auto cti = EvalAdd(ctMS2, zeros[i]);
+//std::cerr << ", " << ComputeM(ctKS, cti);
+        auto Mi = ComputeM(ctKS, cti);
+        if (Mi < minM) {
+            minM = Mi;
+            minC = cti;
+        }
+        for (uint32_t j = i + 1; j < ZERO_POOL_SIZE; ++j) {
+            auto ctj = EvalAdd(cti, zeros[j]);
+//std::cerr << ", " << ComputeM(ctKS, ctj);
+            auto Mj = ComputeM(ctKS, ctj);
+            if (Mj < minM) {
+                minM = Mj;
+                minC = ctj;
+            }
+        }
+    }
+//std::cerr << "\n";
+    return minC;
+}
+
+
+
+
+
 // convert ciphertext with modulus Q and dimension N to ciphertext with modulus q and dimension n
 LWECiphertext LWEEncryptionScheme::SwitchCTtoqn(const std::shared_ptr<LWECryptoParams>& params,
                                                 ConstLWESwitchingKey& ksk, ConstLWECiphertext& ct) const {
+
+
     // Modulus switching to a middle step Q'
-    auto ctMS = ModSwitch(params->GetqKS(), ct);
+    auto ctMS1 = ModSwitch(params->GetqKS(), ct);
+
+
+//    auto tmp = Test1(ct, ctMS1, ksk->GetZerosN());
     // Key switching
-    auto ctKS = KeySwitch(params, ksk, ctMS);
+//    auto ctKS = KeySwitch(params, ksk, tmp);
+
+    auto ctKS = KeySwitch(params, ksk, ctMS1);
+
+
     // Modulus switching
-    return ModSwitch(params->Getq(), ctKS);
+    auto ctMS2 = ModSwitch(params->Getq(), ctKS);
+    return Test1(ctKS, ctMS2, ksk->GetZeros());
 }
 
 // classical LWE decryption
@@ -212,6 +277,10 @@ void LWEEncryptionScheme::Decrypt(const std::shared_ptr<LWECryptoParams>& params
         static_cast<double>(*result);
     std::cerr << error * q.ConvertToDouble() / static_cast<double>(p) << std::endl;
 #endif
+}
+
+LWECiphertext LWEEncryptionScheme::EvalAdd(ConstLWECiphertext& ct1, ConstLWECiphertext& ct2) const {
+    return std::make_shared<LWECiphertextImpl>(ct1->GetA().ModAdd(ct2->GetA()), ct1->GetB().ModAddFast(ct2->GetB(), ct1->GetModulus()));
 }
 
 void LWEEncryptionScheme::EvalAddEq(LWECiphertext& ct1, ConstLWECiphertext& ct2) const {
@@ -319,7 +388,19 @@ LWESwitchingKey LWEEncryptionScheme::KeySwitchGen(const std::shared_ptr<LWECrypt
         resultVecA[i] = std::move(vector1A);
         resultVecB[i] = std::move(vector1B);
     }
-    return std::make_shared<LWESwitchingKeyImpl>(std::move(resultVecA), std::move(resultVecB));
+
+    std::vector<LWECiphertext> zeros;
+    zeros.reserve(ZERO_POOL_SIZE);
+    for (uint32_t i = 0; i < ZERO_POOL_SIZE; ++i)
+        zeros.emplace_back(Encrypt(params, sk, 0, 4, params->Getq()));
+
+//    std::vector<LWECiphertext> zerosN;
+//    zerosN.reserve(ZERO_POOL_SIZE);
+//    for (uint32_t i = 0; i < ZERO_POOL_SIZE; ++i)
+//        zerosN.emplace_back(Encrypt(params, skN, 0, 4, params->GetqKS()));
+//    return std::make_shared<LWESwitchingKeyImpl>(std::move(resultVecA), std::move(resultVecB), std::move(zeros), std::move(zerosN));
+
+    return std::make_shared<LWESwitchingKeyImpl>(std::move(resultVecA), std::move(resultVecB), std::move(zeros));
 }
 
 // the key switching operation as described in Section 3 of

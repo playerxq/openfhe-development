@@ -32,8 +32,8 @@
 #ifndef _LWE_KEYSWITCHKEY_H_
 #define _LWE_KEYSWITCHKEY_H_
 
+#include "lwe-ciphertext-fwd.h"
 #include "lwe-keyswitchkey-fwd.h"
-
 #include "math/math-hal.h"
 #include "utils/serializable.h"
 
@@ -55,8 +55,19 @@ public:
         : m_keyA(keyA), m_keyB(keyB) {}
 
     LWESwitchingKeyImpl(std::vector<std::vector<std::vector<NativeVector>>>&& keyA,
-                        std::vector<std::vector<std::vector<NativeInteger>>>&& keyB)
+                        std::vector<std::vector<std::vector<NativeInteger>>>&& keyB) noexcept
         : m_keyA(std::move(keyA)), m_keyB(std::move(keyB)) {}
+
+
+
+
+    LWESwitchingKeyImpl(std::vector<std::vector<std::vector<NativeVector>>>&& keyA,
+                        std::vector<std::vector<std::vector<NativeInteger>>>&& keyB, std::vector<LWECiphertext>&& zeros) noexcept
+        : m_keyA(std::move(keyA)), m_keyB(std::move(keyB)), m_zeros(std::move(zeros)) {}
+//                        std::vector<std::vector<std::vector<NativeInteger>>>&& keyB, std::vector<LWECiphertext>&& zeros, std::vector<LWECiphertext>&& zerosN) noexcept
+//        : m_keyA(std::move(keyA)), m_keyB(std::move(keyB)), m_zeros(std::move(zeros)), m_zerosN(std::move(zerosN)) {}
+
+
 
     LWESwitchingKeyImpl(const LWESwitchingKeyImpl& rhs) : m_keyA(rhs.m_keyA), m_keyB(rhs.m_keyB) {}
 
@@ -91,6 +102,22 @@ public:
         m_keyB = keyB;
     }
 
+
+
+    void SetZeros(std::vector<LWECiphertext>&& zeros) noexcept {
+        m_zeros = std::move(zeros);
+    }
+    const std::vector<LWECiphertext>& GetZeros() const {
+        return m_zeros;
+    }
+//    void SetZerosN(std::vector<LWECiphertext>&& zerosN) noexcept {
+//        m_zerosN = std::move(zerosN);
+//    }
+//    const std::vector<LWECiphertext>& GetZerosN() const {
+//        return m_zerosN;
+//    }
+
+
     bool operator==(const LWESwitchingKeyImpl& other) const {
         return (m_keyA == other.m_keyA && m_keyB == other.m_keyB);
     }
@@ -103,6 +130,7 @@ public:
     void save(Archive& ar, std::uint32_t const version) const {
         ar(::cereal::make_nvp("a", m_keyA));
         ar(::cereal::make_nvp("b", m_keyB));
+        ar(::cereal::make_nvp("z", m_zeros));
     }
 
     template <class Archive>
@@ -114,6 +142,7 @@ public:
 
         ar(::cereal::make_nvp("a", m_keyA));
         ar(::cereal::make_nvp("b", m_keyB));
+        ar(::cereal::make_nvp("z", m_zeros));
     }
 
     std::string SerializedObjectName() const override {
@@ -126,6 +155,8 @@ public:
 private:
     std::vector<std::vector<std::vector<NativeVector>>> m_keyA;
     std::vector<std::vector<std::vector<NativeInteger>>> m_keyB;
+    std::vector<LWECiphertext> m_zeros;
+//    std::vector<LWECiphertext> m_zerosN;
 };
 
 }  // namespace lbcrypto

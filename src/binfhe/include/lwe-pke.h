@@ -133,6 +133,8 @@ public:
     void Decrypt(const std::shared_ptr<LWECryptoParams>& params, ConstLWEPrivateKey& sk, ConstLWECiphertext& ct,
                  LWEPlaintext* result, LWEPlaintextModulus p = 4) const;
 
+    LWECiphertext EvalAdd(ConstLWECiphertext& ct1, ConstLWECiphertext& ct2) const;
+
     /**
    * Adds the second ciphertext to the first ciphertext
    *
@@ -221,6 +223,17 @@ public:
    * @return a shared pointer to the ciphertext
    */
     LWECiphertext NoiselessEmbedding(const std::shared_ptr<LWECryptoParams>& params, LWEPlaintext m) const;
+
+
+
+
+
+
+
+LWECiphertext Test1(ConstLWECiphertext& ctKS, LWECiphertext& ctMS2, const std::vector<LWECiphertext>& zeros) const;
+
+NativeInteger ComputeM(ConstLWECiphertext& ctKS, ConstLWECiphertext& ctprime) const;
+
 };
 
 }  // namespace lbcrypto

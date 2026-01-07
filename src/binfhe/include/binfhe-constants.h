@@ -137,6 +137,8 @@ std::ostream& operator<<(std::ostream& s, KEYGEN_MODE f);
 
 void isMethodCompatible(BINFHE_METHOD m, BINFHE_PARAMSET p);
 
+#define ZERO_POOL_SIZE 32
+
 }  // namespace lbcrypto
 
 #endif  // _BINFHE_CONSTANTS_H_
