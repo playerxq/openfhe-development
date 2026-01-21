@@ -51,7 +51,7 @@ public:
 
     LWECiphertextImpl(const NativeVector& a, NativeInteger b) : m_a(a), m_b(b) {}
 
-    LWECiphertextImpl(NativeVector&& a, NativeInteger b) noexcept : m_a(std::move(a)), m_b(b) {}
+    LWECiphertextImpl(NativeVector&& a, NativeInteger b, NativeInteger p = 4) noexcept : m_a(std::move(a)), m_b(b), m_p(p) {}
 
     LWECiphertextImpl(const LWECiphertextImpl& rhs) : m_a(rhs.m_a), m_b(rhs.m_b) {}
 
@@ -156,9 +156,9 @@ public:
     }
 
 private:
-    NativeVector m_a{};
-    NativeInteger m_b{};
-    NativeInteger m_p = 4;  // pt modulus
+    NativeVector m_a;
+    NativeInteger m_b;
+    NativeInteger m_p = 4;
 };
 
 }  // namespace lbcrypto

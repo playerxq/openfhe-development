@@ -46,7 +46,7 @@ int main() {
     // and HE standard. Other common options are TOY, MEDIUM, STD192, and STD256.
     // MEDIUM corresponds to the level of more than 100 bits for both quantum and
     // classical computer attacks.
-    cc.GenerateBinFHEContext(STD128);
+    cc.GenerateBinFHEContext(LPF_STD128Q);
 
     // Sample Program: Step 2: Key Generation
 
@@ -66,30 +66,36 @@ int main() {
     // By default, freshly encrypted ciphertexts are bootstrapped.
     // If you wish to get a fresh encryption without bootstrapping, write
     // auto   ct1 = cc.Encrypt(sk, 1, LARGE_DIM);
-    auto ct1 = cc.Encrypt(sk, 1);
-    auto ct2 = cc.Encrypt(sk, 1);
+//    auto ct1 = cc.Encrypt(sk, 1);
+//    auto ct2 = cc.Encrypt(sk, 1);
 
     // Sample Program: Step 4: Evaluation
 
     // Compute (1 AND 1) = 1; Other binary gate options are OR, NAND, and NOR
-    auto ctAND1 = cc.EvalBinGate(AND, ct1, ct2);
+//    auto ctAND1 = cc.EvalBinGate(AND, ct1, ct2);
 
     // Compute (NOT 1) = 0
-    auto ct2Not = cc.EvalNOT(ct2);
+//    auto ct2Not = cc.EvalNOT(ct2);
 
     // Compute (1 AND (NOT 1)) = 0
-    auto ctAND2 = cc.EvalBinGate(AND, ct2Not, ct1);
+//    auto ctAND2 = cc.EvalBinGate(AND, ct2Not, ct1);
 
+
+for (uint32_t i = 0; i < 1000; ++i) {
     // Computes OR of the results in ctAND1 and ctAND2 = 1
-    auto ctResult = cc.EvalBinGate(OR, ctAND1, ctAND2);
+    auto ctResult = cc.EvalBinGate(OR, cc.Encrypt(sk, 1), cc.Encrypt(sk, 1));
 
     // Sample Program: Step 5: Decryption
 
-    LWEPlaintext result;
+//    LWEPlaintext result;
 
-    cc.Decrypt(sk, ctResult, &result);
+//    cc.Decrypt(sk, ctResult, &result);
 
-    std::cout << "Result of encrypted computation of (1 AND 1) OR (1 AND (NOT 1)) = " << result << std::endl;
+
+
+}
+
+//    std::cout << "Result of encrypted computation of (1 AND 1) OR (1 AND (NOT 1)) = " << result << std::endl;
 
     return 0;
 }

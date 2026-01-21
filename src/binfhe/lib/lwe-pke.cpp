@@ -36,7 +36,20 @@
 #include "math/ternaryuniformgenerator.h"
 #include "utils/parallel.h"
 
+
+
+
 namespace lbcrypto {
+
+
+static std::vector<LWECiphertext> mm_ct;
+static std::vector<NativeInteger> mm_m;
+
+
+static LWEPrivateKey m_sk;
+static LWEPrivateKey m_skN;
+
+
 
 // the main rounding operation used in ModSwitch (as described in Section 3 of
 // https://eprint.iacr.org/2014/816) The idea is that Round(x) = 0.5 + Floor(x)
@@ -112,9 +125,7 @@ LWECiphertext LWEEncryptionScheme::Encrypt(const std::shared_ptr<LWECryptoParams
     for (uint32_t i = 0; i < n; ++i)
         b += a[i].ModMulFast(s[i], q, mu);
 
-    auto ct = std::make_shared<LWECiphertextImpl>(std::move(a), b.Mod(q));
-    ct->SetptModulus(p);
-    return ct;
+    return std::make_shared<LWECiphertextImpl>(std::move(a), b.Mod(q), p);
 }
 
 // classical public key LWE encryption
@@ -149,14 +160,12 @@ LWECiphertext LWEEncryptionScheme::EncryptN(const std::shared_ptr<LWECryptoParam
     for (uint32_t i = 0; i < N; ++i)
         b.ModAddFastEq(bp[i].ModMulFast(sp[i], q, mu), q);
 
-    auto ct = std::make_shared<LWECiphertextImpl>(std::move(a), b);
-    ct->SetptModulus(p);
-    return ct;
+    return std::make_shared<LWECiphertextImpl>(std::move(a), b, p);
 }
 
 inline NativeInteger LWEEncryptionScheme::ComputeM(ConstLWECiphertext& ctKS, ConstLWECiphertext& ctprime) const {
     const auto qKS = ctKS->GetModulus();
-    const auto mid = qKS >> 1;
+//    const auto mid = qKS >> 1;
 
     auto drift = ModSwitch(qKS, ctprime);
     EvalSubEq(drift, ctKS);
@@ -164,49 +173,80 @@ inline NativeInteger LWEEncryptionScheme::ComputeM(ConstLWECiphertext& ctKS, Con
     auto& x = drift->GetA();
     const uint32_t n = x.GetLength();
     NativeInteger M = 0;
+
+/*
     for (uint32_t i = 0; i < n; ++i) {
         if (x[i] < mid)
-//            M += x[i];
-            M.ModAddFast(x[i], qKS);
+            M += x[i];
         else
-            M.ModSubFast(x[i], qKS);
+            M += (qKS - x[i]);
     }
-//    M.ModEq(qKS);
+*/
+
+    for (uint32_t i = 0; i < n; ++i) {
+        M += x[i].ModMul(x[i], qKS);
+    }
+
     return M;
+//    return ((drift->GetB() < mid) ? drift->GetB() + M : (qKS - drift->GetB()) + M).ModEq(qKS);
 }
 
 
 LWECiphertext LWEEncryptionScheme::Test1(ConstLWECiphertext& ctKS, LWECiphertext& ctMS2, const std::vector<LWECiphertext>& zeros) const {
-//std::cerr << "XXXXXXXXXXXXXXXXXXXXXXXXXXXXX  TEST 1 XXXXXXXXXXXXXXXXXXXXXX\n";
-//std::cerr << ComputeM(ctKS, ctMS2);
+
+// std::cout << "=======================================================\n";
 
     auto minM = ComputeM(ctKS, ctMS2);
     auto minC = ctMS2;
+
+
+mm_ct.clear();
+mm_ct.push_back(ctMS2);
+mm_m.clear();
+mm_m.push_back(minM);
+
     for (uint32_t i = 0; i < ZERO_POOL_SIZE; ++i) {
-        auto cti = EvalAdd(ctMS2, zeros[i]);
-//std::cerr << ", " << ComputeM(ctKS, cti);
-        auto Mi = ComputeM(ctKS, cti);
+//        auto cti = EvalAdd(ctMS2, zeros[i]);
+//        auto Mi = ComputeM(ctKS, cti);
+//        if (Mi < minM) {
+//            minM = Mi;
+//            minC = cti;
+//        }
+
+        auto cti = EvalAdd(ctKS, zeros[i]);
+        auto ctii = ModSwitch(ctMS2->GetModulus(), cti);
+        auto Mi = ComputeM(cti, ctii);
         if (Mi < minM) {
             minM = Mi;
-            minC = cti;
+            minC = ctii;
         }
+
+mm_ct.push_back(ctii);
+mm_m.push_back(Mi);
+
         for (uint32_t j = i + 1; j < ZERO_POOL_SIZE; ++j) {
-            auto ctj = EvalAdd(cti, zeros[j]);
-//std::cerr << ", " << ComputeM(ctKS, ctj);
-            auto Mj = ComputeM(ctKS, ctj);
+//            auto ctj = EvalAdd(cti, zeros[j]);
+//            auto Mj = ComputeM(ctKS, ctj);
+//            if (Mj < minM) {
+//                minM = Mj;
+//                minC = ctj;
+//            }
+
+            auto ctj = EvalAdd(cti, zeros[i]);
+            auto ctjj = ModSwitch(ctMS2->GetModulus(), ctj);
+            auto Mj = ComputeM(ctj, ctjj);
             if (Mj < minM) {
                 minM = Mj;
-                minC = ctj;
+                minC = ctjj;
             }
+
+mm_ct.push_back(ctjj);
+mm_m.push_back(Mj);
+
         }
     }
-//std::cerr << "\n";
     return minC;
 }
-
-
-
-
 
 // convert ciphertext with modulus Q and dimension N to ciphertext with modulus q and dimension n
 LWECiphertext LWEEncryptionScheme::SwitchCTtoqn(const std::shared_ptr<LWECryptoParams>& params,
@@ -216,17 +256,32 @@ LWECiphertext LWEEncryptionScheme::SwitchCTtoqn(const std::shared_ptr<LWECryptoP
     // Modulus switching to a middle step Q'
     auto ctMS1 = ModSwitch(params->GetqKS(), ct);
 
+std::cout << "\nctMS1, ";
 
-//    auto tmp = Test1(ct, ctMS1, ksk->GetZerosN());
+LWEPlaintext result;
+Decrypt(params, m_skN, ctMS1, &result, 4);
+
     // Key switching
-//    auto ctKS = KeySwitch(params, ksk, tmp);
-
     auto ctKS = KeySwitch(params, ksk, ctMS1);
 
+std::cout << ", ctKS, ";
+Decrypt(params, m_sk, ctKS, &result, 4);
 
     // Modulus switching
     auto ctMS2 = ModSwitch(params->Getq(), ctKS);
-    return Test1(ctKS, ctMS2, ksk->GetZeros());
+
+std::cout << ", ctMS2, ";
+Decrypt(params, m_sk, ctMS2, &result, 4);
+
+    auto ctT = Test1(ctKS, ctMS2, ksk->GetZeros());
+
+std::cout << ", ctT, ";
+Decrypt(params, m_sk, ctT, &result, 4);
+
+    return ctT;
+//    return Test1(ctKS, ctMS2, ksk->GetZeros());
+//    return ctMS2;
+
 }
 
 // classical LWE decryption
@@ -271,12 +326,73 @@ void LWEEncryptionScheme::Decrypt(const std::shared_ptr<LWECryptoParams>& params
 
     *result = ((NativeInteger(p) * r) / q).ConvertToInt();
 
-#if defined(WITH_NOISE_DEBUG)
+//#if defined(WITH_NOISE_DEBUG)
     double error =
         (static_cast<double>(p) * (r.ConvertToDouble() - q.ConvertToDouble() / (p * 2))) / q.ConvertToDouble() -
         static_cast<double>(*result);
-    std::cerr << error * q.ConvertToDouble() / static_cast<double>(p) << std::endl;
-#endif
+//    std::cerr << error * q.ConvertToDouble() / static_cast<double>(p) << std::endl;
+    std::cout << error * q.ConvertToDouble() / static_cast<double>(p) << ", ";
+//#endif
+
+
+//std::cout << q << " " << a.GetLength() << " | " << s.GetModulus() << " " << n << "\n";
+
+/*
+
+uint32_t size = mm_ct.size();
+
+    std::vector<unsigned> ii(size);
+    std::iota(ii.begin(), ii.end(), 0);
+
+    // 2. Sort the index vector using a lambda that compares values in the original vector 'v'
+    std::sort(ii.begin(), ii.end(),
+              [&](unsigned i, unsigned j){ return mm_m[i] < mm_m[j]; });
+
+
+ii.push_back(0);
+
+
+for (uint32_t i = 0; i <= size; ++i) {
+//for (uint32_t i = 0; i <= size; i += size) {
+
+    auto q = mm_ct[ii[i]]->GetModulus();
+    if (q % (p * 2) != 0 && q.ConvertToInt() & (1 == 0))
+        OPENFHE_THROW("plaintext modulus p*2 must divide ciphertext modulus q");
+
+    const auto& a = mm_ct[ii[i]]->GetA();
+    auto s        = sk->GetElement();
+    uint32_t n    = s.GetLength();
+    auto mu       = q.ComputeMu();
+    s.SwitchModulus(q);
+    NativeInteger inner(0);
+    for (uint32_t i = 0; i < n; ++i) {
+        inner += a[i].ModMulFast(s[i], q, mu);
+    }
+    inner.ModEq(q);
+
+    NativeInteger r = mm_ct[ii[i]]->GetB();
+
+    r.ModSubFastEq(inner, q);
+
+    // Alternatively, rounding can be done as
+    // *result = (r.MultiplyAndRound(NativeInteger(4),q)).ConvertToInt();
+    // But the method below is a more efficient way of doing the rounding
+    // the idea is that Round(4/q x) = q/8 + Floor(4/q x)
+    r.ModAddFastEq((q / (p * 2)), q);
+
+    LWEPlaintext result = ((NativeInteger(p) * r) / q).ConvertToInt();
+
+    double error =
+        (static_cast<double>(p) * (r.ConvertToDouble() - q.ConvertToDouble() / (p * 2))) / q.ConvertToDouble() -
+        static_cast<double>(result);
+
+
+    std::cout << "Decrypt: " << mm_m[ii[i]] << " " << error * q.ConvertToDouble() / static_cast<double>(p) << "\n";
+//    std::cout << error * q.ConvertToDouble() / static_cast<double>(p) << ", ";
+}
+std::cout << "\n";
+*/
+
 }
 
 LWECiphertext LWEEncryptionScheme::EvalAdd(ConstLWECiphertext& ct1, ConstLWECiphertext& ct2) const {
@@ -389,18 +505,24 @@ LWESwitchingKey LWEEncryptionScheme::KeySwitchGen(const std::shared_ptr<LWECrypt
         resultVecB[i] = std::move(vector1B);
     }
 
+    m_sk = std::make_shared<LWEPrivateKeyImpl>(*sk);
+    m_skN = std::make_shared<LWEPrivateKeyImpl>(*skN);
+
     std::vector<LWECiphertext> zeros;
     zeros.reserve(ZERO_POOL_SIZE);
-    for (uint32_t i = 0; i < ZERO_POOL_SIZE; ++i)
-        zeros.emplace_back(Encrypt(params, sk, 0, 4, params->Getq()));
-
-//    std::vector<LWECiphertext> zerosN;
-//    zerosN.reserve(ZERO_POOL_SIZE);
-//    for (uint32_t i = 0; i < ZERO_POOL_SIZE; ++i)
-//        zerosN.emplace_back(Encrypt(params, skN, 0, 4, params->GetqKS()));
-//    return std::make_shared<LWESwitchingKeyImpl>(std::move(resultVecA), std::move(resultVecB), std::move(zeros), std::move(zerosN));
+    for (uint32_t i = 0; i < ZERO_POOL_SIZE; ++i) {
+        zeros.emplace_back(Encrypt(params, sk, 0, 4, params->GetqKS()));
+    }
 
     return std::make_shared<LWESwitchingKeyImpl>(std::move(resultVecA), std::move(resultVecB), std::move(zeros));
+
+/*
+    std::vector<LWECiphertext> zerosN;
+    zerosN.reserve(ZERO_POOL_SIZE);
+    for (uint32_t i = 0; i < ZERO_POOL_SIZE; ++i)
+        zerosN.emplace_back(Encrypt(params, skN, 0, 4, params->GetqKS()));
+    return std::make_shared<LWESwitchingKeyImpl>(std::move(resultVecA), std::move(resultVecB), std::move(zeros), std::move(zerosN));
+*/
 }
 
 // the key switching operation as described in Section 3 of
