@@ -53,6 +53,12 @@
 #include <utility>
 #include <vector>
 
+#include <algorithm>
+#include <execution>
+#include <numeric>
+
+//#include <oneapi/tbb/task_arena.h>
+
 namespace lbcrypto {
 
 template <typename VecType>
@@ -129,10 +135,21 @@ public:
     DCRTPolyType& operator-=(const Integer& rhs) override;
     DCRTPolyType& operator-=(const NativeInteger& rhs) override;
     DCRTPolyType& operator*=(const DCRTPolyType& rhs) override {
-        size_t size{m_vectors.size()};
-#pragma omp parallel for num_threads(OpenFHEParallelControls.GetThreadLimit(size))
-        for (size_t i = 0; i < size; ++i)
-            m_vectors[i] *= rhs.m_vectors[i];
+        //        size_t size{m_vectors.size()};
+        //#pragma omp parallel for num_threads(OpenFHEParallelControls.GetThreadLimit(size))
+        //        for (size_t i = 0; i < size; ++i)
+        //            m_vectors[i] *= rhs.m_vectors[i];
+
+        //    tbb::task_arena limited_arena(m_vectors.size());
+
+        //    std::vector<uint32_t> ii(m_vectors.size());
+        //    std::iota(ii.begin(), ii.end(), 0);
+
+        //    limited_arena.execute([&] {
+        std::for_each_n(std::execution::par_unseq, OpenFHEParallelControls.Getii().begin(), m_vectors.size(),
+                        [&](uint32_t i) { m_vectors[i] *= rhs.m_vectors[i]; });
+        //    });
+
         return *this;
     }
     DCRTPolyType& operator*=(const Integer& rhs) override;
@@ -161,9 +178,13 @@ public:
         if (m_vectors[0].GetModulus() != rhs.m_vectors[0].GetModulus())
             OPENFHE_THROW("Modulus mismatch");
         DCRTPolyType tmp(m_params, m_format);
-#pragma omp parallel for num_threads(OpenFHEParallelControls.GetThreadLimit(size))
-        for (size_t i = 0; i < size; ++i)
-            tmp.m_vectors[i] = m_vectors[i].PlusNoCheck(rhs.m_vectors[i]);
+        //#pragma omp parallel for num_threads(OpenFHEParallelControls.GetThreadLimit(size))
+        //        for (size_t i = 0; i < size; ++i)
+        //            tmp.m_vectors[i] = m_vectors[i].PlusNoCheck(rhs.m_vectors[i]);
+
+        std::for_each_n(std::execution::par_unseq, OpenFHEParallelControls.Getii().begin(), m_vectors.size(),
+                        [&](uint32_t i) { tmp.m_vectors[i] = m_vectors[i].PlusNoCheck(rhs.m_vectors[i]); });
+
         return tmp;
     }
 
@@ -182,9 +203,13 @@ public:
         if (m_vectors[0].GetModulus() != rhs.m_vectors[0].GetModulus())
             OPENFHE_THROW("Modulus mismatch");
         DCRTPolyType tmp(m_params, m_format);
-#pragma omp parallel for num_threads(OpenFHEParallelControls.GetThreadLimit(size))
-        for (size_t i = 0; i < size; ++i)
-            tmp.m_vectors[i] = m_vectors[i].TimesNoCheck(rhs.m_vectors[i]);
+        //#pragma omp parallel for num_threads(OpenFHEParallelControls.GetThreadLimit(size))
+        //        for (size_t i = 0; i < size; ++i)
+        //            tmp.m_vectors[i] = m_vectors[i].TimesNoCheck(rhs.m_vectors[i]);
+
+        std::for_each_n(std::execution::par_unseq, OpenFHEParallelControls.Getii().begin(), m_vectors.size(),
+                        [&](uint32_t i) { tmp.m_vectors[i] = m_vectors[i].TimesNoCheck(rhs.m_vectors[i]); });
+
         return tmp;
     }
     DCRTPolyType Times(const Integer& rhs) const override;

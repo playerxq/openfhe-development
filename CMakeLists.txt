@@ -79,7 +79,7 @@ else()
     option(BUILD_UNITTESTS "Set to ON to build unit tests for the library"             ON  )
     option(BUILD_EXAMPLES "Set to ON to build examples for the library"                ON  )
     option(BUILD_BENCHMARKS "Set to ON to build benchmarks for the library"            ON  )
-    option(WITH_OPENMP "Use OpenMP to enable <omp.h>"                                  ON  )
+    option(WITH_OPENMP "Use OpenMP to enable <omp.h>"                                  OFF  )
 endif()
 
 option(BUILD_EXTRAS "Set to ON to build extras for the library"                        OFF )
@@ -88,7 +88,7 @@ option(WITH_BE2 "Include MATHBACKEND 2 in build by setting WITH_BE2 to ON"      
 option(WITH_BE4 "Include MATHBACKEND 4 in build by setting WITH_BE4 to ON"             OFF )
 option(WITH_NTL "Include MATHBACKEND 6 and NTL in build by setting WITH_NTL to ON"     OFF )
 option(WITH_TCM "Activate tcmalloc by setting WITH_TCM to ON"                          OFF )
-option(WITH_NATIVEOPT "Use machine-specific optimizations"                             OFF )
+option(WITH_NATIVEOPT "Use machine-specific optimizations"                             ON )
 option(WITH_COVTEST "Turn on to enable coverage testing (can be used with g++ only)"   OFF )
 option(WITH_NOISE_DEBUG "Use only when running lattice estimator; not for production"  OFF )
 option(WITH_REDUCED_NOISE "Enable reduced noise within HKS and BFV HPSPOVERQ modes"    OFF )
@@ -159,8 +159,8 @@ if("${isSystemDir}" STREQUAL "-1")
 endif("${isSystemDir}" STREQUAL "-1")
 
 # Compiler flags
-set(C_COMPILE_FLAGS "-Wall -Werror -DOPENFHE_VERSION=${OPENFHE_VERSION}")
-set(CXX_COMPILE_FLAGS "-Wall -Werror -DOPENFHE_VERSION=${OPENFHE_VERSION}")
+set(C_COMPILE_FLAGS "-Wall -Werror -DOPENFHE_VERSION=${OPENFHE_VERSION} -fexperimental-library")
+set(CXX_COMPILE_FLAGS "-Wall -Werror -DOPENFHE_VERSION=${OPENFHE_VERSION} -fexperimental-library")
 if(WITH_NATIVEOPT)
     string(APPEND C_COMPILE_FLAGS " -march=native")
     string(APPEND CXX_COMPILE_FLAGS " -march=native")
@@ -222,6 +222,13 @@ if(UNIX AND NOT APPLE AND "${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
     # In order to ensure that OpenFHE can dynamically load shared objects at runtime, add an additional library:
     set(ADDITIONAL_LIBS "-ldl")
 endif()
+
+
+
+
+
+
+
 
 if(BUILD_STATIC)
     set(OpenFHE_STATIC_LIBS OPENFHEcore_static OPENFHEpke_static OPENFHEbinfhe_static)
@@ -503,6 +510,18 @@ else()  # WITH_OPENMP == OFF
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wno-unknown-pragmas")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-unknown-pragmas")
 endif()
+
+
+
+
+
+
+
+
+
+find_package(TBB REQUIRED)
+string(APPEND ADDITIONAL_LIBS "TBB::tbb")
+
 
 #--------------------------------------------------------------------
 # Pthreads logic (only for Google benchmark)

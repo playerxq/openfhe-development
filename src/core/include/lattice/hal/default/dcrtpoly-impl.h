@@ -236,17 +236,21 @@ std::vector<DCRTPolyImpl<VecType>> DCRTPolyImpl<VecType>::CRTDecompose(uint32_t 
 
     if (baseBits == 0) {
         std::vector<DCRTPolyType> result(size, *eval);
-#pragma omp parallel for num_threads(OpenFHEParallelControls.GetThreadLimit(size))
-        for (uint32_t i = 0; i < size; ++i) {
-            for (uint32_t k = 0; k < size; ++k) {
-                if (i != k) {
-                    DCRTPolyImpl::PolyType tmp((*coef).m_vectors[i]);
-                    tmp.SwitchModulus((*coef).m_vectors[k].GetModulus(), (*coef).m_vectors[k].GetRootOfUnity(), 0, 0);
-                    tmp.SetFormat(Format::EVALUATION);
-                    result[i].m_vectors[k] = std::move(tmp);
-                }
-            }
-        }
+        //#pragma omp parallel for num_threads(OpenFHEParallelControls.GetThreadLimit(size))
+        //        for (uint32_t i = 0; i < size; ++i) {
+
+        std::for_each_n(std::execution::par_unseq, OpenFHEParallelControls.Getii().begin(), m_vectors.size(),
+                        [&](uint32_t i) {
+                            for (uint32_t k = 0; k < size; ++k) {
+                                if (i != k) {
+                                    DCRTPolyImpl::PolyType tmp((*coef).m_vectors[i]);
+                                    tmp.SwitchModulus((*coef).m_vectors[k].GetModulus(),
+                                                      (*coef).m_vectors[k].GetRootOfUnity(), 0, 0);
+                                    tmp.SetFormat(Format::EVALUATION);
+                                    result[i].m_vectors[k] = std::move(tmp);
+                                }
+                            }
+                        });
         return result;
     }
 
@@ -264,22 +268,26 @@ std::vector<DCRTPolyImpl<VecType>> DCRTPolyImpl<VecType>::CRTDecompose(uint32_t 
     }
     std::vector<DCRTPolyType> result(nWindows);
 
-#pragma omp parallel for num_threads(OpenFHEParallelControls.GetThreadLimit(size))
-    for (uint32_t i = 0; i < size; ++i) {
-        auto decomposed               = (*coef).m_vectors[i].BaseDecompose(baseBits, false);
-        const uint32_t decomposedsize = decomposed.size();
-        for (uint32_t j = 0; j < decomposedsize; ++j) {
-            DCRTPolyImpl<VecType> currentDCRTPoly(*coef);
-            for (uint32_t k = 0; k < size; ++k) {
-                DCRTPolyImpl::PolyType tmp(decomposed[j]);
-                if (i != k)
-                    tmp.SwitchModulus((*coef).m_vectors[k].GetModulus(), (*coef).m_vectors[k].GetRootOfUnity(), 0, 0);
-                currentDCRTPoly.m_vectors[k] = std::move(tmp);
-            }
-            currentDCRTPoly.SwitchFormat();
-            result[j + arrWindows[i]] = std::move(currentDCRTPoly);
-        }
-    }
+    //#pragma omp parallel for num_threads(OpenFHEParallelControls.GetThreadLimit(size))
+    //    for (uint32_t i = 0; i < size; ++i) {
+
+    std::for_each_n(std::execution::par_unseq, OpenFHEParallelControls.Getii().begin(), m_vectors.size(),
+                    [&](uint32_t i) {
+                        auto decomposed               = (*coef).m_vectors[i].BaseDecompose(baseBits, false);
+                        const uint32_t decomposedsize = decomposed.size();
+                        for (uint32_t j = 0; j < decomposedsize; ++j) {
+                            DCRTPolyImpl<VecType> currentDCRTPoly(*coef);
+                            for (uint32_t k = 0; k < size; ++k) {
+                                DCRTPolyImpl::PolyType tmp(decomposed[j]);
+                                if (i != k)
+                                    tmp.SwitchModulus((*coef).m_vectors[k].GetModulus(),
+                                                      (*coef).m_vectors[k].GetRootOfUnity(), 0, 0);
+                                currentDCRTPoly.m_vectors[k] = std::move(tmp);
+                            }
+                            currentDCRTPoly.SwitchFormat();
+                            result[j + arrWindows[i]] = std::move(currentDCRTPoly);
+                        }
+                    });
     return result;
 }
 
@@ -346,10 +354,11 @@ DCRTPolyImpl<VecType> DCRTPolyImpl<VecType>::MultiplicativeInverse() const {
 template <typename VecType>
 DCRTPolyImpl<VecType> DCRTPolyImpl<VecType>::Negate() const {
     DCRTPolyImpl<VecType> tmp(m_params, m_format);
-    uint32_t size(m_vectors.size());
-#pragma omp parallel for num_threads(OpenFHEParallelControls.GetThreadLimit(size))
-    for (uint32_t i = 0; i < size; ++i)
-        tmp.m_vectors[i] = m_vectors[i].Negate();
+    //    uint32_t size(m_vectors.size());
+    //#pragma omp parallel for num_threads(OpenFHEParallelControls.GetThreadLimit(size))
+    //    for (uint32_t i = 0; i < size; ++i)
+    std::for_each_n(std::execution::par_unseq, OpenFHEParallelControls.Getii().begin(), m_vectors.size(),
+                    [&](uint32_t i) { tmp.m_vectors[i] = m_vectors[i].Negate(); });
     return tmp;
 }
 
@@ -363,66 +372,74 @@ DCRTPolyImpl<VecType> DCRTPolyImpl<VecType>::Minus(const DCRTPolyImpl& rhs) cons
     if (m_vectors.size() != rhs.m_vectors.size())
         OPENFHE_THROW("tower size mismatch; cannot subtract");
     DCRTPolyImpl<VecType> tmp(m_params, m_format);
-    uint32_t size(m_vectors.size());
-#pragma omp parallel for num_threads(OpenFHEParallelControls.GetThreadLimit(size))
-    for (uint32_t i = 0; i < size; ++i)
-        tmp.m_vectors[i] = m_vectors[i].Minus(rhs.m_vectors[i]);
+    //    uint32_t size(m_vectors.size());
+    //#pragma omp parallel for num_threads(OpenFHEParallelControls.GetThreadLimit(size))
+    //    for (uint32_t i = 0; i < size; ++i)
+    std::for_each_n(std::execution::par_unseq, OpenFHEParallelControls.Getii().begin(), m_vectors.size(),
+                    [&](uint32_t i) { tmp.m_vectors[i] = m_vectors[i].Minus(rhs.m_vectors[i]); });
     return tmp;
 }
 
 template <typename VecType>
 DCRTPolyImpl<VecType>& DCRTPolyImpl<VecType>::operator+=(const DCRTPolyImpl& rhs) {
-    uint32_t size(m_vectors.size());
-#pragma omp parallel for num_threads(OpenFHEParallelControls.GetThreadLimit(size))
-    for (uint32_t i = 0; i < size; ++i)
-        m_vectors[i] += rhs.m_vectors[i];
+    //    uint32_t size(m_vectors.size());
+    //#pragma omp parallel for num_threads(OpenFHEParallelControls.GetThreadLimit(size))
+    //    for (uint32_t i = 0; i < size; ++i)
+    std::for_each_n(std::execution::par_unseq, OpenFHEParallelControls.Getii().begin(), m_vectors.size(),
+                    [&](uint32_t i) { m_vectors[i] += rhs.m_vectors[i]; });
     return *this;
 }
 
 template <typename VecType>
 DCRTPolyImpl<VecType>& DCRTPolyImpl<VecType>::operator+=(const Integer& rhs) {
     NativeInteger val{rhs};
-    uint32_t size(m_vectors.size());
-#pragma omp parallel for num_threads(OpenFHEParallelControls.GetThreadLimit(size))
-    for (uint32_t i = 0; i < size; ++i)
-        m_vectors[i] += val;
+    //    uint32_t size(m_vectors.size());
+    //#pragma omp parallel for num_threads(OpenFHEParallelControls.GetThreadLimit(size))
+    //    for (uint32_t i = 0; i < size; ++i)
+    std::for_each_n(std::execution::par_unseq, OpenFHEParallelControls.Getii().begin(), m_vectors.size(),
+                    [&](uint32_t i) { m_vectors[i] += val; });
     return *this;
 }
 
 template <typename VecType>
 DCRTPolyImpl<VecType>& DCRTPolyImpl<VecType>::operator+=(const NativeInteger& rhs) {
-    uint32_t size(m_vectors.size());
-#pragma omp parallel for num_threads(OpenFHEParallelControls.GetThreadLimit(size))
-    for (uint32_t i = 0; i < size; ++i)
-        m_vectors[i] += rhs;
+    //    uint32_t size(m_vectors.size());
+    //#pragma omp parallel for num_threads(OpenFHEParallelControls.GetThreadLimit(size))
+    //    for (uint32_t i = 0; i < size; ++i)
+    std::for_each_n(std::execution::par_unseq, OpenFHEParallelControls.Getii().begin(), m_vectors.size(),
+                    [&](uint32_t i) { m_vectors[i] += rhs; });
     return *this;
 }
 
 template <typename VecType>
 DCRTPolyImpl<VecType>& DCRTPolyImpl<VecType>::operator-=(const DCRTPolyImpl& rhs) {
-    uint32_t size(m_vectors.size());
-#pragma omp parallel for num_threads(OpenFHEParallelControls.GetThreadLimit(size))
-    for (uint32_t i = 0; i < size; ++i)
-        m_vectors[i] -= rhs.m_vectors[i];
+    //    uint32_t size(m_vectors.size());
+    //#pragma omp parallel for num_threads(OpenFHEParallelControls.GetThreadLimit(size))
+    //    for (uint32_t i = 0; i < size; ++i)
+
+    std::for_each_n(std::execution::par_unseq, OpenFHEParallelControls.Getii().begin(), m_vectors.size(),
+                    [&](uint32_t i) { m_vectors[i] -= rhs.m_vectors[i]; });
     return *this;
 }
 
 template <typename VecType>
 DCRTPolyImpl<VecType>& DCRTPolyImpl<VecType>::operator-=(const Integer& rhs) {
     NativeInteger val{rhs};
-    uint32_t size(m_vectors.size());
-#pragma omp parallel for num_threads(OpenFHEParallelControls.GetThreadLimit(size))
-    for (uint32_t i = 0; i < size; ++i)
-        m_vectors[i] -= val;
+    //    uint32_t size(m_vectors.size());
+    //#pragma omp parallel for num_threads(OpenFHEParallelControls.GetThreadLimit(size))
+    //    for (uint32_t i = 0; i < size; ++i)
+    std::for_each_n(std::execution::par_unseq, OpenFHEParallelControls.Getii().begin(), m_vectors.size(),
+                    [&](uint32_t i) { m_vectors[i] -= val; });
     return *this;
 }
 
 template <typename VecType>
 DCRTPolyImpl<VecType>& DCRTPolyImpl<VecType>::operator-=(const NativeInteger& rhs) {
-    uint32_t size(m_vectors.size());
-#pragma omp parallel for num_threads(OpenFHEParallelControls.GetThreadLimit(size))
-    for (uint32_t i = 0; i < size; ++i)
-        m_vectors[i] -= rhs;
+    //    uint32_t size(m_vectors.size());
+    //#pragma omp parallel for num_threads(OpenFHEParallelControls.GetThreadLimit(size))
+    //    for (uint32_t i = 0; i < size; ++i)
+    std::for_each_n(std::execution::par_unseq, OpenFHEParallelControls.Getii().begin(), m_vectors.size(),
+                    [&](uint32_t i) { m_vectors[i] -= rhs; });
     return *this;
 }
 
@@ -509,20 +526,22 @@ template <typename VecType>
 DCRTPolyImpl<VecType> DCRTPolyImpl<VecType>::Plus(const Integer& rhs) const {
     NativeInteger val{rhs};
     DCRTPolyImpl<VecType> tmp(m_params, m_format);
-    uint32_t size(m_vectors.size());
-#pragma omp parallel for num_threads(OpenFHEParallelControls.GetThreadLimit(size))
-    for (uint32_t i = 0; i < size; ++i)
-        tmp.m_vectors[i] = m_vectors[i].Plus(val);
+    //    uint32_t size(m_vectors.size());
+    //#pragma omp parallel for num_threads(OpenFHEParallelControls.GetThreadLimit(size))
+    //    for (uint32_t i = 0; i < size; ++i)
+    std::for_each_n(std::execution::par_unseq, OpenFHEParallelControls.Getii().begin(), m_vectors.size(),
+                    [&](uint32_t i) { tmp.m_vectors[i] = m_vectors[i].Plus(val); });
     return tmp;
 }
 
 template <typename VecType>
 DCRTPolyImpl<VecType> DCRTPolyImpl<VecType>::Plus(const std::vector<Integer>& crtElement) const {
     DCRTPolyImpl<VecType> tmp(m_params, m_format);
-    uint32_t size(m_vectors.size());
-#pragma omp parallel for num_threads(OpenFHEParallelControls.GetThreadLimit(size))
-    for (uint32_t i = 0; i < size; ++i)
-        tmp.m_vectors[i] = m_vectors[i].Plus(NativeInteger(crtElement[i]));
+    //    uint32_t size(m_vectors.size());
+    //#pragma omp parallel for num_threads(OpenFHEParallelControls.GetThreadLimit(size))
+    //    for (uint32_t i = 0; i < size; ++i)
+    std::for_each_n(std::execution::par_unseq, OpenFHEParallelControls.Getii().begin(), m_vectors.size(),
+                    [&](uint32_t i) { tmp.m_vectors[i] = m_vectors[i].Plus(NativeInteger(crtElement[i])); });
     return tmp;
 }
 
@@ -530,20 +549,22 @@ template <typename VecType>
 DCRTPolyImpl<VecType> DCRTPolyImpl<VecType>::Minus(const Integer& rhs) const {
     NativeInteger val{rhs};
     DCRTPolyImpl<VecType> tmp(m_params, m_format);
-    uint32_t size(m_vectors.size());
-#pragma omp parallel for num_threads(OpenFHEParallelControls.GetThreadLimit(size))
-    for (uint32_t i = 0; i < size; ++i)
-        tmp.m_vectors[i] = m_vectors[i].Minus(val);
+    //    uint32_t size(m_vectors.size());
+    //#pragma omp parallel for num_threads(OpenFHEParallelControls.GetThreadLimit(size))
+    //    for (uint32_t i = 0; i < size; ++i)
+    std::for_each_n(std::execution::par_unseq, OpenFHEParallelControls.Getii().begin(), m_vectors.size(),
+                    [&](uint32_t i) { tmp.m_vectors[i] = m_vectors[i].Minus(val); });
     return tmp;
 }
 
 template <typename VecType>
 DCRTPolyImpl<VecType> DCRTPolyImpl<VecType>::Minus(const std::vector<Integer>& crtElement) const {
     DCRTPolyImpl<VecType> tmp(m_params, m_format);
-    uint32_t size(m_vectors.size());
-#pragma omp parallel for num_threads(OpenFHEParallelControls.GetThreadLimit(size))
-    for (uint32_t i = 0; i < size; ++i)
-        tmp.m_vectors[i] = m_vectors[i].Minus(NativeInteger(crtElement[i]));
+    //    uint32_t size(m_vectors.size());
+    //#pragma omp parallel for num_threads(OpenFHEParallelControls.GetThreadLimit(size))
+    //    for (uint32_t i = 0; i < size; ++i)
+    std::for_each_n(std::execution::par_unseq, OpenFHEParallelControls.Getii().begin(), m_vectors.size(),
+                    [&](uint32_t i) { tmp.m_vectors[i] = m_vectors[i].Minus(NativeInteger(crtElement[i])); });
     return tmp;
 }
 
@@ -551,30 +572,33 @@ template <typename VecType>
 DCRTPolyImpl<VecType> DCRTPolyImpl<VecType>::Times(const Integer& rhs) const {
     NativeInteger val{rhs};
     DCRTPolyImpl<VecType> tmp(m_params, m_format);
-    uint32_t size(m_vectors.size());
-#pragma omp parallel for num_threads(OpenFHEParallelControls.GetThreadLimit(size))
-    for (uint32_t i = 0; i < size; ++i)
-        tmp.m_vectors[i] = m_vectors[i].Times(val);
+    //    uint32_t size(m_vectors.size());
+    //#pragma omp parallel for num_threads(OpenFHEParallelControls.GetThreadLimit(size))
+    //    for (uint32_t i = 0; i < size; ++i)
+    std::for_each_n(std::execution::par_unseq, OpenFHEParallelControls.Getii().begin(), m_vectors.size(),
+                    [&](uint32_t i) { tmp.m_vectors[i] = m_vectors[i].Times(val); });
     return tmp;
 }
 
 template <typename VecType>
 DCRTPolyImpl<VecType> DCRTPolyImpl<VecType>::Times(NativeInteger::SignedNativeInt rhs) const {
     DCRTPolyImpl<VecType> tmp(m_params, m_format);
-    uint32_t size(m_vectors.size());
-#pragma omp parallel for num_threads(OpenFHEParallelControls.GetThreadLimit(size))
-    for (uint32_t i = 0; i < size; ++i)
-        tmp.m_vectors[i] = m_vectors[i].Times(rhs);
+    //    uint32_t size(m_vectors.size());
+    //#pragma omp parallel for num_threads(OpenFHEParallelControls.GetThreadLimit(size))
+    //    for (uint32_t i = 0; i < size; ++i)
+    std::for_each_n(std::execution::par_unseq, OpenFHEParallelControls.Getii().begin(), m_vectors.size(),
+                    [&](uint32_t i) { tmp.m_vectors[i] = m_vectors[i].Times(rhs); });
     return tmp;
 }
 
 template <typename VecType>
 DCRTPolyImpl<VecType> DCRTPolyImpl<VecType>::Times(const std::vector<Integer>& crtElement) const {
     DCRTPolyImpl<VecType> tmp(m_params, m_format);
-    uint32_t size(m_vectors.size());
-#pragma omp parallel for num_threads(OpenFHEParallelControls.GetThreadLimit(size))
-    for (uint32_t i = 0; i < size; ++i)
-        tmp.m_vectors[i] = m_vectors[i].Times(NativeInteger(crtElement[i]));
+    //    uint32_t size(m_vectors.size());
+    //#pragma omp parallel for num_threads(OpenFHEParallelControls.GetThreadLimit(size))
+    //    for (uint32_t i = 0; i < size; ++i)
+    std::for_each_n(std::execution::par_unseq, OpenFHEParallelControls.Getii().begin(), m_vectors.size(),
+                    [&](uint32_t i) { tmp.m_vectors[i] = m_vectors[i].Times(NativeInteger(crtElement[i])); });
     return tmp;
 }
 
@@ -583,10 +607,11 @@ DCRTPolyImpl<VecType> DCRTPolyImpl<VecType>::Times(const std::vector<NativeInteg
     if (m_vectors.size() != rhs.size())
         OPENFHE_THROW("tower size mismatch; cannot multiply");
     DCRTPolyImpl<VecType> tmp(m_params, m_format);
-    uint32_t size(m_vectors.size());
-#pragma omp parallel for num_threads(OpenFHEParallelControls.GetThreadLimit(size))
-    for (uint32_t i = 0; i < size; ++i)
-        tmp.m_vectors[i] = m_vectors[i].Times(rhs[i]);
+    //    uint32_t size(m_vectors.size());
+    //#pragma omp parallel for num_threads(OpenFHEParallelControls.GetThreadLimit(size))
+    //    for (uint32_t i = 0; i < size; ++i)
+    std::for_each_n(std::execution::par_unseq, OpenFHEParallelControls.Getii().begin(), m_vectors.size(),
+                    [&](uint32_t i) { tmp.m_vectors[i] = m_vectors[i].Times(rhs[i]); });
     return tmp;
 }
 
@@ -594,28 +619,31 @@ template <typename VecType>
 DCRTPolyImpl<VecType> DCRTPolyImpl<VecType>::TimesNoCheck(const std::vector<NativeInteger>& rhs) const {
     uint32_t vecSize = m_vectors.size() < rhs.size() ? m_vectors.size() : rhs.size();
     DCRTPolyImpl<VecType> tmp(m_params, m_format);
-#pragma omp parallel for num_threads(OpenFHEParallelControls.GetThreadLimit(vecSize))
-    for (uint32_t i = 0; i < vecSize; ++i)
-        tmp.m_vectors[i] = m_vectors[i].Times(rhs[i]);
+    //#pragma omp parallel for num_threads(OpenFHEParallelControls.GetThreadLimit(vecSize))
+    //    for (uint32_t i = 0; i < vecSize; ++i)
+    std::for_each_n(std::execution::par_unseq, OpenFHEParallelControls.Getii().begin(), vecSize,
+                    [&](uint32_t i) { tmp.m_vectors[i] = m_vectors[i].Times(rhs[i]); });
     return tmp;
 }
 
 template <typename VecType>
 DCRTPolyImpl<VecType>& DCRTPolyImpl<VecType>::operator*=(const Integer& rhs) {
     NativeInteger val{rhs};
-    uint32_t size(m_vectors.size());
-#pragma omp parallel for num_threads(OpenFHEParallelControls.GetThreadLimit(size))
-    for (uint32_t i = 0; i < size; ++i)
-        m_vectors[i] *= val;
+    //    uint32_t size(m_vectors.size());
+    //#pragma omp parallel for num_threads(OpenFHEParallelControls.GetThreadLimit(size))
+    //    for (uint32_t i = 0; i < size; ++i)
+    std::for_each_n(std::execution::par_unseq, OpenFHEParallelControls.Getii().begin(), m_vectors.size(),
+                    [&](uint32_t i) { m_vectors[i] *= val; });
     return *this;
 }
 
 template <typename VecType>
 DCRTPolyImpl<VecType>& DCRTPolyImpl<VecType>::operator*=(const NativeInteger& rhs) {
-    uint32_t size(m_vectors.size());
-#pragma omp parallel for num_threads(OpenFHEParallelControls.GetThreadLimit(size))
-    for (uint32_t i = 0; i < size; ++i)
-        m_vectors[i] *= rhs;
+    //    uint32_t size(m_vectors.size());
+    //#pragma omp parallel for num_threads(OpenFHEParallelControls.GetThreadLimit(size))
+    //    for (uint32_t i = 0; i < size; ++i)
+    std::for_each_n(std::execution::par_unseq, OpenFHEParallelControls.Getii().begin(), m_vectors.size(),
+                    [&](uint32_t i) { m_vectors[i] *= rhs; });
     return *this;
 }
 
@@ -650,10 +678,11 @@ template <typename VecType>
 void DCRTPolyImpl<VecType>::AddILElementOne() {
     if (m_format != Format::EVALUATION)
         OPENFHE_THROW("Only available in COEFFICIENT format.");
-    uint32_t size(m_vectors.size());
-#pragma omp parallel for num_threads(OpenFHEParallelControls.GetThreadLimit(size))
-    for (uint32_t i = 0; i < size; ++i)
-        m_vectors[i].AddILElementOne();
+    //    uint32_t size(m_vectors.size());
+    //#pragma omp parallel for num_threads(OpenFHEParallelControls.GetThreadLimit(size))
+    //    for (uint32_t i = 0; i < size; ++i)
+    std::for_each_n(std::execution::par_unseq, OpenFHEParallelControls.Getii().begin(), m_vectors.size(),
+                    [&](uint32_t i) { m_vectors[i].AddILElementOne(); });
 }
 
 template <typename VecType>
@@ -695,20 +724,22 @@ void DCRTPolyImpl<VecType>::DropLastElementAndScale(const std::vector<NativeInte
     auto lastPoly(m_vectors.back());
     lastPoly.SetFormat(Format::COEFFICIENT);
     this->DropLastElement();
-    uint32_t size(m_vectors.size());
 
-#pragma omp parallel for num_threads(OpenFHEParallelControls.GetThreadLimit(size))
-    for (uint32_t i = 0; i < size; ++i) {
-        auto tmp = lastPoly;
-        tmp.SwitchModulus(m_vectors[i].GetModulus(), m_vectors[i].GetRootOfUnity(), 0, 0);
-        tmp *= QlQlInvModqlDivqlModq[i];
-        if (m_format == Format::EVALUATION)
-            tmp.SwitchFormat();
-        m_vectors[i] *= qlInvModq[i];
-        m_vectors[i] += tmp;
-        if (m_format == Format::COEFFICIENT)
-            m_vectors[i].SwitchFormat();
-    }
+    //    uint32_t size(m_vectors.size());
+    //#pragma omp parallel for num_threads(OpenFHEParallelControls.GetThreadLimit(size))
+    //    for (uint32_t i = 0; i < size; ++i) {
+    std::for_each_n(std::execution::par_unseq, OpenFHEParallelControls.Getii().begin(), m_vectors.size(),
+                    [&](uint32_t i) {
+                        auto tmp = lastPoly;
+                        tmp.SwitchModulus(m_vectors[i].GetModulus(), m_vectors[i].GetRootOfUnity(), 0, 0);
+                        tmp *= QlQlInvModqlDivqlModq[i];
+                        if (m_format == Format::EVALUATION)
+                            tmp.SwitchFormat();
+                        m_vectors[i] *= qlInvModq[i];
+                        m_vectors[i] += tmp;
+                        if (m_format == Format::COEFFICIENT)
+                            m_vectors[i].SwitchFormat();
+                    });
 }
 
 /**
@@ -741,17 +772,19 @@ void DCRTPolyImpl<VecType>::ModReduce(const NativeInteger& t, const std::vector<
     delta.SetFormat(Format::COEFFICIENT);
     delta *= negtInvModq;
     this->DropLastElement();
-    uint32_t size(m_vectors.size());
 
-#pragma omp parallel for num_threads(OpenFHEParallelControls.GetThreadLimit(size))
-    for (uint32_t i = 0; i < size; ++i) {
-        auto tmp{delta};
-        tmp.SwitchModulus(m_vectors[i].GetModulus(), m_vectors[i].GetRootOfUnity(), 0, 0);
-        if (m_format == Format::EVALUATION)
-            tmp.SwitchFormat();
-        m_vectors[i] += (tmp *= t);
-        m_vectors[i] *= qlInvModq[i];
-    }
+    //    uint32_t size(m_vectors.size());
+    //#pragma omp parallel for num_threads(OpenFHEParallelControls.GetThreadLimit(size))
+    //    for (uint32_t i = 0; i < size; ++i) {
+    std::for_each_n(std::execution::par_unseq, OpenFHEParallelControls.Getii().begin(), m_vectors.size(),
+                    [&](uint32_t i) {
+                        auto tmp{delta};
+                        tmp.SwitchModulus(m_vectors[i].GetModulus(), m_vectors[i].GetRootOfUnity(), 0, 0);
+                        if (m_format == Format::EVALUATION)
+                            tmp.SwitchFormat();
+                        m_vectors[i] += (tmp *= t);
+                        m_vectors[i] *= qlInvModq[i];
+                    });
 }
 
 /*
@@ -870,18 +903,20 @@ void DCRTPolyImpl<VecType>::TimesQovert(const std::shared_ptr<Params>& paramsQ,
                                         const NativeInteger& NegQModt, const NativeInteger& NegQModtPrecon) {
     if (tInvModq.size() < m_vectors.size())
         OPENFHE_THROW("Sizes of vectors do not match.");
-    uint32_t size(m_vectors.size());
+    //    uint32_t size(m_vectors.size());
     uint32_t ringDim(m_params->GetRingDimension());
-#pragma omp parallel for num_threads(OpenFHEParallelControls.GetThreadLimit(size))
-    for (uint32_t i = 0; i < size; ++i) {
-        auto q{m_vectors[i].GetModulus()};
-        auto mu{q.ComputeMu()};
-        for (uint32_t ri = 0; ri < ringDim; ++ri) {
-            NativeInteger& xi = m_vectors[i][ri];
-            xi.ModMulFastConstEq(NegQModt, t, NegQModtPrecon);
-            xi.ModMulFastEq(tInvModq[i], q, mu);
-        }
-    }
+    //#pragma omp parallel for num_threads(OpenFHEParallelControls.GetThreadLimit(size))
+    //    for (uint32_t i = 0; i < size; ++i) {
+    std::for_each_n(std::execution::par_unseq, OpenFHEParallelControls.Getii().begin(), m_vectors.size(),
+                    [&](uint32_t i) {
+                        auto q{m_vectors[i].GetModulus()};
+                        auto mu{q.ComputeMu()};
+                        for (uint32_t ri = 0; ri < ringDim; ++ri) {
+                            NativeInteger& xi = m_vectors[i][ri];
+                            xi.ModMulFastConstEq(NegQModt, t, NegQModtPrecon);
+                            xi.ModMulFastEq(tInvModq[i], q, mu);
+                        }
+                    });
 }
 
 template <typename VecType>
@@ -892,6 +927,7 @@ DCRTPolyImpl<VecType> DCRTPolyImpl<VecType>::ApproxSwitchCRTBasis(
     DCRTPolyImpl<VecType> ans(paramsP, m_format, true);
     uint32_t sizeQ = (m_vectors.size() > paramsQ->GetParams().size()) ? paramsQ->GetParams().size() : m_vectors.size();
     uint32_t sizeP = ans.m_vectors.size();
+
 #if defined(HAVE_INT128) && (NATIVEINT == 64) && !defined(WITH_REDUCED_NOISE) && \
     (defined(WITH_OPENMP) || (defined(__clang__) && !defined(WITH_NATIVEOPT)))
     uint32_t ringDim = m_params->GetRingDimension();
@@ -955,9 +991,10 @@ void DCRTPolyImpl<VecType>::ApproxModUp(const std::shared_ptr<Params>& paramsQ, 
     m_vectors.insert(m_vectors.end(), std::make_move_iterator(partP.m_vectors.begin()),
                      std::make_move_iterator(partP.m_vectors.end()));
 
-#pragma omp parallel for num_threads(OpenFHEParallelControls.GetThreadLimit(sizeQP))
-    for (uint32_t i = 0; i < sizeQP; ++i)
-        m_vectors[i].SetFormat(Format::EVALUATION);
+    //#pragma omp parallel for num_threads(OpenFHEParallelControls.GetThreadLimit(sizeQP))
+    //    for (uint32_t i = 0; i < sizeQP; ++i)
+    std::for_each_n(std::execution::par_unseq, OpenFHEParallelControls.Getii().begin(), sizeQP,
+                    [&](uint32_t i) { m_vectors[i].SetFormat(Format::EVALUATION); });
     m_format = Format::EVALUATION;
     m_params = paramsQP;
 }
@@ -974,14 +1011,15 @@ DCRTPolyImpl<VecType> DCRTPolyImpl<VecType>::ApproxModDown(
     uint32_t sizeP = paramsP->GetParams().size();
     uint32_t sizeQ = m_vectors.size() - sizeP;
 
-#pragma omp parallel for num_threads(OpenFHEParallelControls.GetThreadLimit(sizeP))
-    for (uint32_t j = 0; j < sizeP; ++j) {
+    //#pragma omp parallel for num_threads(OpenFHEParallelControls.GetThreadLimit(sizeP))
+    //    for (uint32_t j = 0; j < sizeP; ++j) {
+    std::for_each_n(std::execution::par_unseq, OpenFHEParallelControls.Getii().begin(), sizeP, [&](uint32_t j) {
         partP.m_vectors[j] = m_vectors[sizeQ + j];
         partP.m_vectors[j].SetFormat(Format::COEFFICIENT);
         // Multiply everything by -t^(-1) mod P (BGVrns only)
         if (t > 0)
             partP.m_vectors[j] *= tInvModp[j];
-    }
+    });
     partP.OverrideFormat(Format::COEFFICIENT);
 
     auto partPSwitchedToQ =
@@ -993,14 +1031,15 @@ DCRTPolyImpl<VecType> DCRTPolyImpl<VecType>::ApproxModDown(
     if (diffQ > 0)
         ans.DropLastElements(diffQ);
 
-#pragma omp parallel for num_threads(OpenFHEParallelControls.GetThreadLimit(sizeQ))
-    for (uint32_t i = 0; i < sizeQ; ++i) {
+    //#pragma omp parallel for num_threads(OpenFHEParallelControls.GetThreadLimit(sizeQ))
+    //    for (uint32_t i = 0; i < sizeQ; ++i) {
+    std::for_each_n(std::execution::par_unseq, OpenFHEParallelControls.Getii().begin(), sizeQ, [&](uint32_t i) {
         // Multiply everything by t mod Q (BGVrns only)
         if (t > 0)
             partPSwitchedToQ.m_vectors[i] *= t;
         partPSwitchedToQ.m_vectors[i].SetFormat(Format::EVALUATION);
         ans.m_vectors[i] = (m_vectors[i] - partPSwitchedToQ.m_vectors[i]) * PInvModq[i];
-    }
+    });
     return ans;
 }
 
@@ -1108,9 +1147,10 @@ void DCRTPolyImpl<VecType>::ExpandCRTBasis(
     m_vectors.insert(m_vectors.end(), std::make_move_iterator(partP.m_vectors.begin()),
                      std::make_move_iterator(partP.m_vectors.end()));
 
-#pragma omp parallel for num_threads(OpenFHEParallelControls.GetThreadLimit(sizeQP))
-    for (uint32_t i = 0; i < sizeQP; ++i)
-        m_vectors[i].SetFormat(resultFormat);
+    //#pragma omp parallel for num_threads(OpenFHEParallelControls.GetThreadLimit(sizeQP))
+    //    for (uint32_t i = 0; i < sizeQP; ++i)
+    std::for_each_n(std::execution::par_unseq, OpenFHEParallelControls.Getii().begin(), sizeQP,
+                    [&](uint32_t i) { m_vectors[i].SetFormat(resultFormat); });
     m_format = resultFormat;
     m_params = paramsQP;
 }
@@ -1140,9 +1180,10 @@ void DCRTPolyImpl<VecType>::ExpandCRTBasisReverseOrder(
                            std::make_move_iterator(m_vectors.end()));
     m_vectors = std::move(partP.m_vectors);
 
-#pragma omp parallel for num_threads(OpenFHEParallelControls.GetThreadLimit(sizeQP))
-    for (uint32_t i = 0; i < sizeQP; ++i)
-        m_vectors[i].SetFormat(resultFormat);
+    //#pragma omp parallel for num_threads(OpenFHEParallelControls.GetThreadLimit(sizeQP))
+    //    for (uint32_t i = 0; i < sizeQP; ++i)
+    std::for_each_n(std::execution::par_unseq, OpenFHEParallelControls.Getii().begin(), sizeQP,
+                    [&](uint32_t i) { m_vectors[i].SetFormat(resultFormat); });
     m_format = resultFormat;
     m_params = paramsQP;
 }
@@ -1170,14 +1211,16 @@ void DCRTPolyImpl<VecType>::ExpandCRTBasisQlHat(const std::shared_ptr<Params>& p
                                                 const uint32_t sizeQ) {
     uint32_t sizeQl(m_vectors.size());
     uint32_t ringDim(m_params->GetRingDimension());
-#pragma omp parallel for num_threads(OpenFHEParallelControls.GetThreadLimit(sizeQl))
-    for (uint32_t i = 0; i < sizeQl; ++i) {
-        const NativeInteger& qi               = m_vectors[i].GetModulus();
-        const NativeInteger& QlHatModqi       = QlHatModq[i];
-        const NativeInteger& QlHatModqiPrecon = QlHatModqPrecon[i];
-        for (uint32_t ri = 0; ri < ringDim; ++ri)
-            m_vectors[i][ri].ModMulFastConstEq(QlHatModqi, qi, QlHatModqiPrecon);
-    }
+    //#pragma omp parallel for num_threads(OpenFHEParallelControls.GetThreadLimit(sizeQl))
+    //   for (uint32_t i = 0; i < sizeQl; ++i) {
+    std::for_each_n(std::execution::par_unseq, OpenFHEParallelControls.Getii().begin(), m_vectors.size(),
+                    [&](uint32_t i) {
+                        const NativeInteger& qi               = m_vectors[i].GetModulus();
+                        const NativeInteger& QlHatModqi       = QlHatModq[i];
+                        const NativeInteger& QlHatModqiPrecon = QlHatModqPrecon[i];
+                        for (uint32_t ri = 0; ri < ringDim; ++ri)
+                            m_vectors[i][ri].ModMulFastConstEq(QlHatModqi, qi, QlHatModqiPrecon);
+                    });
     m_vectors.resize(sizeQ);
     for (uint32_t i = sizeQl; i < sizeQ; ++i) {
         typename DCRTPolyImpl<VecType>::PolyType newvec(paramsQ->GetParams()[i], m_format, true);
@@ -1930,12 +1973,15 @@ void DCRTPolyImpl<VecType>::FastBaseConvSK(
 template <typename VecType>
 void DCRTPolyImpl<VecType>::SwitchFormat(uint32_t thread_limit) {
     m_format = (m_format == Format::COEFFICIENT) ? Format::EVALUATION : Format::COEFFICIENT;
-
+    /*
     const uint32_t size  = m_vectors.size();
-    const uint32_t limit = thread_limit < size ? thread_limit : size;
+    [[maybe_unused]] const uint32_t limit = thread_limit < size ? thread_limit : size;
 #pragma omp parallel for num_threads(OpenFHEParallelControls.GetThreadLimit(limit))
     for (uint32_t i = 0; i < size; ++i)
         m_vectors[i].SwitchFormat();
+*/
+    std::for_each_n(std::execution::par_unseq, OpenFHEParallelControls.Getii().begin(), m_vectors.size(),
+                    [&](uint32_t i) { m_vectors[i].SwitchFormat(); });
 }
 
 template <typename VecType>

@@ -40,6 +40,13 @@
     #include <omp.h>
 #endif
 
+#include <vector>
+#include <numeric>
+
+#include <cstdint>
+
+#include <oneapi/tbb/global_control.h>
+
 namespace lbcrypto {
 
 class ParallelControls {
@@ -56,6 +63,13 @@ public:
             // omp_set_nested(0);
             // omp_set_max_active_levels(1);
 #endif
+
+        ii.resize(1024);
+        std::iota(ii.begin(), ii.end(), 0);
+
+        //    tbb::global_control control(
+        //        tbb::global_control::max_allowed_parallelism, 33
+        //    );
     }
 
     // @Brief Enable() enables parallel operation
@@ -125,8 +139,13 @@ public:
 #endif
     }
 
+    const std::vector<uint32_t>& Getii() {
+        return ii;
+    }
+
 private:
     int machineThreads{1};
+    std::vector<uint32_t> ii;
 };
 
 extern ParallelControls OpenFHEParallelControls;
