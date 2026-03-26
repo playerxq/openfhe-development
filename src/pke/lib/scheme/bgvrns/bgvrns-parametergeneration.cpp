@@ -490,11 +490,21 @@ bool ParameterGenerationBGVRNS::ParamsGenBGVRNSInternal(std::shared_ptr<CryptoPa
             if (multipartyMode == NOISE_FLOODING_MULTIPARTY)
                 newQBound += cryptoParamsBGVRNS->EstimateMultipartyFloodingLogQ();
             if (ksTech == HYBRID) {
+                // When NOISE_FLOODING_MULTIPARTY is used, PrecomputeCRTTables adds NUM_MODULI_MULTIPARTY
+                // flooding primes (of MULTIPARTY_MOD_SIZE bits each) to Q after this loop. Include them
+                // in the P estimation so the ring dimension is not underestimated, particularly in
+                // 128-bit builds where P primes are 121 bits and the larger QP can exceed the security limit.
+                uint32_t numPrimesEst = (scalTech == FLEXIBLEAUTOEXT) ? moduliQ.size() - 1 : moduliQ.size();
+                double dcrtBitsEst    = (moduliQ.size() > 1) ? std::log2(moduliQ[1].ConvertToDouble()) : 0;
+                if (multipartyMode == NOISE_FLOODING_MULTIPARTY) {
+                    numPrimesEst += NoiseFlooding::NUM_MODULI_MULTIPARTY;
+                    dcrtBitsEst = std::max(dcrtBitsEst, static_cast<double>(NoiseFlooding::MULTIPARTY_MOD_SIZE));
+                }
                 auto hybridKSInfo = CryptoParametersRNS::EstimateLogP(
                     numPartQ, std::log2(moduliQ[0].ConvertToDouble()),
-                    (moduliQ.size() > 1) ? std::log2(moduliQ[1].ConvertToDouble()) : 0,
+                    dcrtBitsEst,
                     (scalTech == FLEXIBLEAUTOEXT) ? std::log2(moduliQ[moduliQ.size() - 1].ConvertToDouble()) : 0,
-                    (scalTech == FLEXIBLEAUTOEXT) ? moduliQ.size() - 1 : moduliQ.size(), auxBits, scalTech, false);
+                    numPrimesEst, auxBits, scalTech, false);
                 newQBound += std::get<0>(hybridKSInfo);
             }
         } while (qBound < newQBound);
