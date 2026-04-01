@@ -172,7 +172,7 @@ public:
    * @brief returns the element's root of unity.
    * @return the element's root of unity.
    */
-    const Integer& GetRootOfUnity() const {
+    Integer GetRootOfUnity() const {
         return this->GetDerived().GetParams()->GetRootOfUnity();
     }
 
@@ -180,7 +180,7 @@ public:
    * @brief returns the element's modulus
    * @return returns the modulus of the element.
    */
-    const Integer& GetModulus() const final {
+    Integer GetModulus() const final {
         return this->GetDerived().GetParams()->GetModulus();
     }
 
@@ -218,8 +218,8 @@ public:
    * Note this operation is computationally intense. Does bound checking
    * @return interpolated value at index i.
    */
-    Integer& at(usint i) override             = 0;
-    const Integer& at(usint i) const override = 0;
+    Integer& at(usint i) override      = 0;
+    Integer at(usint i) const override = 0;
 
     /**
    * @brief Get interpolated value of element at index i.
@@ -230,7 +230,7 @@ public:
         return this->GetDerived()[i];
     }
 
-    const Integer& operator[](usint i) const override {
+    Integer operator[](usint i) const override {
         return this->GetDerived()[i];
     }
 

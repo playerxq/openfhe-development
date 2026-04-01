@@ -165,7 +165,7 @@ public:
    * ciphertext modulus.
    * @return The ciphertext modulus, not the big ciphertext modulus.
    */
-    const IntegerType& GetModulus() const {
+    IntegerType GetModulus() const {
         return m_ciphertextModulus;
     }
 
@@ -174,7 +174,7 @@ public:
    * This is not relevant for all applications.
    * @return The big ciphertext modulus.
    */
-    const IntegerType& GetBigModulus() const {
+    IntegerType GetBigModulus() const {
         return m_bigCiphertextModulus;
     }
 
@@ -183,7 +183,7 @@ public:
    * unity.
    * @return The root of unity, not the big root of unity.
    */
-    const IntegerType& GetRootOfUnity() const {
+    IntegerType GetRootOfUnity() const {
         return m_rootOfUnity;
     }
 
@@ -191,7 +191,7 @@ public:
    * @brief Simple getter method for the big root of unity.
    * @return The the big root of unity.
    */
-    const IntegerType& GetBigRootOfUnity() const {
+    IntegerType GetBigRootOfUnity() const {
         return m_bigRootOfUnity;
     }
 

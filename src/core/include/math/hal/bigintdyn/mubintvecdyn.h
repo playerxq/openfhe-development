@@ -242,7 +242,7 @@ public:
         return m_data[i];
     }
 
-    const ubint_el_t& at(size_t i) const {
+    ubint_el_t at(size_t i) const {
         if (!mubintvec::IndexCheck(i))
             OPENFHE_THROW("index out of range");
         return m_data[i];
@@ -252,7 +252,7 @@ public:
         return m_data[i];
     }
 
-    const ubint_el_t& operator[](size_t i) const {
+    ubint_el_t operator[](size_t i) const {
         return m_data[i];
     }
 
@@ -326,7 +326,7 @@ public:
    *
    * @return the vector modulus.
    */
-    const ubint_el_t& GetModulus() const {
+    ubint_el_t GetModulus() const {
         if (m_modulus_state != State::INITIALIZED)
             OPENFHE_THROW("GetModulus() on uninitialized mubintvec");
         return m_modulus;

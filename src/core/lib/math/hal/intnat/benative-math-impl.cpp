@@ -54,7 +54,7 @@ template NativeInteger RootOfUnity<NativeInteger>(usint m, const NativeInteger& 
 template std::vector<NativeInteger> RootsOfUnity(usint m, const std::vector<NativeInteger>& moduli);
 template NativeInteger GreatestCommonDivisor(const NativeInteger& a, const NativeInteger& b);
 template bool MillerRabinPrimalityTest(const NativeInteger& p, const usint niter);
-template const NativeInteger PollardRhoFactorization(const NativeInteger& n);
+template NativeInteger PollardRhoFactorization(const NativeInteger& n);
 template void PrimeFactorize(NativeInteger n, std::set<NativeInteger>& primeFactors);
 template NativeInteger FirstPrime(uint32_t nBits, uint64_t m);
 template NativeInteger LastPrime(uint32_t nBits, uint64_t m);

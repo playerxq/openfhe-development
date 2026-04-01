@@ -1035,7 +1035,7 @@ public:
     * @brief Getter for ciphertext modulus
     * @return modulus
     */
-    const IntType& GetModulus() const {
+    IntType GetModulus() const {
         return m_params->GetElementParams()->GetModulus();
     }
 
@@ -1043,7 +1043,7 @@ public:
     * @brief Getter for root of unity
     * @return RootOfUnity
     */
-    const IntType& GetRootOfUnity() const {
+    IntType GetRootOfUnity() const {
         return m_params->GetElementParams()->GetRootOfUnity();
     }
 

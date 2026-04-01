@@ -239,9 +239,7 @@ public:
    * @brief returns the element's root of unity.
    * @return the element's root of unity.
    */
-    // TODO: this doesn't look right
-    const BigIntType GetRootOfUnity() const {
-        //        return BigIntType(0);
+    const BigIntType& GetRootOfUnity() const {
         return this->GetDerived().GetParams()->GetRootOfUnity();
     }
 

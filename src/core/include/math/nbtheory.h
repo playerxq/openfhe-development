@@ -259,7 +259,7 @@ bool MillerRabinPrimalityTest(const IntType& p, const usint niter = 100);
  * @return a factor of n, and IntType::ONE if no other factor is found.
  */
 template <typename IntType>
-const IntType PollardRhoFactorization(const IntType& n);
+IntType PollardRhoFactorization(const IntType& n);
 
 /**
  * Recursively factorizes to find the distinct primefactors of a number.

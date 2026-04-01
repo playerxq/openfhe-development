@@ -205,7 +205,7 @@ public:
         return m_values->at(i);
     }
 
-    inline const Integer& at(usint i) const final {
+    inline Integer at(usint i) const final {
         if (m_values == nullptr)
             OPENFHE_THROW("No values in PolyImpl");
         return m_values->at(i);
@@ -215,7 +215,7 @@ public:
         return (*m_values)[i];
     }
 
-    inline const Integer& operator[](usint i) const final {
+    inline Integer operator[](usint i) const final {
         return (*m_values)[i];
     }
 

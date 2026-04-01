@@ -128,7 +128,7 @@ public:
    *
    * @return the modulus.
    */
-    virtual const IntType& GetModulus() const = 0;
+    virtual IntType GetModulus() const = 0;
 
     /**
    * @brief Get the values for the element
@@ -155,13 +155,13 @@ public:
     virtual IntType& at(usint i) {
         OPENFHE_THROW("at() not implemented");
     }
-    virtual const IntType& at(usint i) const {
+    virtual IntType at(usint i) const {
         OPENFHE_THROW("const at() not implemented");
     }
     virtual IntType& operator[](usint i) {
         OPENFHE_THROW("[] not implemented");
     }
-    virtual const IntType& operator[](usint i) const {
+    virtual IntType operator[](usint i) const {
         OPENFHE_THROW("const [] not implemented");
     }
 

@@ -130,7 +130,7 @@ public:
 
     // The derived class must implement at and operator[]
     I& at(size_t idx);
-    const I& at(size_t idx) const;
+    I at(size_t idx) const;
     I& operator[](size_t idx);
     const I& operator[](size_t idx) const;
 
@@ -157,7 +157,7 @@ public:
    *
    * @return the vector modulus.
    */
-    const I& GetModulus() const;
+    I GetModulus() const;
 
     /**
    * Gets the vector length.

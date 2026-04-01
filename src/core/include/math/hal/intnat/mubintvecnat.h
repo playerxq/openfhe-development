@@ -283,7 +283,7 @@ public:
         return m_data[i];
     }
 
-    const IntegerType& at(size_t i) const {
+    IntegerType at(size_t i) const {
         if (!NativeVectorT::IndexCheck(i))
             OPENFHE_THROW("NativeVectorT index out of range");
         return m_data[i];
@@ -298,7 +298,7 @@ public:
         return m_data[idx];
     }
 
-    const IntegerType& operator[](size_t idx) const {
+    IntegerType operator[](size_t idx) const {
         return m_data[idx];
     }
 
@@ -332,7 +332,7 @@ public:
    *
    * @return the vector modulus.
    */
-    const IntegerType& GetModulus() const {
+    IntegerType GetModulus() const {
         return m_modulus;
     }
 

@@ -289,7 +289,7 @@ bool MillerRabinPrimalityTest(const IntType& p, const usint niter) {
  Output: a factor of n.
  */
 template <typename IntType>
-const IntType PollardRhoFactorization(const IntType& n) {
+IntType PollardRhoFactorization(const IntType& n) {
     if (n.Mod(IntType(2)) == IntType(0))
         return IntType(2);
     IntType divisor(1);

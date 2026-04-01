@@ -198,7 +198,7 @@ public:
         return this->m_data[i];
     }
 
-    const IntegerType& at(size_t i) const {
+    IntegerType at(size_t i) const {
         if (!this->IndexCheck(i)) {
             OPENFHE_THROW("BigVector index out of range");
         }
@@ -214,7 +214,7 @@ public:
         return (this->m_data[idx]);
     }
 
-    const IntegerType& operator[](size_t idx) const {
+    IntegerType operator[](size_t idx) const {
         return (this->m_data[idx]);
     }
 
@@ -243,7 +243,7 @@ public:
    *
    * @return the vector modulus.
    */
-    const IntegerType& GetModulus() const {
+    IntegerType GetModulus() const {
         return this->m_modulus;
     }
 

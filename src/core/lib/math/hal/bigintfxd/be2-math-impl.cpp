@@ -55,7 +55,7 @@ template M2Integer RootOfUnity<M2Integer>(usint m, const M2Integer& modulo);
 template std::vector<M2Integer> RootsOfUnity(usint m, const std::vector<M2Integer>& moduli);
 template M2Integer GreatestCommonDivisor(const M2Integer& a, const M2Integer& b);
 template bool MillerRabinPrimalityTest(const M2Integer& p, const usint niter);
-template const M2Integer PollardRhoFactorization(const M2Integer& n);
+template M2Integer PollardRhoFactorization(const M2Integer& n);
 template void PrimeFactorize(M2Integer n, std::set<M2Integer>& primeFactors);
 template M2Integer FirstPrime(uint32_t nBits, uint64_t m);
 template M2Integer LastPrime(uint32_t nBits, uint64_t m);

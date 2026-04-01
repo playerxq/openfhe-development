@@ -161,7 +161,7 @@ public:
         return this->NTL::Vec<myT>::at(i);
     }
 
-    const myT& at(size_t i) const {
+    myT at(size_t i) const {
         return this->NTL::Vec<myT>::at(i);
     }
 
@@ -169,7 +169,7 @@ public:
         return this->at(idx);
     }
 
-    const myT& operator[](size_t idx) const {
+    myT operator[](size_t idx) const {
         return this->at(idx);
     }
 
@@ -230,7 +230,7 @@ public:
         this->m_modulus_state = INITIALIZED;
     }
 
-    const myT& GetModulus() const {
+    myT GetModulus() const {
         if (this->isModulusSet()) {
             return (this->m_modulus);
         }

@@ -59,7 +59,7 @@ template M6Integer RootOfUnity<M6Integer>(usint m, const M6Integer& modulo);
 template std::vector<M6Integer> RootsOfUnity(usint m, const std::vector<M6Integer>& moduli);
 template M6Integer GreatestCommonDivisor(const M6Integer& a, const M6Integer& b);
 template bool MillerRabinPrimalityTest(const M6Integer& p, const usint niter);
-template const M6Integer PollardRhoFactorization(const M6Integer& n);
+template M6Integer PollardRhoFactorization(const M6Integer& n);
 template void PrimeFactorize(M6Integer n, std::set<M6Integer>& primeFactors);
 template M6Integer FirstPrime(uint32_t nBits, uint64_t m);
 template M6Integer LastPrime(uint32_t nBits, uint64_t m);
