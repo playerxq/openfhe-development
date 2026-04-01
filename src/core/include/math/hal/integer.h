@@ -347,14 +347,14 @@ public:
    * @param shift # of bits.
    * @return result of the shift operation.
    */
-    T LShift(usshort shift) const;
-    T& LShiftEq(usshort shift);
+    T LShift(uint16_t shift) const;
+    T& LShiftEq(uint16_t shift);
 
     /// inline operators for the left shift operations.
-    friend T operator<<(const T& a, usshort shift) {
+    friend T operator<<(const T& a, uint16_t shift) {
         return a.LShift(shift);
     }
-    friend T& operator<<=(T& a, usshort shift) {
+    friend T& operator<<=(T& a, uint16_t shift) {
         return a.LShiftEq(shift);
     }
 
@@ -364,14 +364,14 @@ public:
    * @param shift # of bits.
    * @return result of the shift operation.
    */
-    T RShift(usshort shift) const;
-    T& RShiftEq(usshort shift);
+    T RShift(uint16_t shift) const;
+    T& RShiftEq(uint16_t shift);
 
     /// inline operators for the right shift operations.
-    friend T operator>>(const T& a, usshort shift) {
+    friend T operator>>(const T& a, uint16_t shift) {
         return a.RShift(shift);
     }
-    friend T& operator>>=(T& a, usshort shift) {
+    friend T& operator>>=(T& a, uint16_t shift) {
         return a.RShiftEq(shift);
     }
 

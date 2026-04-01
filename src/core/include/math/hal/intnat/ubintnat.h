@@ -1594,7 +1594,7 @@ public:
    * @param shift # of bits.
    * @return result of the shift operation.
    */
-    NativeIntegerT LShift(usshort shift) const {
+    NativeIntegerT LShift(uint16_t shift) const {
         return {m_value << shift};
     }
 
@@ -1604,7 +1604,7 @@ public:
    * @param shift # of bits.
    * @return result of the shift operation.
    */
-    NativeIntegerT& LShiftEq(usshort shift) {
+    NativeIntegerT& LShiftEq(uint16_t shift) {
         return *this = m_value << shift;
     }
 
@@ -1614,7 +1614,7 @@ public:
    * @param shift # of bits.
    * @return result of the shift operation.
    */
-    NativeIntegerT RShift(usshort shift) const {
+    NativeIntegerT RShift(uint16_t shift) const {
         return {m_value >> shift};
     }
 
@@ -1624,7 +1624,7 @@ public:
    * @param shift # of bits.
    * @return result of the shift operation.
    */
-    NativeIntegerT& RShiftEq(usshort shift) {
+    NativeIntegerT& RShiftEq(uint16_t shift) {
         return *this = m_value >> shift;
     }
 
@@ -1734,10 +1734,10 @@ public:
    * @param index is the index of the bit to get.
    * @return resulting bit.
    */
-    uschar GetBitAtIndex(usint index) const {
+    uint8_t GetBitAtIndex(usint index) const {
         if (index == 0)
             OPENFHE_THROW("Zero index in GetBitAtIndex");
-        return static_cast<uschar>((m_value >> (index - 1)) & 0x1);
+        return static_cast<uint8_t>((m_value >> (index - 1)) & 0x1);
     }
 
     /**

@@ -48,7 +48,7 @@ namespace bigintfxd {
 // constant static member variable initialization of m_uintBitLength which is
 // equal to number of bits in the unit data type permitted values: 8,16,32
 template <typename uint_type, usint BITLENGTH>
-const uschar BigIntegerFixedT<uint_type, BITLENGTH>::m_uintBitLength = UIntBitWidth<uint_type>::value;
+const uint8_t BigIntegerFixedT<uint_type, BITLENGTH>::m_uintBitLength = UIntBitWidth<uint_type>::value;
 
 template <typename uint_type, usint BITLENGTH>
 const usint BigIntegerFixedT<uint_type, BITLENGTH>::m_numDigitInPrintval = BITLENGTH / bigintfxd::LOG2_10;
@@ -56,7 +56,7 @@ const usint BigIntegerFixedT<uint_type, BITLENGTH>::m_numDigitInPrintval = BITLE
 // constant static member variable initialization of m_logUintBitLength which is
 // equal to log of number of bits in the unit data type permitted values: 3,4,5
 template <typename uint_type, usint BITLENGTH>
-const uschar BigIntegerFixedT<uint_type, BITLENGTH>::m_logUintBitLength = LogDtype<uint_type>::value;
+const uint8_t BigIntegerFixedT<uint_type, BITLENGTH>::m_logUintBitLength = LogDtype<uint_type>::value;
 
 // constant static member variable initialization of m_nSize which is size of
 // the array of unit data type
@@ -1342,7 +1342,7 @@ BigIntegerFixedT<uint_type, BITLENGTH>& BigIntegerFixedT<uint_type, BITLENGTH>::
  *   Shifting is done by using bit shift operations and carry over propagation.
  */
 template <typename uint_type, usint BITLENGTH>
-BigIntegerFixedT<uint_type, BITLENGTH> BigIntegerFixedT<uint_type, BITLENGTH>::LShift(usshort shift) const {
+BigIntegerFixedT<uint_type, BITLENGTH> BigIntegerFixedT<uint_type, BITLENGTH>::LShift(uint16_t shift) const {
     if (this->m_MSB == 0) {
         return 0;
     }
@@ -1352,7 +1352,7 @@ BigIntegerFixedT<uint_type, BITLENGTH> BigIntegerFixedT<uint_type, BITLENGTH>::L
     BigIntegerFixedT ans(*this);
 
     usint shiftByUint = shift >> m_logUintBitLength;
-    usshort remShift  = (shift & (m_uintBitLength - 1));
+    uint16_t remShift  = (shift & (m_uintBitLength - 1));
 
     if (remShift != 0) {
         uint_type endVal = m_nSize - ceilIntByUInt(m_MSB);
@@ -1385,7 +1385,7 @@ BigIntegerFixedT<uint_type, BITLENGTH> BigIntegerFixedT<uint_type, BITLENGTH>::L
 }
 
 template <typename uint_type, usint BITLENGTH>
-BigIntegerFixedT<uint_type, BITLENGTH>& BigIntegerFixedT<uint_type, BITLENGTH>::LShiftEq(usshort shift) {
+BigIntegerFixedT<uint_type, BITLENGTH>& BigIntegerFixedT<uint_type, BITLENGTH>::LShiftEq(uint16_t shift) {
     if (this->m_MSB == 0) {
         return *this;
     }
@@ -1433,7 +1433,7 @@ BigIntegerFixedT<uint_type, BITLENGTH>& BigIntegerFixedT<uint_type, BITLENGTH>::
  *   Shifting is done by using bit shift operations and carry over propagation.
  */
 template <typename uint_type, usint BITLENGTH>
-BigIntegerFixedT<uint_type, BITLENGTH> BigIntegerFixedT<uint_type, BITLENGTH>::RShift(usshort shift) const {
+BigIntegerFixedT<uint_type, BITLENGTH> BigIntegerFixedT<uint_type, BITLENGTH>::RShift(uint16_t shift) const {
     // trivial cases
     if (this->m_MSB == 0 || this->m_MSB <= shift) {
         return BigIntegerFixedT(0);
@@ -1478,7 +1478,7 @@ BigIntegerFixedT<uint_type, BITLENGTH> BigIntegerFixedT<uint_type, BITLENGTH>::R
 }
 
 template <typename uint_type, usint BITLENGTH>
-BigIntegerFixedT<uint_type, BITLENGTH>& BigIntegerFixedT<uint_type, BITLENGTH>::RShiftEq(usshort shift) {
+BigIntegerFixedT<uint_type, BITLENGTH>& BigIntegerFixedT<uint_type, BITLENGTH>::RShiftEq(uint16_t shift) {
     if (this->m_MSB == 0) {
         return *this;
     }
@@ -1487,7 +1487,7 @@ BigIntegerFixedT<uint_type, BITLENGTH>& BigIntegerFixedT<uint_type, BITLENGTH>::
         return *this;
     }
     int shiftByUint = shift >> m_logUintBitLength;      // no of array shifts
-    uschar remShift = (shift & (m_uintBitLength - 1));  // no of bit shifts
+    uint8_t remShift = (shift & (m_uintBitLength - 1));  // no of bit shifts
     // perform shifting in arrays
     if (shiftByUint != 0) {
         int endVal = m_nSize - ceilIntByUInt(this->m_MSB);
@@ -1534,7 +1534,7 @@ int BigIntegerFixedT<uint_type, BITLENGTH>::Compare(const BigIntegerFixedT& a) c
         return 1;
     }
     if (this->m_MSB == a.m_MSB) {
-        uschar ceilInt = ceilIntByUInt(this->m_MSB);
+        uint8_t ceilInt = ceilIntByUInt(this->m_MSB);
         for (usint i = m_nSize - ceilInt; i < m_nSize; i++) {
             auto testChar = int64_t(this->m_value[i]) - int64_t(a.m_value[i]);
             if (testChar < 0)
@@ -1647,7 +1647,7 @@ usint BigIntegerFixedT<uint_type, BITLENGTH>::GetDigitAtIndexForBase(usint index
 }
 
 template <typename uint_type, usint BITLENGTH>
-uschar BigIntegerFixedT<uint_type, BITLENGTH>::GetBitAtIndex(usint index) const {
+uint8_t BigIntegerFixedT<uint_type, BITLENGTH>::GetBitAtIndex(usint index) const {
     if (index <= 0) {
         return 0;
     }
@@ -1666,7 +1666,7 @@ uschar BigIntegerFixedT<uint_type, BITLENGTH>::GetBitAtIndex(usint index) const 
     }
     result = temp & bmask;         // finds the bit in  bit format
     result >>= bmask_counter - 1;  // shifting operation gives bit either 1 or 0
-    return (uschar)result;
+    return (uint8_t)result;
 }
 
 // STRINGS & STREAMS
@@ -1678,7 +1678,7 @@ const std::string BigIntegerFixedT<uint_type, BITLENGTH>::ToString() const {
 
     // print_VALUE array stores the decimal value in the array
     // NOLINTNEXTLINE
-    uschar* print_VALUE = new uschar[m_numDigitInPrintval];
+    uint8_t* print_VALUE = new uint8_t[m_numDigitInPrintval];
     for (size_t i = 0; i < m_numDigitInPrintval; i++) {  // reset to zero
         *(print_VALUE + i) = 0;
     }
@@ -1710,14 +1710,14 @@ const std::string BigIntegerFixedT<uint_type, BITLENGTH>::ToString() const {
 template <typename uint_type, usint BITLENGTH>
 void BigIntegerFixedT<uint_type, BITLENGTH>::AssignVal(const std::string& v) {
     int arrSize      = v.length();
-    uschar* DecValue = new uschar[arrSize];  // memory allocated for decimal array
+    uint8_t* DecValue = new uint8_t[arrSize];  // memory allocated for decimal array
     for (int i = 0; i < arrSize; i++) {      // store the string to decimal array
-        DecValue[i] = (uschar)atoi(v.substr(i, 1).c_str());
+        DecValue[i] = (uint8_t)atoi(v.substr(i, 1).c_str());
     }
     int zptr = 0;
     // index of highest non-zero number in decimal number
     // define  bit register array
-    uschar* bitArr = new uschar[m_uintBitLength]();
+    uint8_t* bitArr = new uint8_t[m_uintBitLength]();
 
     int bitValPtr = m_nSize - 1;
     // bitValPtr is a pointer to the Value char array, initially pointed to the
@@ -1862,7 +1862,7 @@ void BigIntegerFixedT<uint_type, BITLENGTH>::MulByUintToInt(const uint_type b, B
 
 // Algoritm used is shift and add
 template <typename uint_type, usint BITLENGTH>
-uint_type BigIntegerFixedT<uint_type, BITLENGTH>::UintInBinaryToDecimal(uschar* a) {
+uint_type BigIntegerFixedT<uint_type, BITLENGTH>::UintInBinaryToDecimal(uint8_t* a) {
     uint_type Val = 0;
     uint_type one = 1;
     for (int i = m_uintBitLength - 1; i >= 0; i--) {
@@ -1874,8 +1874,8 @@ uint_type BigIntegerFixedT<uint_type, BITLENGTH>::UintInBinaryToDecimal(uschar* 
 }
 
 template <typename uint_type, usint BITLENGTH>
-void BigIntegerFixedT<uint_type, BITLENGTH>::double_bitVal(uschar* a) {
-    uschar ofl = 0;
+void BigIntegerFixedT<uint_type, BITLENGTH>::double_bitVal(uint8_t* a) {
+    uint8_t ofl = 0;
     for (int i = m_numDigitInPrintval - 1; i > -1; i--) {
         *(a + i) <<= 1;
         if (*(a + i) > 9) {
@@ -1890,8 +1890,8 @@ void BigIntegerFixedT<uint_type, BITLENGTH>::double_bitVal(uschar* a) {
 }
 
 template <typename uint_type, usint BITLENGTH>
-void BigIntegerFixedT<uint_type, BITLENGTH>::add_bitVal(uschar* a, uschar b) {
-    uschar ofl = 0;
+void BigIntegerFixedT<uint_type, BITLENGTH>::add_bitVal(uint8_t* a, uint8_t b) {
+    uint8_t ofl = 0;
     *(a + m_numDigitInPrintval - 1) += b;
     for (int i = m_numDigitInPrintval - 1; i > -1; i--) {
         *(a + i) += ofl;

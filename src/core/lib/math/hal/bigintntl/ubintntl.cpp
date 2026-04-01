@@ -334,8 +334,8 @@ usint myZZ::GetDigitAtIndexForBase(usint index, usint base) const {
 // returns the bit at the index into the binary format of the big integer,
 // note that msb is 1 like all other bit indicies in OpenFHE.
 
-uschar myZZ::GetBitAtIndex(usint index) const {
-    return (uschar)GetBitRangeAtIndex(index, 1);
+uint8_t myZZ::GetBitAtIndex(usint index) const {
+    return (uint8_t)GetBitRangeAtIndex(index, 1);
 }
 
 // optimized ceiling function after division by number of bits in the limb data

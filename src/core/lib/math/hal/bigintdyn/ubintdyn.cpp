@@ -482,8 +482,8 @@ ubint<limb_t> ubint<limb_t>::ModExp(const ubint& b, const ubint& modulus) const 
 }
 
 template <typename limb_t>
-ubint<limb_t> ubint<limb_t>::LShift(usshort shift) const {
-    static constexpr usshort mask{m_limbBitLength - 1};
+ubint<limb_t> ubint<limb_t>::LShift(uint16_t shift) const {
+    static constexpr uint16_t mask{m_limbBitLength - 1};
     if (m_MSB == 0)
         return ubint();
     auto ans(*this);
@@ -511,8 +511,8 @@ ubint<limb_t> ubint<limb_t>::LShift(usshort shift) const {
 }
 
 template <typename limb_t>
-ubint<limb_t>& ubint<limb_t>::LShiftEq(usshort shift) {
-    static constexpr usshort mask{m_limbBitLength - 1};
+ubint<limb_t>& ubint<limb_t>::LShiftEq(uint16_t shift) {
+    static constexpr uint16_t mask{m_limbBitLength - 1};
     if (m_MSB == 0)
         return *this;
     m_MSB += shift;
@@ -546,8 +546,8 @@ ubint<limb_t>& ubint<limb_t>::LShiftEq(usshort shift) {
  *   Shifting is done by using bit shift operations and carry over propagation.
  */
 template <typename limb_t>
-ubint<limb_t> ubint<limb_t>::RShift(usshort shift) const {
-    static constexpr usshort mask{m_limbBitLength - 1};
+ubint<limb_t> ubint<limb_t>::RShift(uint16_t shift) const {
+    static constexpr uint16_t mask{m_limbBitLength - 1};
     if (m_MSB <= shift)
         return ubint(0);
     ubint ans(*this);
@@ -568,8 +568,8 @@ ubint<limb_t> ubint<limb_t>::RShift(usshort shift) const {
 }
 
 template <typename limb_t>
-ubint<limb_t>& ubint<limb_t>::RShiftEq(usshort shift) {
-    static constexpr usshort mask{m_limbBitLength - 1};
+ubint<limb_t>& ubint<limb_t>::RShiftEq(uint16_t shift) {
+    static constexpr uint16_t mask{m_limbBitLength - 1};
     if (m_MSB <= shift) {
         m_MSB = 0;
         m_value.resize(1);
@@ -685,7 +685,7 @@ usint ubint<limb_t>::GetDigitAtIndexForBase(usint index, usint base) const {
 
 template <typename limb_t>
 const std::string ubint<limb_t>::ToString() const {
-    std::vector<uschar> val{0};
+    std::vector<uint8_t> val{0};
     val.reserve(m_MSB >> 1);
     for (usint i = m_MSB; i > 0; --i) {
         auto ofl = GetBitAtIndex(i);  // TODO: needlessly expensive here
@@ -997,13 +997,13 @@ void ubint<limb_t>::SetValue(const std::string& vin) {
 }
 
 template <typename limb_t>
-uschar ubint<limb_t>::GetBitAtIndex(usint index) const {
+uint8_t ubint<limb_t>::GetBitAtIndex(usint index) const {
     constexpr usint mask{m_limbBitLength - 1};
     if (index > m_MSB)
         return 0;
     size_t idx{MSBToLimbs(index) - 1};
     index &= mask;
-    return static_cast<uschar>((m_value[idx] >> (index ? index - 1 : mask)) & 0x1);
+    return static_cast<uint8_t>((m_value[idx] >> (index ? index - 1 : mask)) & 0x1);
 }
 
 template class bigintdyn::ubint<expdtype>;

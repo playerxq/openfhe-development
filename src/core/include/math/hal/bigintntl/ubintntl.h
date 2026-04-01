@@ -824,7 +824,7 @@ public:
    * @param shift # of bits.
    * @return result of the shift operation.
    */
-    myZZ LShift(usshort shift) const {
+    myZZ LShift(uint16_t shift) const {
         return *static_cast<const ZZ*>(this) << shift;
     }
 
@@ -834,7 +834,7 @@ public:
    * @param shift # of bits.
    * @return result of the shift operation.
    */
-    myZZ& LShiftEq(usshort shift) {
+    myZZ& LShiftEq(uint16_t shift) {
         *static_cast<ZZ*>(this) <<= shift;
         return *this;
     }
@@ -845,7 +845,7 @@ public:
    * @param shift # of bits.
    * @return result of the shift operation.
    */
-    myZZ RShift(usshort shift) const {
+    myZZ RShift(uint16_t shift) const {
         return *static_cast<const ZZ*>(this) >> shift;
     }
 
@@ -855,7 +855,7 @@ public:
    * @param shift # of bits.
    * @return result of the shift operation.
    */
-    myZZ& RShiftEq(usshort shift) {
+    myZZ& RShiftEq(uint16_t shift) {
         *static_cast<ZZ*>(this) >>= shift;
         return *this;
     }
@@ -961,7 +961,7 @@ public:
    * @param index of the bit to get. LSB=1
    * @return resulting bit.
    */
-    uschar GetBitAtIndex(usint index) const;
+    uint8_t GetBitAtIndex(usint index) const;
 
     /**
    * A zero allocator that is called by the Matrix class. It is used to

@@ -679,8 +679,8 @@ public:
    * @param shift # of bits.
    * @return result of the shift operation.
    */
-    ubint LShift(usshort shift) const;
-    ubint& LShiftEq(usshort shift);
+    ubint LShift(uint16_t shift) const;
+    ubint& LShiftEq(uint16_t shift);
 
     /**
    * Right shift operation.
@@ -688,8 +688,8 @@ public:
    * @param shift # of bits.
    * @return result of the shift operation.
    */
-    ubint RShift(usshort shift) const;
-    ubint& RShiftEq(usshort shift);
+    ubint RShift(uint16_t shift) const;
+    ubint& RShiftEq(uint16_t shift);
 
     /**
    * Compares the current ubint to ubint a.
@@ -816,7 +816,7 @@ public:
    * @param index is the index of the bit to get.
    * @return resulting bit.
    */
-    uschar GetBitAtIndex(usint index) const;
+    uint8_t GetBitAtIndex(usint index) const;
 
     /**
    * A zero allocator that is called by the Matrix class. It is used to

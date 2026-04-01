@@ -830,7 +830,7 @@ public:
    * @param shift # of bits.
    * @return result of the shift operation.
    */
-    BigIntegerFixedT LShift(usshort shift) const;
+    BigIntegerFixedT LShift(uint16_t shift) const;
 
     /**
    * Left shift operation. In-place variant.
@@ -838,7 +838,7 @@ public:
    * @param shift # of bits.
    * @return result of the shift operation.
    */
-    BigIntegerFixedT& LShiftEq(usshort shift);
+    BigIntegerFixedT& LShiftEq(uint16_t shift);
 
     /**
    * Right shift operation.
@@ -846,7 +846,7 @@ public:
    * @param shift # of bits.
    * @return result of the shift operation.
    */
-    BigIntegerFixedT RShift(usshort shift) const;
+    BigIntegerFixedT RShift(uint16_t shift) const;
 
     /**
    * Right shift operation. In-place variant.
@@ -854,7 +854,7 @@ public:
    * @param shift # of bits.
    * @return result of the shift operation.
    */
-    BigIntegerFixedT& RShiftEq(usshort shift);
+    BigIntegerFixedT& RShiftEq(uint16_t shift);
 
     // COMPARE
 
@@ -968,7 +968,7 @@ public:
    * @param index is the index of the bit to get.
    * @return resulting bit.
    */
-    uschar GetBitAtIndex(usint index) const;
+    uint8_t GetBitAtIndex(usint index) const;
 
     /**
    * A zero allocator that is called by the Matrix class. It is used to
@@ -1023,7 +1023,7 @@ public:
         // initiate to object to be printed
         auto print_obj = new BigIntegerFixedT<uint_type_c, BITLENGTH_c>(ptr_obj);
         // print_VALUE array stores the decimal value in the array
-        uschar* print_VALUE = new uschar[ptr_obj.m_numDigitInPrintval];
+        uint8_t* print_VALUE = new uint8_t[ptr_obj.m_numDigitInPrintval];
         for (size_t i = 0; i < ptr_obj.m_numDigitInPrintval; i++) {
             // reset to zero
             *(print_VALUE + i) = 0;
@@ -1123,17 +1123,17 @@ private:
     uint_type m_value[(BITLENGTH + 8 * sizeof(uint_type) - 1) / (8 * sizeof(uint_type))];
 
     // variable that stores the MOST SIGNIFICANT BIT position in the number.
-    usshort m_MSB;
+    uint16_t m_MSB;
 
     // variable to store the bit width of the integral data type.
-    static const uschar m_uintBitLength;
+    static const uint8_t m_uintBitLength;
 
     // variable to store the maximum value of the integral data type.
     static const uint_type m_uintMax;
 
     // variable to store the log(base 2) of the number of bits in the integral
     // data type.
-    static const uschar m_logUintBitLength;
+    static const uint8_t m_logUintBitLength;
 
     // variable to store the size of the data array.
     static const usint m_nSize;
@@ -1191,20 +1191,20 @@ private:
    * @param a is a pointer to the binary array.
    * @return the decimal value.
    */
-    static uint_type UintInBinaryToDecimal(uschar* a);
+    static uint_type UintInBinaryToDecimal(uint8_t* a);
 
     /**
    * function that mutiplies by 2 to the binary array.
    * @param a is a pointer to the binary array.
    */
-    static void double_bitVal(uschar* a);
+    static void double_bitVal(uint8_t* a);
 
     /**
    * function that adds bit b to the binary array.
    * @param a is a pointer to the binary array.
    * @param b is a bit value to be added.
    */
-    static void add_bitVal(uschar* a, uschar b);
+    static void add_bitVal(uint8_t* a, uint8_t b);
 };
 
 }  // namespace bigintfxd
