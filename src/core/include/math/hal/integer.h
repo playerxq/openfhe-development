@@ -418,7 +418,7 @@ public:
    *
    * @return the index of the most significant bit.
    */
-    usint GetMSB() const;
+    uint32_t GetMSB() const;
 
     /**
    * Get the number of digits using a specific base - support for arbitrary base
@@ -427,7 +427,7 @@ public:
    * @param base is the base with which to determine length in.
    * @return the length of the representation in a specific base.
    */
-    usint GetLengthForBase(usint base) const;
+    uint32_t GetLengthForBase(uint32_t base) const;
 
     /**
    * Get the number of digits using a specific base - support for arbitrary base
@@ -442,7 +442,7 @@ public:
    * @param base is the base with which to determine length in.
    * @return the length of the representation in a specific base.
    */
-    usint GetDigitAtIndexForBase(usint index, usint base) const;
+    uint32_t GetDigitAtIndexForBase(uint32_t index, uint32_t base) const;
 
     // STRINGS
 

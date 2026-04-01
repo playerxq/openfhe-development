@@ -222,7 +222,7 @@ ubint<limb_t>& ubint<limb_t>::DividedByEq(const ubint& b) {
 }
 
 template <typename limb_t>
-ubint<limb_t> ubint<limb_t>::Exp(usint p) const {
+ubint<limb_t> ubint<limb_t>::Exp(uint32_t p) const {
     if (p == 0)
         return ubint(1);
     if (p == 1)
@@ -555,7 +555,7 @@ ubint<limb_t> ubint<limb_t>::RShift(uint16_t shift) const {
     size_t shiftByLimb{static_cast<size_t>(shift) >> m_log2LimbBitLength};
     shift &= mask;
     Dlimb_t tmp{ans.m_value[shiftByLimb++] >> shift};
-    usint lshift{m_limbBitLength - shift};
+    uint32_t lshift{m_limbBitLength - shift};
     size_t size{ans.m_value.size() - shiftByLimb};
     for (size_t i = 0; i < size; ++i, tmp >>= m_limbBitLength) {
         tmp |= static_cast<Dlimb_t>(ans.m_value[i + shiftByLimb]) << lshift;
@@ -580,7 +580,7 @@ ubint<limb_t>& ubint<limb_t>::RShiftEq(uint16_t shift) {
     size_t shiftByLimb{static_cast<size_t>(shift) >> m_log2LimbBitLength};
     shift &= mask;
     Dlimb_t tmp{m_value[shiftByLimb++] >> shift};
-    usint lshift{m_limbBitLength - shift};
+    uint32_t lshift{m_limbBitLength - shift};
     size_t size{m_value.size() - shiftByLimb};
     for (size_t i = 0; i < size; ++i, tmp >>= m_limbBitLength) {
         tmp |= static_cast<Dlimb_t>(m_value[i + shiftByLimb]) << lshift;
@@ -610,12 +610,12 @@ double ubint<limb_t>::ConvertToDouble() const {
     double ans{-1.0};
     try {
         // ans = std::stod(this->ToString());
-        usint ceilInt = MSBToLimbs(m_MSB);
+        uint32_t ceilInt = MSBToLimbs(m_MSB);
         double factor = std::pow(2, m_limbBitLength);
         double power  = 1.0;
 
         ans = 0.0;
-        for (usint i = 0; i < ceilInt; ++i, power *= factor)
+        for (uint32_t i = 0; i < ceilInt; ++i, power *= factor)
             ans += power * m_value[i];
     }
     catch (const std::exception& e) {
@@ -648,18 +648,18 @@ ubint<limb_t> ubint<limb_t>::FromBinaryString(const std::string& vin) {
         return ubint();
     ubint value;
     value.m_value.clear();
-    usint len  = v.length();
-    usint cntr = MSBToLimbs(len);
+    uint32_t len  = v.length();
+    uint32_t cntr = MSBToLimbs(len);
     std::string val;
     Dlimb_t partial_value = 0;
-    for (usint i = 0; i < cntr; i++) {
+    for (uint32_t i = 0; i < cntr; i++) {
         if (len > ((i + 1) * m_limbBitLength)) {
             val = v.substr((len - (i + 1) * m_limbBitLength), m_limbBitLength);
         }
         else {
             val = v.substr(0, len % m_limbBitLength);
         }
-        for (usint j = 0; j < val.length(); j++) {
+        for (uint32_t j = 0; j < val.length(); j++) {
             partial_value += std::stoi(val.substr(j, 1));
             partial_value <<= 1;
         }
@@ -673,11 +673,11 @@ ubint<limb_t> ubint<limb_t>::FromBinaryString(const std::string& vin) {
 
 // TODO: * i to << i
 template <typename limb_t>
-usint ubint<limb_t>::GetDigitAtIndexForBase(usint index, usint base) const {
-    usint DigitLen = std::ceil(std::log2(base));
-    usint digit    = 0;
-    usint newIndex = 1 + (index - 1) * DigitLen;
-    for (usint i = 1; i < base; i <<= 1) {
+uint32_t ubint<limb_t>::GetDigitAtIndexForBase(uint32_t index, uint32_t base) const {
+    uint32_t DigitLen = std::ceil(std::log2(base));
+    uint32_t digit    = 0;
+    uint32_t newIndex = 1 + (index - 1) * DigitLen;
+    for (uint32_t i = 1; i < base; i <<= 1) {
         digit += GetBitAtIndex(newIndex++) * i;
     }
     return digit;
@@ -687,7 +687,7 @@ template <typename limb_t>
 const std::string ubint<limb_t>::ToString() const {
     std::vector<uint8_t> val{0};
     val.reserve(m_MSB >> 1);
-    for (usint i = m_MSB; i > 0; --i) {
+    for (uint32_t i = m_MSB; i > 0; --i) {
         auto ofl = GetBitAtIndex(i);  // TODO: needlessly expensive here
         for (auto& a : val) {
             a = (a << 1) + ofl;
@@ -975,7 +975,7 @@ void ubint<limb_t>::SetValue(const std::string& vin) {
 
     m_value.clear();
     //    m_value.reserve(MSBToLimbs(arrSize << 2));
-    usint cnt{0};
+    uint32_t cnt{0};
     limb_t val{0};
     size_t zptr{0};
     while (zptr <= arrSize) {
@@ -997,8 +997,8 @@ void ubint<limb_t>::SetValue(const std::string& vin) {
 }
 
 template <typename limb_t>
-uint8_t ubint<limb_t>::GetBitAtIndex(usint index) const {
-    constexpr usint mask{m_limbBitLength - 1};
+uint8_t ubint<limb_t>::GetBitAtIndex(uint32_t index) const {
+    constexpr uint32_t mask{m_limbBitLength - 1};
     if (index > m_MSB)
         return 0;
     size_t idx{MSBToLimbs(index) - 1};

@@ -187,7 +187,7 @@ static void BM_BigInt_DividedByEq(benchmark::State& state) {
 }
 
 template <typename I>
-static void exp_BigInt(const I& a, const usint& b) {
+static void exp_BigInt(const I& a, const uint32_t& b) {
     __attribute__((unused)) I c1 = a.Exp(b);
 }
 
@@ -199,7 +199,7 @@ static void BM_BigInt_Exp(benchmark::State& state) {
 }
 
 template <typename I>
-static void expeq_BigInt(I a, const usint& b) {
+static void expeq_BigInt(I a, const uint32_t& b) {
     a.ExpEq(b);
 }
 
