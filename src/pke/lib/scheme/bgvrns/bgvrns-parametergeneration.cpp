@@ -458,8 +458,11 @@ bool ParameterGenerationBGVRNS::ParamsGenBGVRNSInternal(std::shared_ptr<CryptoPa
         // we add an extra bit to account for the special logic of selecting the RNS moduli in BGV
         // ignore the case when there is only one max size modulus
         // no extra bit needs to be added for FIXEDMANUAL
-        if ((qBound != auxBits) && (scalTech != FIXEDMANUAL))
+        bool addOne = false;
+        if ((qBound != auxBits) && (scalTech != FIXEDMANUAL)) {
             qBound++;
+            addOne = true;
+        }
 
         uint32_t numPrimesEst          = numPrimes;
         bool isNoiseFloodingMultiparty = (multipartyMode == NOISE_FLOODING_MULTIPARTY);
@@ -467,7 +470,7 @@ bool ParameterGenerationBGVRNS::ParamsGenBGVRNSInternal(std::shared_ptr<CryptoPa
             numPrimesEst += NoiseFlooding::NUM_MODULI_MULTIPARTY;
         auto hybridKSInfo =
             CryptoParametersRNS::EstimateLogP(numPartQ, firstModSize, dcrtBits, extraModSize, numPrimesEst, auxBits,
-                                              scalTech, true, isNoiseFloodingMultiparty);
+                                              scalTech, addOne, isNoiseFloodingMultiparty);
         qBound += std::get<0>(hybridKSInfo);
         auxTowers = std::get<1>(hybridKSInfo);
     }
