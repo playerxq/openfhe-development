@@ -393,7 +393,8 @@ uint64_t CryptoParametersRNS::FindAuxPrimeStep() const {
 std::pair<double, uint32_t> CryptoParametersRNS::EstimateLogP(uint32_t numPartQ, double firstModulusSize,
                                                               double dcrtBits, double extraModulusSize,
                                                               uint32_t numPrimes, uint32_t auxBits,
-                                                              ScalingTechnique scalTech, bool addOne) {
+                                                              ScalingTechnique scalTech,
+                                                              bool isNoiseFloodingMultiparty, bool addOne) {
     // numPartQ can not be zero as there is a division by numPartQ
     if (numPartQ == 0)
         OPENFHE_THROW("numPartQ is zero");
@@ -419,6 +420,11 @@ std::pair<double, uint32_t> CryptoParametersRNS::EstimateLogP(uint32_t numPartQ,
     qi[0] = firstModulusSize;
     if (extraModulusSize > 0)
         qi[sizeQ - 1] = extraModulusSize;
+    if (isNoiseFloodingMultiparty) {
+        for (size_t i = 0; i < std::min<size_t>(NoiseFlooding::NUM_MODULI_MULTIPARTY, sizeQ); ++i) {
+            qi[i] = NoiseFlooding::MULTIPARTY_MOD_SIZE;
+        }
+    }
 
     // Compute partitions of Q into numPartQ digits
     uint32_t maxBits = 0;
