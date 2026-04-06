@@ -133,8 +133,7 @@ bool ParameterGenerationCKKSRNS::ParamsGenCKKSRNSInternal(std::shared_ptr<Crypto
         // Estimate ciphertext modulus Q*P bound (in case of HYBRID P*Q)
         if (ksTech == HYBRID)
             qBound += std::get<0>(CryptoParametersRNS::EstimateLogP(numPartQ, firstModSize, scalingModSize,
-                                                                    extraModSize, numPrimes, auxBits, scalTech,
-                                                                    false, true));
+                                                                    extraModSize, numPrimes, auxBits, scalTech, true));
 
         uint32_t he_std_n = StdLatticeParm::FindRingDim(distType, stdLevel, qBound);
 

@@ -467,7 +467,7 @@ bool ParameterGenerationBGVRNS::ParamsGenBGVRNSInternal(std::shared_ptr<CryptoPa
             numPrimesEst += NoiseFlooding::NUM_MODULI_MULTIPARTY;
         auto hybridKSInfo =
             CryptoParametersRNS::EstimateLogP(numPartQ, firstModSize, dcrtBits, extraModSize, numPrimesEst, auxBits,
-                                              scalTech, isNoiseFloodingMultiparty, true);
+                                              scalTech, true, isNoiseFloodingMultiparty);
         qBound += std::get<0>(hybridKSInfo);
         auxTowers = std::get<1>(hybridKSInfo);
     }
@@ -504,7 +504,7 @@ bool ParameterGenerationBGVRNS::ParamsGenBGVRNSInternal(std::shared_ptr<CryptoPa
                     numPartQ, std::log2(moduliQ[0].ConvertToDouble()),
                     dcrtBitsEst,
                     (scalTech == FLEXIBLEAUTOEXT) ? std::log2(moduliQ[moduliQ.size() - 1].ConvertToDouble()) : 0,
-                    numPrimesEst, auxBits, scalTech, isNoiseFloodingMultiparty, false);
+                    numPrimesEst, auxBits, scalTech, false, isNoiseFloodingMultiparty);
                 newQBound += std::get<0>(hybridKSInfo);
             }
         } while (qBound < newQBound);
