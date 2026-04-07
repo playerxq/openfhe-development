@@ -415,10 +415,9 @@ public:
    */
     NativeVectorT& ModAddEq(const NativeVectorT& b);
     NativeVectorT& ModAddNoCheckEq(const NativeVectorT& b) {
-        size_t size{m_data.size()};
-        auto mv{m_modulus};
-        for (size_t i = 0; i < size; ++i)
-            m_data[i].ModAddFastEq(b[i], mv);
+        uint32_t size = m_data.size();
+        for (uint32_t i = 0; i < size; ++i)
+            m_data[i].ModAddFastEq(b[i], m_modulus);
         return *this;
     }
 
@@ -490,15 +489,14 @@ public:
    */
     NativeVectorT& ModMulEq(const NativeVectorT& b);
     NativeVectorT& ModMulNoCheckEq(const NativeVectorT& b) {
-        size_t size{m_data.size()};
-        auto mv{m_modulus};
+        uint32_t size = m_data.size();
 #ifdef NATIVEINT_BARRET_MOD
         auto mu{m_modulus.ComputeMu()};
-        for (size_t i = 0; i < size; ++i)
-            m_data[i].ModMulFastEq(b[i], mv, mu);
+        for (uint32_t i = 0; i < size; ++i)
+            m_data[i].ModMulFastEq(b[i], m_modulus, mu);
 #else
-        for (size_t i = 0; i < size; ++i)
-            m_data[i].ModMulFastEq(b[i], mv);
+        for (uint32_t i = 0; i < size; ++i)
+            m_data[i].ModMulFastEq(b[i], m_modulus);
 #endif
         return *this;
     }
@@ -535,11 +533,10 @@ public:
    * @return a new vector which is the result of the modulus inverse operation.
    */
     NativeVectorT ModInverse() const {
-        size_t size{m_data.size()};
-        auto mv{m_modulus};
-        NativeVectorT ans(size, mv);
-        for (size_t i{0}; i < size; ++i)
-            ans[i] = m_data[i].ModInverse(mv);
+        uint32_t size(m_data.size());
+        NativeVectorT ans(size, m_modulus);
+        for (uint32_t i{0}; i < size; ++i)
+            ans[i] = m_data[i].ModInverse(m_modulus);
         return ans;
     }
 
@@ -549,10 +546,9 @@ public:
    * @return a new vector which is the result of the modulus inverse operation.
    */
     NativeVectorT& ModInverseEq() {
-        size_t size{m_data.size()};
-        auto mv{m_modulus};
-        for (size_t i{0}; i < size; ++i)
-            m_data[i] = m_data[i].ModInverse(mv);
+        uint32_t size(m_data.size());
+        for (uint32_t i{0}; i < size; ++i)
+            m_data[i] = m_data[i].ModInverse(m_modulus);
         return *this;
     }
 

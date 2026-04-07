@@ -39,10 +39,8 @@
 #include "lattice/hal/default/ildcrtparams.h"
 #include "lattice/hal/default/poly.h"
 #include "lattice/hal/dcrtpoly-interface.h"
-
 #include "math/math-hal.h"
 #include "math/distrgen.h"
-
 #include "utils/exception.h"
 #include "utils/inttypes.h"
 #include "utils/parallel.h"
@@ -56,7 +54,7 @@
 namespace lbcrypto {
 
 template <typename VecType>
-class DCRTPolyImpl final : public DCRTPolyInterface<DCRTPolyImpl<VecType>, VecType, NativeVector, PolyImpl> {
+class DCRTPolyImpl : public DCRTPolyInterface<DCRTPolyImpl<VecType>, VecType, NativeVector, PolyImpl> {
 public:
     using Vector                = VecType;
     using Integer               = typename VecType::Integer;
@@ -125,13 +123,23 @@ public:
     DCRTPolyType& operator+=(const DCRTPolyType& rhs) override;
     DCRTPolyType& operator+=(const Integer& rhs) override;
     DCRTPolyType& operator+=(const NativeInteger& rhs) override;
+
     DCRTPolyType& operator-=(const DCRTPolyType& rhs) override;
     DCRTPolyType& operator-=(const Integer& rhs) override;
     DCRTPolyType& operator-=(const NativeInteger& rhs) override;
+
     DCRTPolyType& operator*=(const DCRTPolyType& rhs) override {
-        size_t size{m_vectors.size()};
+        if (m_params->GetRingDimension() != rhs.m_params->GetRingDimension())
+            OPENFHE_THROW("RingDimension mismatch");
+        if (m_format != Format::EVALUATION || rhs.m_format != Format::EVALUATION)
+            OPENFHE_THROW("operator* for DCRTPolyImpl supported only in Format::EVALUATION");
+        uint32_t size = m_vectors.size();
+        if (size != rhs.m_vectors.size())
+            OPENFHE_THROW("tower size mismatch; cannot multiply");
+        if (m_vectors[0].GetModulus() != rhs.m_vectors[0].GetModulus())
+            OPENFHE_THROW("Modulus mismatch");
 #pragma omp parallel for num_threads(OpenFHEParallelControls.GetThreadLimit(size))
-        for (size_t i = 0; i < size; ++i)
+        for (uint32_t i = 0; i < size; ++i)
             m_vectors[i] *= rhs.m_vectors[i];
         return *this;
     }
@@ -141,8 +149,8 @@ public:
     DCRTPolyType Negate() const override;
     DCRTPolyType operator-() const override;
 
-    std::vector<DCRTPolyType> BaseDecompose(usint baseBits, bool evalModeAnswer) const override;
-    std::vector<DCRTPolyType> PowersOfBase(usint baseBits) const override;
+    std::vector<DCRTPolyType> BaseDecompose(uint32_t baseBits, bool evalModeAnswer) const override;
+    std::vector<DCRTPolyType> PowersOfBase(uint32_t baseBits) const override;
     std::vector<DCRTPolyType> CRTDecompose(uint32_t baseBits) const;
 
     DCRTPolyType AutomorphismTransform(uint32_t i) const override;
@@ -155,14 +163,14 @@ public:
             OPENFHE_THROW("RingDimension mismatch");
         if (m_format != rhs.m_format)
             OPENFHE_THROW("Format mismatch");
-        size_t size{m_vectors.size()};
+        uint32_t size = m_vectors.size();
         if (size != rhs.m_vectors.size())
-            OPENFHE_THROW("tower size mismatch; cannot add");
+            OPENFHE_THROW("Tower size mismatch");
         if (m_vectors[0].GetModulus() != rhs.m_vectors[0].GetModulus())
             OPENFHE_THROW("Modulus mismatch");
         DCRTPolyType tmp(m_params, m_format);
 #pragma omp parallel for num_threads(OpenFHEParallelControls.GetThreadLimit(size))
-        for (size_t i = 0; i < size; ++i)
+        for (uint32_t i = 0; i < size; ++i)
             tmp.m_vectors[i] = m_vectors[i].PlusNoCheck(rhs.m_vectors[i]);
         return tmp;
     }
@@ -176,14 +184,14 @@ public:
             OPENFHE_THROW("RingDimension mismatch");
         if (m_format != Format::EVALUATION || rhs.m_format != Format::EVALUATION)
             OPENFHE_THROW("operator* for DCRTPolyImpl supported only in Format::EVALUATION");
-        size_t size{m_vectors.size()};
+        uint32_t size = m_vectors.size();
         if (size != rhs.m_vectors.size())
             OPENFHE_THROW("tower size mismatch; cannot multiply");
         if (m_vectors[0].GetModulus() != rhs.m_vectors[0].GetModulus())
             OPENFHE_THROW("Modulus mismatch");
         DCRTPolyType tmp(m_params, m_format);
 #pragma omp parallel for num_threads(OpenFHEParallelControls.GetThreadLimit(size))
-        for (size_t i = 0; i < size; ++i)
+        for (uint32_t i = 0; i < size; ++i)
             tmp.m_vectors[i] = m_vectors[i].TimesNoCheck(rhs.m_vectors[i]);
         return tmp;
     }
@@ -217,7 +225,7 @@ public:
     PolyLargeType CRTInterpolate() const override;
     PolyType DecryptionCRTInterpolate(PlaintextModulus ptm) const override;
     PolyType ToNativePoly() const override;
-    PolyLargeType CRTInterpolateIndex(usint i) const override;
+    PolyLargeType CRTInterpolateIndex(uint32_t i) const override;
     Integer GetWorkingModulus() const override;
 
     void SetValuesModSwitch(const DCRTPolyType& element, const NativeInteger& modulus) override;
@@ -274,7 +282,7 @@ public:
     void FastExpandCRTBasisPloverQ(const Precomputations& precomputed) override;
 
     void ExpandCRTBasisQlHat(const std::shared_ptr<Params>& paramsQ, const std::vector<NativeInteger>& QlHatModq,
-                             const std::vector<NativeInteger>& QlHatModqPrecon, const usint sizeQ) override;
+                             const std::vector<NativeInteger>& QlHatModqPrecon, const uint32_t sizeQ) override;
 
     PolyType ScaleAndRound(const NativeInteger& t, const std::vector<NativeInteger>& tQHatInvModqDivqModt,
                            const std::vector<NativeInteger>& tQHatInvModqDivqModtPrecon,
@@ -383,11 +391,11 @@ public:
         return m_vectors;
     }
 
-    void SetElementAtIndex(usint index, const PolyType& element) {
+    void SetElementAtIndex(uint32_t index, const PolyType& element) {
         m_vectors[index] = element;
     }
 
-    void SetElementAtIndex(usint index, PolyType&& element) {
+    void SetElementAtIndex(uint32_t index, PolyType&& element) noexcept {
         m_vectors[index] = std::move(element);
     }
 

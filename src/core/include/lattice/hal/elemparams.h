@@ -38,7 +38,6 @@
 
 #include "math/math-hal.h"
 #include "math/nbtheory.h"
-
 #include "utils/exception.h"
 #include "utils/inttypes.h"
 #include "utils/serializable.h"

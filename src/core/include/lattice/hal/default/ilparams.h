@@ -57,7 +57,7 @@ namespace lbcrypto {
  * and their inheritors.
  */
 template <typename IntType>
-class ILParamsImpl final : public ElemParams<IntType> {
+class ILParamsImpl : public ElemParams<IntType> {
 public:
     using Integer = IntType;
 

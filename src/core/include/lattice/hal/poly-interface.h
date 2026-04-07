@@ -38,11 +38,9 @@
 
 #include "lattice/ilelement.h"
 #include "lattice/hal/default/ilparams.h"
-
 #include "math/math-hal.h"
 #include "math/distrgen.h"
 #include "math/nbtheory.h"
-
 #include "utils/inttypes.h"
 #include "utils/exception.h"
 
@@ -164,7 +162,7 @@ public:
    * @brief returns the element's ring dimension
    * @return returns the ring dimension of the element.
    */
-    usint GetRingDimension() const {
+    uint32_t GetRingDimension() const {
         return this->GetDerived().GetParams()->GetRingDimension();
     }
 
@@ -188,7 +186,7 @@ public:
    * @brief returns the element's cyclotomic order
    * @return returns the cyclotomic order of the element.
    */
-    usint GetCyclotomicOrder() const final {
+    uint32_t GetCyclotomicOrder() const final {
         return this->GetDerived().GetParams()->GetCyclotomicOrder();
     }
 
@@ -198,7 +196,7 @@ public:
    *
    * @return length of the component element
    */
-    usint GetLength() const final {
+    uint32_t GetLength() const final {
         //        if (this->GetDerived().IsEmpty())
         //            OPENFHE_THROW("No values in PolyImpl");
         return this->GetDerived().GetValues().GetLength();
@@ -218,19 +216,19 @@ public:
    * Note this operation is computationally intense. Does bound checking
    * @return interpolated value at index i.
    */
-    Integer& at(usint i) override             = 0;
-    const Integer& at(usint i) const override = 0;
+    Integer& at(uint32_t i) override             = 0;
+    const Integer& at(uint32_t i) const override = 0;
 
     /**
    * @brief Get interpolated value of element at index i.
    * Note this operation is computationally intense. No bound checking
    * @return interpolated value at index i.
    */
-    Integer& operator[](usint i) override {
+    Integer& operator[](uint32_t i) override {
         return this->GetDerived()[i];
     }
 
-    const Integer& operator[](usint i) const override {
+    const Integer& operator[](uint32_t i) const override {
         return this->GetDerived()[i];
     }
 
@@ -546,7 +544,7 @@ public:
    *          will be removed in future. Use @see DCRTPolyInterface::CRTDecompose instead.
    */
 
-    std::vector<DerivedType> BaseDecompose(usint baseBits, bool evalModeAnswer) const override = 0;
+    std::vector<DerivedType> BaseDecompose(uint32_t baseBits, bool evalModeAnswer) const override = 0;
 
     /**
    * @brief Generate a vector of PolyImpl's as \f$ \left\{x, {base}*x,
@@ -562,7 +560,7 @@ public:
    * @warning not efficient and  not fast, uses multiprecision arithmetic and
    *          will be removed in future. Use @see DCRTPolyInterface::CRTDecompose instead.
    */
-    std::vector<DerivedType> PowersOfBase(usint baseBits) const override = 0;
+    std::vector<DerivedType> PowersOfBase(uint32_t baseBits) const override = 0;
 
     /**
    * @brief Set method that should not be used, will throw an error.

@@ -61,10 +61,10 @@ NativeVectorT<IntegerType>::NativeVectorT(uint32_t length, const IntegerType& mo
 
 template <class IntegerType>
 NativeVectorT<IntegerType>& NativeVectorT<IntegerType>::operator=(std::initializer_list<std::string> rhs) noexcept {
-    const size_t vlen = rhs.size();
+    const uint32_t vlen = rhs.size();
     if (m_data.size() < vlen)
         m_data.resize(vlen);
-    for (size_t i = 0; i < m_data.size(); ++i) {
+    for (uint32_t i = 0; i < m_data.size(); ++i) {
         if (i < vlen) {
             m_data[i] = *(rhs.begin() + i);
             if (m_modulus.m_value != 0)
@@ -79,10 +79,10 @@ NativeVectorT<IntegerType>& NativeVectorT<IntegerType>::operator=(std::initializ
 
 template <class IntegerType>
 NativeVectorT<IntegerType>& NativeVectorT<IntegerType>::operator=(std::initializer_list<uint64_t> rhs) noexcept {
-    const size_t vlen = rhs.size();
+    const uint32_t vlen = rhs.size();
     if (m_data.size() < vlen)
         m_data.resize(vlen);
-    for (size_t i = 0; i < m_data.size(); ++i) {
+    for (uint32_t i = 0; i < m_data.size(); ++i) {
         if (i < vlen) {
             m_data[i].m_value = BasicInt(*(rhs.begin() + i));
             if (m_modulus.m_value != 0)
@@ -326,13 +326,13 @@ NativeVectorT<IntegerType>& NativeVectorT<IntegerType>::ModMulEq(const NativeVec
     if (m_data.size() != b.m_data.size() || m_modulus != b.m_modulus)
         OPENFHE_THROW("Called on NativeVectorT's with different parameters.");
     auto mv{m_modulus};
-    size_t size{m_data.size()};
+    uint32_t size(m_data.size());
 #ifdef NATIVEINT_BARRET_MOD
     auto mu{m_modulus.ComputeMu()};
-    for (size_t i = 0; i < size; ++i)
+    for (uint32_t i = 0; i < size; ++i)
         m_data[i].ModMulFastEq(b[i], mv, mu);
 #else
-    for (size_t i = 0; i < size; ++i)
+    for (uint32_t i = 0; i < size; ++i)
         m_data[i].ModMulFastEq(b[i], mv);
 #endif
     return *this;

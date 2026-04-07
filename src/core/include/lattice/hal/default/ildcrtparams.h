@@ -38,11 +38,9 @@
 
 #include "lattice/hal/elemparams.h"
 #include "lattice/hal/default/ilparams.h"
-
 #include "math/hal/basicint.h"
 #include "math/math-hal.h"
 #include "math/nbtheory-impl.h"
-
 #include "utils/exception.h"
 #include "utils/inttypes.h"
 
@@ -67,7 +65,7 @@ namespace lbcrypto {
  * Heidelberg
  */
 template <typename IntType>
-class ILDCRTParams final : public ElemParams<IntType> {
+class ILDCRTParams : public ElemParams<IntType> {
 public:
     using Integer        = IntType;
     using ILNativeParams = ILParamsImpl<NativeInteger>;
