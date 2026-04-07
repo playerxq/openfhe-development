@@ -458,11 +458,19 @@ bool ParameterGenerationBGVRNS::ParamsGenBGVRNSInternal(std::shared_ptr<CryptoPa
         // we add an extra bit to account for the special logic of selecting the RNS moduli in BGV
         // ignore the case when there is only one max size modulus
         // no extra bit needs to be added for FIXEDMANUAL
-        if ((qBound != auxBits) && (scalTech != FIXEDMANUAL))
+        bool addOne = false;
+        if ((qBound != auxBits) && (scalTech != FIXEDMANUAL)) {
             qBound++;
+            addOne = true;
+        }
 
-        auto hybridKSInfo = CryptoParametersRNS::EstimateLogP(numPartQ, firstModSize, dcrtBits, extraModSize, numPrimes,
-                                                              auxBits, scalTech, true);
+        uint32_t numPrimesEst          = numPrimes;
+        bool isNoiseFloodingMultiparty = (multipartyMode == NOISE_FLOODING_MULTIPARTY);
+        if (isNoiseFloodingMultiparty)
+            numPrimesEst += NoiseFlooding::NUM_MODULI_MULTIPARTY;
+        auto hybridKSInfo =
+            CryptoParametersRNS::EstimateLogP(numPartQ, firstModSize, dcrtBits, extraModSize, numPrimesEst, auxBits,
+                                              scalTech, addOne, isNoiseFloodingMultiparty);
         qBound += std::get<0>(hybridKSInfo);
         auxTowers = std::get<1>(hybridKSInfo);
     }
@@ -490,11 +498,16 @@ bool ParameterGenerationBGVRNS::ParamsGenBGVRNSInternal(std::shared_ptr<CryptoPa
             if (multipartyMode == NOISE_FLOODING_MULTIPARTY)
                 newQBound += cryptoParamsBGVRNS->EstimateMultipartyFloodingLogQ();
             if (ksTech == HYBRID) {
+                double dcrtBitsEst    = (moduliQ.size() > 1) ? std::log2(moduliQ[1].ConvertToDouble()) : 0;
+                uint32_t numPrimesEst = (scalTech == FLEXIBLEAUTOEXT) ? moduliQ.size() - 1 : moduliQ.size();
+                bool isNoiseFloodingMultiparty = (multipartyMode == NOISE_FLOODING_MULTIPARTY);
+                if (isNoiseFloodingMultiparty)
+                    numPrimesEst += NoiseFlooding::NUM_MODULI_MULTIPARTY;
                 auto hybridKSInfo = CryptoParametersRNS::EstimateLogP(
                     numPartQ, std::log2(moduliQ[0].ConvertToDouble()),
-                    (moduliQ.size() > 1) ? std::log2(moduliQ[1].ConvertToDouble()) : 0,
+                    dcrtBitsEst,
                     (scalTech == FLEXIBLEAUTOEXT) ? std::log2(moduliQ[moduliQ.size() - 1].ConvertToDouble()) : 0,
-                    (scalTech == FLEXIBLEAUTOEXT) ? moduliQ.size() - 1 : moduliQ.size(), auxBits, scalTech, false);
+                    numPrimesEst, auxBits, scalTech, false, isNoiseFloodingMultiparty);
                 newQBound += std::get<0>(hybridKSInfo);
             }
         } while (qBound < newQBound);
