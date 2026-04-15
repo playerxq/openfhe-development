@@ -195,7 +195,7 @@ public:
     }
 
     // sets modulus and the NTL init function uint64_t argument
-    inline void SetModulus(const uint64_t& value) {
+    inline void SetModulus(uint64_t value) {
         if (value == 0) {
             OPENFHE_THROW("SetModulus(uint64_t) cannot be zero");
         }

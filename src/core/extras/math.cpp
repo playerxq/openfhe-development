@@ -71,7 +71,7 @@ int main(int argc, char* argv[]) {
     do {                                                                                                 \
         try {                                                                                            \
             TIC(t);                                                                                      \
-            for (uint32_t j = 0; j < nloop; j++) {                                                          \
+            for (uint32_t j = 0; j < nloop; j++) {                                                       \
                 res = (fn);                                                                              \
             }                                                                                            \
             time2 = TOC(t);                                                                              \

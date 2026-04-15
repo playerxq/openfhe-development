@@ -96,7 +96,7 @@ public:
    * @param modulus uint32_t associated with entries in the vector.
    */
     // TODO: what practical purpose with uint32_t modulus??
-    //    explicit mubintvec(uint32_t length, const uint32_t& modulus) noexcept
+    //    explicit mubintvec(uint32_t length, uint32_t modulus) noexcept
     //        : m_modulus(modulus), m_modulus_state(State::INITIALIZED), m_data(length) {}
 
     /**
@@ -269,7 +269,7 @@ public:
    *
    * @param value is the value to set.
    */
-    //    void SetModulus(const uint32_t& value) noexcept {
+    //    void SetModulus(uint32_t value) noexcept {
     //        m_modulus       = ubint_el_t(value);
     //        m_modulus_state = State::INITIALIZED;
     //    }

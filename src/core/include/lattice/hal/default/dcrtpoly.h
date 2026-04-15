@@ -307,7 +307,7 @@ public:
         const std::vector<NativeInteger>& mtildeQHatInvModq, const std::vector<NativeInteger>& mtildeQHatInvModqPrecon,
         const std::vector<std::vector<NativeInteger>>& QHatModbsk, const std::vector<uint64_t>& QHatModmtilde,
         const std::vector<NativeInteger>& QModbsk, const std::vector<NativeInteger>& QModbskPrecon,
-        const uint64_t& negQInvModmtilde, const std::vector<NativeInteger>& mtildeInvModbsk,
+        uint64_t negQInvModmtilde, const std::vector<NativeInteger>& mtildeInvModbsk,
         const std::vector<NativeInteger>& mtildeInvModbskPrecon) override;
 
     void FastRNSFloorq(const NativeInteger& t, const std::vector<NativeInteger>& moduliQ,
